@@ -176,7 +176,7 @@
     </header>
 
     <!-- 1. Hero Section -->
-    <header class="h-screen w-full relative flex items-center justify-center text-center overflow-hidden">
+    <section class="h-screen w-full relative overflow-hidden">
         <!-- Background Video -->
         <video 
             playsinline 
@@ -196,7 +196,8 @@
 
         <!-- Content -->
         <!-- UPDATED: Converted to flex container to force centering of all child elements -->
-        <div class="relative z-30 w-full text-center px-4 reveal-on-scroll is-visible">
+        <div class="absolute inset-0 z-30 flex items-center justify-center text-center px-4 reveal-on-scroll is-visible">
+            <div class="w-full">
             <!-- UPDATED: Added text-center -->
             <h1 class="gignite-h1 text-5xl md:text-8xl font-black uppercase tracking-tighter text-center">
                 Your Audience Awaits
@@ -209,8 +210,9 @@
             <a href="#features" class="gignite-button mt-12 inline-block py-3 px-10 bg-transparent text-white border-[3px] border-cyan-500 font-bold text-lg uppercase shadow-lg shadow-cyan-500/30 transform transition-all duration-300 hover:scale-105 hover:bg-cyan-500 hover:text-black hover:border-cyan-500">
                 Start Planning
             </a>
+            </div>
         </div>
-    </header>
+    </section>
 
     <!-- Section Divider 1 -->
     <section class="bg-black py-10 w-full">
