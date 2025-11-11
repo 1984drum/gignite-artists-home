@@ -57,36 +57,36 @@
 
         /* Slow zoom and pan animations */
         .hero-bg-image[data-slide="0"].active {
-            animation: zoomPanLeft 3s ease-in-out forwards;
+            animation: zoomPanLeft 6s ease-in-out forwards;
         }
 
         .hero-bg-image[data-slide="1"].active {
-            animation: zoomPanRight 3s ease-in-out forwards;
+            animation: zoomPanRight 6s ease-in-out forwards;
         }
 
         .hero-bg-image[data-slide="2"].active {
-            animation: zoomPanLeft 3s ease-in-out forwards;
+            animation: zoomPanLeft 6s ease-in-out forwards;
         }
 
         .hero-bg-image[data-slide="3"].active {
-            animation: zoomPanRight 3s ease-in-out forwards;
+            animation: zoomPanRight 6s ease-in-out forwards;
         }
 
         @keyframes zoomPanLeft {
             0% {
-                transform: scale(1.15) translateX(3%);
+                transform: scale(1.15) translateX(2%);
             }
             100% {
-                transform: scale(1.2) translateX(-3%);
+                transform: scale(1.2) translateX(-2%);
             }
         }
 
         @keyframes zoomPanRight {
             0% {
-                transform: scale(1.15) translateX(-3%);
+                transform: scale(1.15) translateX(-2%);
             }
             100% {
-                transform: scale(1.2) translateX(3%);
+                transform: scale(1.2) translateX(2%);
             }
         }
 
@@ -289,7 +289,7 @@
             padding: 0.5rem 1.5rem;
             background-color: transparent;
             color: #fff;
-            border: 3px solid #3b82f6; /* blue-500 */
+            border: 3px solid #06b6d4; /* cyan-500 - matches Start Planning button */
             font-family: "brother-1816", sans-serif;
             font-weight: 700;
             font-size: 1rem;
@@ -299,13 +299,75 @@
         }
 
         .login-btn:hover {
-            background-color: #3b82f6;
+            background-color: #06b6d4;
             color: #000;
         }
 
         .login-icon {
             width: 20px;
             height: 20px;
+        }
+
+        /* Glitch effect for Start Planning button */
+        .glitch-button {
+            position: relative;
+        }
+
+        .glitch-button::before,
+        .glitch-button::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: transparent;
+            border: 3px solid #06b6d4;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .glitch-button::before {
+            animation: glitch1 3s infinite;
+        }
+
+        .glitch-button::after {
+            animation: glitch2 2.5s infinite;
+        }
+
+        @keyframes glitch1 {
+            0%, 90%, 100% {
+                opacity: 0;
+                transform: translate(0);
+            }
+            91% {
+                opacity: 0.8;
+                transform: translate(-2px, 2px);
+            }
+            92% {
+                opacity: 0.6;
+                transform: translate(2px, -2px);
+            }
+            93% {
+                opacity: 0;
+                transform: translate(0);
+            }
+        }
+
+        @keyframes glitch2 {
+            0%, 94%, 100% {
+                opacity: 0;
+                transform: translate(0);
+            }
+            95% {
+                opacity: 0.7;
+                transform: translate(3px, -1px);
+            }
+            96% {
+                opacity: 0.5;
+                transform: translate(-3px, 1px);
+            }
+            97% {
+                opacity: 0;
+                transform: translate(0);
+            }
         }
     </style>
 </head>
@@ -357,7 +419,7 @@
                 Our platform will help you build out your tour plan step by step, making your ambitions a reality.
             </p>
             <!-- UPDATED: Button Style 1 -->
-            <a href="#features" class="gignite-button mt-12 inline-block py-3 px-10 bg-transparent text-white border-[3px] border-cyan-500 font-bold text-lg uppercase shadow-lg shadow-cyan-500/30 transform transition-all duration-300 hover:scale-105 hover:bg-cyan-500 hover:text-black hover:border-cyan-500">
+            <a href="#features" class="glitch-button gignite-button mt-12 inline-block py-3 px-10 bg-transparent text-white border-[3px] border-cyan-500 font-bold text-lg uppercase shadow-lg shadow-cyan-500/30 transform transition-all duration-300 hover:scale-105 hover:bg-cyan-500 hover:text-black hover:border-cyan-500">
                 Start Planning
             </a>
             </div>
@@ -903,8 +965,8 @@
             currentImageIndex = nextImageIndex;
         }
 
-        // Start the carousel - transition every 3 seconds
-        setInterval(transitionToNextImage, 3000);
+        // Start the carousel - transition every 6 seconds
+        setInterval(transitionToNextImage, 6000);
     </script>
 
 </body>
