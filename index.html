@@ -48,10 +48,46 @@
             z-index: 0;
             opacity: 0;
             transition: opacity 0.1s ease;
+            transform: scale(1.1);
         }
 
         .hero-bg-image.active {
             opacity: 1;
+        }
+
+        /* Slow zoom and pan animations */
+        .hero-bg-image[data-slide="0"].active {
+            animation: zoomPanLeft 3s ease-in-out forwards;
+        }
+
+        .hero-bg-image[data-slide="1"].active {
+            animation: zoomPanRight 3s ease-in-out forwards;
+        }
+
+        .hero-bg-image[data-slide="2"].active {
+            animation: zoomPanLeft 3s ease-in-out forwards;
+        }
+
+        .hero-bg-image[data-slide="3"].active {
+            animation: zoomPanRight 3s ease-in-out forwards;
+        }
+
+        @keyframes zoomPanLeft {
+            0% {
+                transform: scale(1.15) translateX(3%);
+            }
+            100% {
+                transform: scale(1.2) translateX(-3%);
+            }
+        }
+
+        @keyframes zoomPanRight {
+            0% {
+                transform: scale(1.15) translateX(-3%);
+            }
+            100% {
+                transform: scale(1.2) translateX(3%);
+            }
         }
 
         /* Gradient fade from bottom to top (transparent to black) */
@@ -68,8 +104,12 @@
             inset: 0;
             z-index: 3;
             display: flex;
+            gap: 1px;
             pointer-events: none;
             opacity: 0;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
         }
 
         .equalizer-transition.active {
@@ -80,15 +120,53 @@
             flex: 1;
             background: #000;
             transform-origin: bottom;
-            animation: equalizerWave 0.6s ease-in-out;
+            animation: equalizerWave 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: contrast(1.2);
         }
 
+        /* Multiple wave variations for more dynamic effect */
         @keyframes equalizerWave {
+            0% {
+                transform: scaleY(0);
+            }
+            30% {
+                transform: scaleY(0.3);
+            }
+            60% {
+                transform: scaleY(1);
+            }
+            80% {
+                transform: scaleY(0.5);
+            }
+            100% {
+                transform: scaleY(0);
+            }
+        }
+
+        @keyframes equalizerWave2 {
+            0% {
+                transform: scaleY(0);
+            }
+            40% {
+                transform: scaleY(0.8);
+            }
+            70% {
+                transform: scaleY(1);
+            }
+            100% {
+                transform: scaleY(0);
+            }
+        }
+
+        @keyframes equalizerWave3 {
             0% {
                 transform: scaleY(0);
             }
             50% {
                 transform: scaleY(1);
+            }
+            75% {
+                transform: scaleY(0.6);
             }
             100% {
                 transform: scaleY(0);
@@ -742,13 +820,19 @@
         const equalizerContainer = document.getElementById('equalizer-transition');
         let currentImageIndex = 0;
 
-        // Create equalizer bars (40 bars for pixelated effect)
-        const numBars = 40;
+        // Create equalizer bars (25 bars for more pixelated/blocky effect)
+        const numBars = 25;
+        const animationVariations = ['equalizerWave', 'equalizerWave2', 'equalizerWave3'];
+
         for (let i = 0; i < numBars; i++) {
             const bar = document.createElement('div');
             bar.className = 'equalizer-bar';
             // Random delay for each bar to create staggered equalizer effect
-            bar.style.animationDelay = `${Math.random() * 0.3}s`;
+            const delay = Math.random() * 0.35;
+            bar.style.animationDelay = `${delay}s`;
+            // Randomly assign different animation variations for more dynamic effect
+            const randomAnimation = animationVariations[Math.floor(Math.random() * animationVariations.length)];
+            bar.style.animationName = randomAnimation;
             equalizerContainer.appendChild(bar);
         }
 
@@ -760,25 +844,30 @@
             // Show equalizer transition
             equalizerContainer.classList.add('active');
 
-            // Reset all bar animations
+            // Reset all bar animations with new random variations
             const bars = equalizerContainer.querySelectorAll('.equalizer-bar');
             bars.forEach(bar => {
                 bar.style.animation = 'none';
                 // Force reflow
                 bar.offsetHeight;
-                bar.style.animation = null;
+                // Reassign random animation variation and delay for variety
+                const randomAnimation = animationVariations[Math.floor(Math.random() * animationVariations.length)];
+                const delay = Math.random() * 0.35;
+                bar.style.animationName = randomAnimation;
+                bar.style.animationDelay = `${delay}s`;
+                bar.style.animationDuration = '0.7s';
             });
 
-            // After 300ms (mid-transition), switch images
+            // After 350ms (mid-transition), switch images
             setTimeout(() => {
                 currentImage.classList.remove('active');
                 nextImage.classList.add('active');
-            }, 300);
+            }, 350);
 
             // Hide equalizer after transition completes
             setTimeout(() => {
                 equalizerContainer.classList.remove('active');
-            }, 600);
+            }, 700);
 
             currentImageIndex = nextImageIndex;
         }
