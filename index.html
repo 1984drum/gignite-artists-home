@@ -417,6 +417,15 @@
         /* Glitch effect for Start Planning button */
         .glitch-button {
             position: relative;
+            background: rgba(0, 0, 0, 0.5) !important;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .glitch-button:hover {
+            background: #06b6d4 !important;
+            backdrop-filter: blur(0);
+            -webkit-backdrop-filter: blur(0);
         }
 
         .glitch-button::before,
