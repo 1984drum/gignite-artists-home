@@ -881,12 +881,6 @@
             const nextImageIndex = (currentImageIndex + 1) % heroImages.length;
             const nextImage = heroImages[nextImageIndex];
 
-            // Show next image underneath
-            nextImage.classList.add('active');
-
-            // Show dark overlay (50% opacity) on next image
-            darkOverlay.classList.add('active');
-
             // Show equalizer transition
             equalizerContainer.classList.add('active');
 
@@ -912,40 +906,49 @@
                     }
                 });
 
-                // PHASE 2: After all bars reach the top, they lock there briefly
+                // PHASE 2: After all bars reach the top and lock, THEN change image
                 setTimeout(() => {
+                    // Show next image underneath
+                    nextImage.classList.add('active');
+
+                    // Show dark overlay briefly (50% opacity) on next image
+                    darkOverlay.classList.add('active');
+
                     // PHASE 3: Fade image transition WHILE bars are locked at top
-                    // Fade: hide old image and remove dark overlay
-                    currentImage.classList.remove('active');
-                    darkOverlay.classList.remove('active');
-
-                    // PHASE 4: After fade completes, drop bars back down
                     setTimeout(() => {
-                        let maxDropDuration = 0;
+                        // Fade: hide old image and remove dark overlay
+                        currentImage.classList.remove('active');
+                        darkOverlay.classList.remove('active');
 
-                        bars.forEach((bar) => {
-                            // Random delay for staggered drop
-                            const dropDelay = Math.random() * 0.4;
-                            const dropDuration = 0.4 + Math.random() * 0.3; // 0.4-0.7s
-
-                            // Reset and animate down
-                            bar.style.animation = 'none';
-                            bar.offsetHeight; // Force reflow
-                            bar.style.animation = `barDropDown ${dropDuration}s ease-in ${dropDelay}s forwards`;
-
-                            // Track max drop duration
-                            const totalDropTime = dropDelay + dropDuration;
-                            if (totalDropTime > maxDropDuration) {
-                                maxDropDuration = totalDropTime;
-                            }
-                        });
-
-                        // Hide equalizer after bars finish dropping
+                        // PHASE 4: After fade completes, drop bars back down
                         setTimeout(() => {
-                            equalizerContainer.classList.remove('active');
-                        }, (maxDropDuration * 1000) + 100);
+                            let maxDropDuration = 0;
 
-                    }, 300); // Wait 300ms for fade to complete before dropping bars
+                            bars.forEach((bar) => {
+                                // Random delay for staggered drop
+                                const dropDelay = Math.random() * 0.4;
+                                const dropDuration = 0.4 + Math.random() * 0.3; // 0.4-0.7s
+
+                                // Reset and animate down
+                                bar.style.animation = 'none';
+                                bar.offsetHeight; // Force reflow
+                                bar.style.animation = `barDropDown ${dropDuration}s ease-in ${dropDelay}s forwards`;
+
+                                // Track max drop duration
+                                const totalDropTime = dropDelay + dropDuration;
+                                if (totalDropTime > maxDropDuration) {
+                                    maxDropDuration = totalDropTime;
+                                }
+                            });
+
+                            // Hide equalizer after bars finish dropping
+                            setTimeout(() => {
+                                equalizerContainer.classList.remove('active');
+                            }, (maxDropDuration * 1000) + 100);
+
+                        }, 300); // Wait 300ms for fade to complete before dropping bars
+
+                    }, 100); // Brief moment for next image to appear before fade
 
                 }, (maxGrowDuration * 1000) + 100);
 
