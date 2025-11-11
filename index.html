@@ -912,31 +912,38 @@
                     }
                 });
 
-                // PHASE 2: After all bars reach the top, do quick fade transition
+                // PHASE 2: After all bars reach the top, start dropping them
                 setTimeout(() => {
-                    // Quick fade: hide old image and remove dark overlay
-                    currentImage.classList.remove('active');
-                    darkOverlay.classList.remove('active');
+                    let maxDropDuration = 0;
 
-                    // PHASE 3: After quick fade, drop bars back down in random order
+                    bars.forEach((bar) => {
+                        // Random delay for staggered drop
+                        const dropDelay = Math.random() * 0.4;
+                        const dropDuration = 0.4 + Math.random() * 0.3; // 0.4-0.7s
+
+                        // Reset and animate down
+                        bar.style.animation = 'none';
+                        bar.offsetHeight; // Force reflow
+                        bar.style.animation = `barDropDown ${dropDuration}s ease-in ${dropDelay}s forwards`;
+
+                        // Track max drop duration
+                        const totalDropTime = dropDelay + dropDuration;
+                        if (totalDropTime > maxDropDuration) {
+                            maxDropDuration = totalDropTime;
+                        }
+                    });
+
+                    // PHASE 3: Fade image transition WHILE bars are dropping (after a brief moment)
                     setTimeout(() => {
-                        bars.forEach((bar) => {
-                            // Random delay for staggered drop
-                            const dropDelay = Math.random() * 0.4;
-                            const dropDuration = 0.4 + Math.random() * 0.3; // 0.4-0.7s
+                        // Fade: hide old image and remove dark overlay
+                        currentImage.classList.remove('active');
+                        darkOverlay.classList.remove('active');
+                    }, 150); // Start fade 150ms after bars start dropping
 
-                            // Reset and animate down
-                            bar.style.animation = 'none';
-                            bar.offsetHeight; // Force reflow
-                            bar.style.animation = `barDropDown ${dropDuration}s ease-in ${dropDelay}s forwards`;
-                        });
-
-                        // Hide equalizer after bars finish dropping
-                        setTimeout(() => {
-                            equalizerContainer.classList.remove('active');
-                        }, 1000);
-
-                    }, 200); // 200ms for quick fade
+                    // Hide equalizer after bars finish dropping
+                    setTimeout(() => {
+                        equalizerContainer.classList.remove('active');
+                    }, (maxDropDuration * 1000) + 100);
 
                 }, (maxGrowDuration * 1000) + 100);
 
