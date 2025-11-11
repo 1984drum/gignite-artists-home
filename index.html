@@ -45,46 +45,30 @@
             height: 100%;
             object-fit: cover;
             object-position: bottom;
+            z-index: 0;
             opacity: 0;
-            transition: none;
+            transition: opacity 0.1s ease;
         }
 
         .hero-bg-image.active {
             opacity: 1;
         }
 
-        /* Z-index layering for images */
-        .hero-bg-image[data-slide="0"] {
-            z-index: 1;
+        /* Slow zoom and pan animations */
+        .hero-bg-image[data-slide="0"].active {
+            animation: zoomPanLeft 6s ease-in-out forwards;
         }
 
-        .hero-bg-image[data-slide="1"] {
-            z-index: 2;
+        .hero-bg-image[data-slide="1"].active {
+            animation: zoomPanRight 6s ease-in-out forwards;
         }
 
-        .hero-bg-image[data-slide="2"] {
-            z-index: 3;
+        .hero-bg-image[data-slide="2"].active {
+            animation: zoomPanLeft 6s ease-in-out forwards;
         }
 
-        .hero-bg-image[data-slide="3"] {
-            z-index: 4;
-        }
-
-        /* Slow zoom and pan animations - always running */
-        .hero-bg-image[data-slide="0"] {
-            animation: zoomPanLeft 6s ease-in-out infinite;
-        }
-
-        .hero-bg-image[data-slide="1"] {
-            animation: zoomPanRight 6s ease-in-out infinite;
-        }
-
-        .hero-bg-image[data-slide="2"] {
-            animation: zoomPanLeft 6s ease-in-out infinite;
-        }
-
-        .hero-bg-image[data-slide="3"] {
-            animation: zoomPanRight 6s ease-in-out infinite;
+        .hero-bg-image[data-slide="3"].active {
+            animation: zoomPanRight 6s ease-in-out forwards;
         }
 
         @keyframes zoomPanLeft {
@@ -113,29 +97,13 @@
             z-index: 5;
         }
 
-        /* Current image overlay - covers next image until transition */
-        .current-image-cover {
-            position: absolute;
-            inset: 0;
-            z-index: 8;
-            pointer-events: none;
-        }
-
-        .current-image-cover img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: bottom;
-        }
-
         /* Pixelated Equalizer Transition Overlay */
         .equalizer-transition {
             position: absolute;
             inset: 0;
-            z-index: 9;
+            z-index: 3;
             display: flex;
             gap: 8px;
-            padding: 0 4px;
             pointer-events: none;
             opacity: 0;
         }
@@ -146,17 +114,6 @@
 
         .equalizer-bar {
             flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            justify-content: flex-end;
-            align-items: center;
-            height: 100%;
-        }
-
-        .equalizer-square {
-            width: 100%;
-            height: 20px;
             background: #000;
             transform: scaleY(0);
             transform-origin: bottom;
@@ -167,7 +124,7 @@
             position: absolute;
             inset: 0;
             background: rgba(0, 0, 0, 0.5);
-            z-index: 6;
+            z-index: 2;
             opacity: 0;
             transition: opacity 1s ease;
             pointer-events: none;
@@ -177,8 +134,8 @@
             opacity: 1;
         }
 
-        /* Square animation - grow up like equalizer bars */
-        @keyframes squareGrow {
+        /* Bar animation - grow up and down like equalizer */
+        @keyframes barGrow {
             0%, 100% {
                 transform: scaleY(0);
             }
@@ -390,7 +347,7 @@
 
     <!-- 1. Hero Section -->
     <section class="h-screen w-full relative overflow-hidden">
-        <!-- Background Images (Carousel) - Always animating -->
+        <!-- Background Images (Carousel) -->
         <img src="img/GN 29.png" alt="GIGNITE Background" class="hero-bg-image active" data-slide="0" />
         <img src="img/GN 44.png" alt="GIGNITE Background" class="hero-bg-image" data-slide="1" />
         <img src="img/GN 48.png" alt="GIGNITE Background" class="hero-bg-image" data-slide="2" />
@@ -398,9 +355,6 @@
 
         <!-- Dark overlay for next image during transition -->
         <div class="transition-dark-overlay" id="transition-dark-overlay"></div>
-
-        <!-- Current image cover - shows current image on top -->
-        <div class="current-image-cover" id="current-image-cover"></div>
 
         <!-- Equalizer Transition Overlay -->
         <div class="equalizer-transition" id="equalizer-transition"></div>
@@ -901,43 +855,26 @@
         const heroImages = document.querySelectorAll('.hero-bg-image');
         const equalizerContainer = document.getElementById('equalizer-transition');
         const darkOverlay = document.getElementById('transition-dark-overlay');
-        const currentImageCover = document.getElementById('current-image-cover');
         let currentImageIndex = 0;
 
-        // Show all images and make first one visible on cover
-        heroImages.forEach((img, index) => {
-            img.style.opacity = '1'; // All images visible and animating
-        });
-
-        // Clone first image to cover
-        const firstImg = heroImages[0].cloneNode();
-        firstImg.style.animation = heroImages[0].style.animation;
-        currentImageCover.appendChild(firstImg);
-
-        // Create equalizer bars with stacked squares
+        // Create simple equalizer bars
         const numBars = 20;
-        const squaresPerBar = 30; // Number of squares stacked vertically in each bar
 
         for (let i = 0; i < numBars; i++) {
             const bar = document.createElement('div');
             bar.className = 'equalizer-bar';
-
-            // Create squares for this bar - vary the number slightly
-            const numSquares = squaresPerBar + Math.floor(Math.random() * 8) - 4;
-            for (let j = 0; j < numSquares; j++) {
-                const square = document.createElement('div');
-                square.className = 'equalizer-square';
-                bar.appendChild(square);
-            }
-
             equalizerContainer.appendChild(bar);
         }
 
         function transitionToNextImage() {
+            const currentImage = heroImages[currentImageIndex];
             const nextImageIndex = (currentImageIndex + 1) % heroImages.length;
             const nextImage = heroImages[nextImageIndex];
 
-            // Show dark overlay (50% opacity) on next image below
+            // Show next image underneath
+            nextImage.classList.add('active');
+
+            // Show dark overlay (50% opacity) on next image
             darkOverlay.classList.add('active');
 
             // Show equalizer transition
@@ -949,40 +886,26 @@
                 let maxDuration = 0;
 
                 bars.forEach((bar, barIndex) => {
-                    const squares = bar.querySelectorAll('.equalizer-square');
-
                     // Random delay for each bar (staggered start)
-                    const barDelay = Math.random() * 0.5;
+                    const delay = Math.random() * 0.5;
+                    const duration = 0.8 + Math.random() * 0.4; // 0.8-1.2s
 
-                    // Animate squares from bottom to top
-                    squares.forEach((square, squareIndex) => {
-                        // Reset
-                        square.style.transform = 'scaleY(0)';
-                        square.style.animation = 'none';
-                        square.offsetHeight; // Force reflow
+                    // Reset and animate
+                    bar.style.animation = 'none';
+                    bar.offsetHeight; // Force reflow
+                    bar.style.animation = `barGrow ${duration}s ease-in-out ${delay}s`;
 
-                        // Stagger each square slightly
-                        const squareDelay = barDelay + (squareIndex * 0.03);
-                        const duration = 0.8 + Math.random() * 0.4; // 0.8-1.2s
-
-                        // Apply animation
-                        square.style.animation = `squareGrow ${duration}s ease-in-out ${squareDelay}s`;
-
-                        // Track max duration
-                        const totalTime = squareDelay + duration;
-                        if (totalTime > maxDuration) {
-                            maxDuration = totalTime;
-                        }
-                    });
+                    // Track max duration
+                    const totalTime = delay + duration;
+                    if (totalTime > maxDuration) {
+                        maxDuration = totalTime;
+                    }
                 });
 
-                // After all bars finish animating, switch the cover image
+                // After all bars finish animating, complete transition
                 setTimeout(() => {
-                    // Update cover to show next image
-                    currentImageCover.innerHTML = '';
-                    const nextImg = nextImage.cloneNode();
-                    nextImg.style.animation = nextImage.style.animation;
-                    currentImageCover.appendChild(nextImg);
+                    // Hide old image
+                    currentImage.classList.remove('active');
 
                     // Hide equalizer
                     equalizerContainer.classList.remove('active');
