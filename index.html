@@ -134,13 +134,23 @@
             opacity: 1;
         }
 
-        /* Bar animation - grow up and down like equalizer */
-        @keyframes barGrow {
-            0%, 100% {
+        /* Bar animation - grow up and lock at top */
+        @keyframes barGrowUp {
+            0% {
                 transform: scaleY(0);
             }
-            50% {
+            100% {
                 transform: scaleY(1);
+            }
+        }
+
+        /* Bar animation - drop back down */
+        @keyframes barDropDown {
+            0% {
+                transform: scaleY(1);
+            }
+            100% {
+                transform: scaleY(0);
             }
         }
 
@@ -880,40 +890,55 @@
             // Show equalizer transition
             equalizerContainer.classList.add('active');
 
-            // Animate the equalizer bars
+            // PHASE 1: Animate bars UP
             setTimeout(() => {
                 const bars = equalizerContainer.querySelectorAll('.equalizer-bar');
-                let maxDuration = 0;
+                let maxGrowDuration = 0;
 
-                bars.forEach((bar, barIndex) => {
-                    // Random delay for each bar (staggered start)
-                    const delay = Math.random() * 0.5;
-                    const duration = 0.8 + Math.random() * 0.4; // 0.8-1.2s
+                bars.forEach((bar) => {
+                    // Random delay for staggered start
+                    const delay = Math.random() * 0.4;
+                    const duration = 0.5 + Math.random() * 0.3; // 0.5-0.8s
 
-                    // Reset and animate
+                    // Reset and animate up
                     bar.style.animation = 'none';
                     bar.offsetHeight; // Force reflow
-                    bar.style.animation = `barGrow ${duration}s ease-in-out ${delay}s`;
+                    bar.style.animation = `barGrowUp ${duration}s ease-out ${delay}s forwards`;
 
                     // Track max duration
                     const totalTime = delay + duration;
-                    if (totalTime > maxDuration) {
-                        maxDuration = totalTime;
+                    if (totalTime > maxGrowDuration) {
+                        maxGrowDuration = totalTime;
                     }
                 });
 
-                // After all bars finish animating, complete transition
+                // PHASE 2: After all bars reach the top, do quick fade transition
                 setTimeout(() => {
-                    // Hide old image
+                    // Quick fade: hide old image and remove dark overlay
                     currentImage.classList.remove('active');
-
-                    // Hide equalizer
-                    equalizerContainer.classList.remove('active');
-
-                    // Fade out dark overlay over 1 second
                     darkOverlay.classList.remove('active');
 
-                }, (maxDuration * 1000) + 100);
+                    // PHASE 3: After quick fade, drop bars back down in random order
+                    setTimeout(() => {
+                        bars.forEach((bar) => {
+                            // Random delay for staggered drop
+                            const dropDelay = Math.random() * 0.4;
+                            const dropDuration = 0.4 + Math.random() * 0.3; // 0.4-0.7s
+
+                            // Reset and animate down
+                            bar.style.animation = 'none';
+                            bar.offsetHeight; // Force reflow
+                            bar.style.animation = `barDropDown ${dropDuration}s ease-in ${dropDelay}s forwards`;
+                        });
+
+                        // Hide equalizer after bars finish dropping
+                        setTimeout(() => {
+                            equalizerContainer.classList.remove('active');
+                        }, 1000);
+
+                    }, 200); // 200ms for quick fade
+
+                }, (maxGrowDuration * 1000) + 100);
 
             }, 50);
 
