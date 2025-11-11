@@ -107,9 +107,7 @@
             gap: 8px;
             pointer-events: none;
             opacity: 0;
-            image-rendering: pixelated;
-            image-rendering: -moz-crisp-edges;
-            image-rendering: crisp-edges;
+            background: #000;
         }
 
         .equalizer-transition.active {
@@ -118,20 +116,28 @@
 
         .equalizer-bar {
             flex: 1;
-            background: #000;
-            transform-origin: bottom;
-            animation: equalizerWave 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-            filter: contrast(1.2);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            justify-content: flex-end;
+            height: 100%;
         }
 
-        /* Dark overlay for next image during transition */
+        .equalizer-square {
+            width: 100%;
+            height: 20px;
+            background: #000;
+            opacity: 0;
+        }
+
+        /* Dark overlay for next image during transition - more opaque */
         .transition-dark-overlay {
             position: absolute;
             inset: 0;
             background: rgba(0, 0, 0, 0.5);
             z-index: 10;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 1s ease;
             pointer-events: none;
         }
 
@@ -139,52 +145,13 @@
             opacity: 1;
         }
 
-        /* Multiple wave variations for more dynamic effect */
-        @keyframes equalizerWave {
+        /* Square reveal animations - fade out to reveal image */
+        @keyframes squareReveal {
             0% {
-                transform: scaleY(0);
-            }
-            30% {
-                transform: scaleY(0.3);
-            }
-            60% {
-                transform: scaleY(1);
-            }
-            80% {
-                transform: scaleY(0.5);
+                opacity: 1;
             }
             100% {
-                transform: scaleY(0);
-            }
-        }
-
-        @keyframes equalizerWave2 {
-            0% {
-                transform: scaleY(0);
-            }
-            40% {
-                transform: scaleY(0.8);
-            }
-            70% {
-                transform: scaleY(1);
-            }
-            100% {
-                transform: scaleY(0);
-            }
-        }
-
-        @keyframes equalizerWave3 {
-            0% {
-                transform: scaleY(0);
-            }
-            50% {
-                transform: scaleY(1);
-            }
-            75% {
-                transform: scaleY(0.6);
-            }
-            100% {
-                transform: scaleY(0);
+                opacity: 0;
             }
         }
 
@@ -901,19 +868,22 @@
         const darkOverlay = document.getElementById('transition-dark-overlay');
         let currentImageIndex = 0;
 
-        // Create equalizer bars (20 bars for more visible pixelated/blocky effect with gaps)
+        // Create equalizer bars with stacked squares
         const numBars = 20;
-        const animationVariations = ['equalizerWave', 'equalizerWave2', 'equalizerWave3'];
+        const squaresPerBar = 25; // Number of squares stacked vertically in each bar
 
         for (let i = 0; i < numBars; i++) {
             const bar = document.createElement('div');
             bar.className = 'equalizer-bar';
-            // Random delay for each bar to create staggered equalizer effect
-            const delay = Math.random() * 0.35;
-            bar.style.animationDelay = `${delay}s`;
-            // Randomly assign different animation variations for more dynamic effect
-            const randomAnimation = animationVariations[Math.floor(Math.random() * animationVariations.length)];
-            bar.style.animationName = randomAnimation;
+
+            // Create squares for this bar
+            const numSquares = Math.floor(Math.random() * 10) + squaresPerBar - 5; // Vary height
+            for (let j = 0; j < numSquares; j++) {
+                const square = document.createElement('div');
+                square.className = 'equalizer-square';
+                bar.appendChild(square);
+            }
+
             equalizerContainer.appendChild(bar);
         }
 
@@ -925,42 +895,56 @@
             // First, show the next image underneath
             nextImage.classList.add('active');
 
-            // Show dark overlay on the next image
+            // Show dark overlay (50% opacity black)
             darkOverlay.classList.add('active');
 
-            // Small delay, then show equalizer transition
-            setTimeout(() => {
-                equalizerContainer.classList.add('active');
+            // Show equalizer transition with all squares visible (black)
+            equalizerContainer.classList.add('active');
 
-                // Reset all bar animations with new random variations
+            // Small delay, then start animating squares
+            setTimeout(() => {
                 const bars = equalizerContainer.querySelectorAll('.equalizer-bar');
-                bars.forEach(bar => {
-                    bar.style.animation = 'none';
-                    // Force reflow
-                    bar.offsetHeight;
-                    // Reassign random animation variation and delay for variety
-                    const randomAnimation = animationVariations[Math.floor(Math.random() * animationVariations.length)];
-                    const delay = Math.random() * 0.35;
-                    bar.style.animationName = randomAnimation;
-                    bar.style.animationDelay = `${delay}s`;
-                    bar.style.animationDuration = '0.7s';
+                let maxDuration = 0;
+
+                bars.forEach((bar, barIndex) => {
+                    const squares = bar.querySelectorAll('.equalizer-square');
+
+                    // Reset all squares to visible
+                    squares.forEach(square => {
+                        square.style.opacity = '1';
+                        square.style.animation = 'none';
+                    });
+
+                    // Random delay for this bar's animation
+                    const barDelay = Math.random() * 0.4;
+                    const duration = 0.5 + Math.random() * 0.3; // 0.5-0.8s duration
+
+                    // Animate squares from bottom to top with stagger
+                    squares.forEach((square, squareIndex) => {
+                        const squareDelay = barDelay + (squareIndex * 0.02); // Stagger each square
+                        square.style.animation = `squareReveal ${duration}s ease-out ${squareDelay}s forwards`;
+
+                        // Track max duration
+                        const totalTime = squareDelay + duration;
+                        if (totalTime > maxDuration) {
+                            maxDuration = totalTime;
+                        }
+                    });
                 });
+
+                // After 100ms, hide the old image
+                setTimeout(() => {
+                    currentImage.classList.remove('active');
+                }, 100);
+
+                // After all squares finish revealing, hide equalizer and fade out dark overlay
+                setTimeout(() => {
+                    equalizerContainer.classList.remove('active');
+                    // Fade out dark overlay over 1 second to reveal full brightness
+                    darkOverlay.classList.remove('active');
+                }, (maxDuration * 1000) + 100);
+
             }, 50);
-
-            // After 100ms, hide the old image (new image now visible through gaps)
-            setTimeout(() => {
-                currentImage.classList.remove('active');
-            }, 100);
-
-            // Hide equalizer after transition completes
-            setTimeout(() => {
-                equalizerContainer.classList.remove('active');
-            }, 750);
-
-            // Fade out dark overlay slightly after equalizer
-            setTimeout(() => {
-                darkOverlay.classList.remove('active');
-            }, 800);
 
             currentImageIndex = nextImageIndex;
         }
