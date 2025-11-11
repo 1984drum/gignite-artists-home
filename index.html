@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gignite - Your Audience Awaits</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- UPDATED: Load Fonts -->
+    <!-- 1. Load Noto Sans for body text -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- 2. Load Brother 1816 for headings/buttons -->
+    <!-- UPDATED: Switched from @import to <link> for faster, more reliable font loading -->
+    <link rel="stylesheet" href="https://use.typekit.net/hat1wfl.css">
+    
+    <style>
+        /* REMOVED: @import url("https://use.typekit.net/hat1wfl.css"); */
+
+        /* UPDATED: Set base font to Noto Sans */
+        body {
+            font-family: 'Noto Sans', sans-serif;
+            background-color: #000;
+            color: #fff;
+            /* REMOVED: overflow-x: hidden; -- This was likely causing the layout shift */
+        }
+
+        /* UPDATED: Define Brother 1816 for headings and buttons */
+        h1, h2, h3, h4, h5, h6, .gignite-heading, .gignite-button {
+            font-family: "brother-1816", sans-serif;
+            font-weight: 700; /* Bold by default */
+        }
+        h1, .gignite-h1 { font-weight: 900; } /* Heavier for H1 */
+
+
+        /* Hero video flicker fix */
+        .video-bg {
+            filter: brightness(0.7);
+        }
+        
+        @keyframes sample-wave-anim {
+            0%, 100% {
+                height: 3px; /* Flat part of the wave */
+            }
+            50% {
+                height: 30px; /* Peak of the wave */
+            }
+        }
+
+        /* Carousel slide styles */
+        .carousel-slide {
+            display: none;
+            animation: fade-in 0.5s ease-in-out;
+        }
+        .carousel-slide.active {
+            display: block;
+        }
+        @keyframes fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Carousel dot styles */
+        .carousel-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #6b7280; /* gray-500 */
+            transition: all 0.3s ease;
+        }
+        .carousel-dot.active {
+            background-color: #06b6d4; /* cyan-500 */
+            transform: scale(1.25);
+        }
+
+        /* 3D "Apple TV" hover effect for feature cards */
+        .feature-card {
+            background-color: #111827; /* gray-900 */
+            border: 3px solid #374151; /* gray-700 */
+            transform-style: preserve-d;
+            transition: all 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: scale(1.05) perspective(1000px) rotateX(0deg) rotateY(0deg);
+            border-color: #06b6d4; /* cyan-500 */
+            box-shadow: 0 25px 50px -12px rgba(6, 182, 212, 0.25);
+        }
+        .feature-card-content {
+            transform: translateZ(20px);
+        }
+        /* UPDATED: Apply heading font to feature card titles */
+        .feature-card h3 {
+             font-family: "brother-1816", sans-serif;
+             font-weight: 700;
+        }
+
+        /* Scroll-triggered fade-in animations */
+        .reveal-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            will-change: opacity, transform;
+        }
+        .reveal-on-scroll.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Helper class for the animated waveform bars */
+        .sample-bar {
+            width: 2px; /* Fixed width for bars */
+            background-color: white;
+            animation: sample-wave-anim 1.2s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-black">
+
+    <!-- 1. Hero Section -->
+    <header class="h-screen w-full relative flex items-center justify-center text-center overflow-hidden">
+        <!-- Background Video -->
+        <video 
+            playsinline 
+            autoplay 
+            muted 
+            loop 
+            <!-- UPDATED: Changed poster text to uppercase GIGNITE -->
+            poster="https://placehold.co/1920x1080/000000/cccccc?text=GIGNITE" 
+            class="video-bg absolute inset-0 w-full h-full object-cover z-0"
+        >
+            <source src="https://videos.pexels.com/video-files/3130634/3130634-hd_1920_1080_25fps.mp4" type="video/mp4">
+        </video>
+        
+        <!-- Overlay -->
+        <!-- UPDATED: Set to z-10 -->
+        <div class="absolute inset-0 bg-black/70 z-10"></div>
+
+        <!-- Background GIGNITE text -->
+        <!-- UPDATED: z-index fix + !important inline style to force uppercase -->
+        <div class="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
+            <!-- UPDATED: Made text larger as requested -->
+            <h1 class="text-[28vw] font-black text-white/5 tracking-tighter" style="text-transform: uppercase !important;">
+                GIGNITE
+            </h1>
+        </div>
+
+        <!-- Content -->
+        <!-- UPDATED: Converted to flex container to force centering of all child elements -->
+        <div class="relative z-30 px-4 mx-auto flex flex-col items-center reveal-on-scroll is-visible">
+            <!-- UPDATED: Added text-center -->
+            <h1 class="gignite-h1 text-5xl md:text-8xl font-black uppercase tracking-tighter text-center">
+                Your Audience Awaits
+            </h1>
+            <!-- UPDATED: Added text-center and removed redundant mx-auto -->
+            <p class="text-xl md:text-2xl mt-6 max-w-3xl text-gray-200 text-center">
+                Our platform will help you build out your tour plan step by step, making your ambitions a reality.
+            </p>
+            <!-- UPDATED: Button Style 1 -->
+            <a href="#features" class="gignite-button mt-12 inline-block py-3 px-10 bg-transparent text-white border-[3px] border-cyan-500 font-bold text-lg uppercase shadow-lg shadow-cyan-500/30 transform transition-all duration-300 hover:scale-105 hover:bg-cyan-500 hover:text-black hover:border-cyan-500">
+                Start Planning
+            </a>
+        </div>
+    </header>
+
+    <!-- Section Divider 1 -->
+    <section class="bg-black py-10 w-full">
+        <div class="w-full flex items-center h-10">
+            <div class="h-[3px] bg-white" style="width: 20%;"></div>
+            <div class="h-10 flex items-center justify-between" style="width: 20%;">
+                <div class="sample-bar" style="animation-delay: 0.1s"></div>
+                <div class="sample-bar" style="animation-delay: 0.2s"></div>
+                <div class="sample-bar" style="animation-delay: 0.3s"></div>
+                <div class="sample-bar" style="animation-delay: 0.1s"></div>
+                <div class="sample-bar" style="animation-delay: 0.4s"></div>
+                <div class="sample-bar" style="animation-delay: 0.2s"></div>
+                <div class="sample-bar" style="animation-delay: 0.5s"></div>
+                <div class="sample-bar" style="animation-delay: 0.3s"></div>
+                <div class="sample-bar" style="animation-delay: 0.1s"></div>
+                <div class="sample-bar" style="animation-delay: 0.2s"></div>
+                <div class="sample-bar" style="animation-delay: 0.4s"></div>
+                <div class="sample-bar" style="animation-delay: 0.3s"></div>
+                <div class="sample-bar" style="animation-delay: 0.5s"></div>
+                <div class="sample-bar" style="animation-delay: 0.2s"></div>
+                <div class="sample-bar" style="animation-delay: 0.1s"></div>
+                <div class="sample-bar" style="animation-delay: 0.3s"></div>
+                <div class="sample-bar" style="animation-delay: 0.4s"></div>
+                <div class="sample-bar" style="animation-delay: 0.1s"></div>
+                <div class="sample-bar" style="animation-delay: 0.2s"></div>
+                <div class="sample-bar" style="animation-delay: 0.5s"></div>
+            </div>
+            <div class="h-[3px] bg-white" style="width: 60%;"></div>
+        </div>
+    </section>
+
+    <main>
+        <!-- 2. Problem/Solution Section -->
+        <section class="py-20 md:py-32 bg-black">
+            <div class="container mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
+                <!-- Text Content -->
+                <div class="reveal-on-scroll">
+                    <h2 class="gignite-heading text-3xl md:text-5xl font-bold tracking-tight">
+                        Planning, managing and delivering events just got <span class="text-cyan-400">simple</span>.
+                    </h2>
+                    <h3 class="gignite-heading text-2xl md:text-3xl font-semibold mt-6 text-gray-300">
+                        Gignite does the heavy-lifting, freeing you to focus on the music.
+                    </h3>
+                    <p class="text-lg text-gray-400 mt-8 space-y-4">
+                        <span>Taking all your admin headaches away, Gignite puts all the information and resources you need at your fingertips. From venue info, travel and logistics, through to marketing and merch.</span>
+                        <span>All your bookings and info in one place, planned to perfection. You get clarity and transparency on the financials, enabling you to drive a more rewarding future for your band.</span>
+                    </p>
+                    <!-- UPDATED: Button Style 2 -->
+                    <a href="#" class="gignite-button mt-10 inline-block py-3 px-10 bg-transparent text-white border-[3px] border-cyan-500 font-bold text-lg uppercase shadow-lg shadow-cyan-500/30 transform transition-all duration-300 hover:scale-105 hover:bg-cyan-500 hover:text-black hover:border-cyan-500">
+                        Get Started
+                    </a>
+                </div>
+                <!-- Mock UI Visual -->
+                <div class="reveal-on-scroll" style="transition-delay: 200ms;">
+                    <div class="bg-gray-900/50 border-[3px] border-gray-700 shadow-2xl backdrop-blur-lg p-6 relative overflow-hidden">
+                        
+                        <!-- Header with dots -->
+                        <div class="flex items-center justify-between pb-4 border-b-[3px] border-gray-600">
+                            <span id="carousel-title" class="gignite-heading text-lg font-semibold transition-all duration-300">My Tour Dashboard</span>
+                            <!-- Carousel Dots -->
+                            <div class="flex space-x-2">
+                                <div id="dot-1" class="carousel-dot active"></div>
+                                <div id="dot-2" class="carousel-dot"></div>
+                                <div id="dot-3" class="carousel-dot"></div>
+                            </div>
+                        </div>
+
+                        <!-- Carousel Container -->
+                        <div id="carousel-container" class="mt-6 space-y-4 relative h-48">
+                            <!-- Slide 1: Dashboard -->
+                            <div id="slide-1" class="carousel-slide active absolute inset-0 space-y-4">
+                                <!-- Mock Checklist Item 1 -->
+                                <div class="flex items-center justify-between bg-gray-800 p-4">
+                                    <div class="flex items-center">
+                                        <div class="w-6 h-6 bg-cyan-500 flex items-center justify-center mr-4">
+                                            <svg class="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                        </div>
+                                        <span class="font-medium">Venue Booked: The Fillmore</span>
+                                    </div>
+                                    <span class="text-xs text-gray-400">Done</span>
+                                </div>
+                                <!-- Mock Checklist Item 2 -->
+                                <div class="flex items-center justify-between bg-gray-800 p-4">
+                                    <div class="flex items-center">
+                                        <div class="w-6 h-6 border-[3px] border-cyan-500 flex items-center justify-center mr-4"></div>
+                                        <span class="font-medium">Logistics: Tour Bus</span>
+                                    </div>
+                                    <span class="text-xs text-cyan-400">In Progress</span>
+                                </div>
+                                <!-- Mock Checklist Item 3 -->
+                                <div class="flex items-center justify-between bg-gray-800 p-4 opacity-60">
+                                    <div class="flex items-center">
+                                        <div class="w-6 h-6 border-[3px] border-gray-600 flex items-center justify-center mr-4"></div>
+                                        <span class="font-medium">Marketing: Tour Poster</span>
+                                    </div>
+                                    <span class="text-xs text-gray-500">Todo</span>
+                                </div>
+                            </div>
+
+                            <!-- Slide 2: Logistics -->
+                            <div id="slide-2" class="carousel-slide absolute inset-0 space-y-4">
+                                <div class="flex items-center justify-between bg-gray-800 p-4">
+                                    <div class="flex items-center">
+                                        <div class="w-6 h-6 bg-cyan-500 flex items-center justify-center mr-4">
+                                            <svg class="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                        </div>
+                                        <span class="font-medium">Tour Bus Confirmed</span>
+                                    </div>
+                                    <span class="text-xs text-gray-400">Done</span>
+                                </div>
+                                <div class="flex items-center justify-between bg-gray-800 p-4 opacity-60">
+                                    <div class="flex items-center">
+                                        <div class="w-6 h-6 border-[3px] border-gray-600 flex items-center justify-center mr-4"></div>
+                                        <span class="font-medium">Carnet Paperwork</span>
+                                    </div>
+                                    <span class="text-xs text-gray-500">Todo</span>
+                                </div>
+                                <div class="flex items-center justify-between bg-gray-800 p-4 opacity-60">
+                                    <div class="flex items-center">
+                                        <div class="w-6 h-6 border-[3px] border-gray-600 flex items-center justify-center mr-4"></div>
+                                        <span class="font-medium">Band Visas (UK)</span>
+                                    </div>
+                                    <span class="text-xs text-gray-500">Todo</span>
+                                </div>
+                            </div>
+
+                            <!-- Slide 3: Marketing -->
+                            <div id="slide-3" class="carousel-slide absolute inset-0 space-y-4">
+                                <div class="flex items-center justify-between bg-gray-800 p-4">
+                                    <div class="flex items-center">
+                                        <div class="w-6 h-6 bg-cyan-500 flex items-center justify-center mr-4">
+                                            <svg class="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                        </div>
+                                        <span class="font-medium">Tour Poster Approved</span>
+                                    </div>
+                                    <span class="text-xs text-gray-400">Done</span>
+                                </div>
+                                <div class="flex items-center justify-between bg-gray-800 p-4">
+                                    <div class="flex items-center">
+                                        <div class="w-6 h-6 border-[3px] border-cyan-500 flex items-center justify-center mr-4"></div>
+                                        <span class="font-medium">Merch Ordered</span>
+                                    </div>
+                                    <span class="text-xs text-cyan-400">In Progress</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section Divider 2 -->
+        <section class="bg-black py-10 w-full">
+            <div class="w-full flex items-center h-10">
+                <div class="h-[3px] bg-white" style="width: 55%;"></div>
+                <div class="h-10 flex items-center justify-between" style="width: 40%;">
+                    <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.4s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.3s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.3s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.4s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.5s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.3s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.4s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.3s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.5s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.3s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.4s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.5s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.3s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.4s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.3s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.5s; animation-duration: 1.0s;"></div>
+                </div>
+                <div class="h-[3px] bg-white" style="width: 5%;"></div>
+            </div>
+        </section>
+
+        <!-- 3. Features Section (Interactive Cards) -->
+        <section id="features" class="py-20 md:py-32 bg-gray-950">
+            <div class="container mx-auto px-6">
+                <div class="text-center max-w-3xl mx-auto reveal-on-scroll">
+                    <h2 class="gignite-heading text-4xl md:text-6xl font-bold tracking-tight">Your Virtual Tour Manager</h2>
+                    <p class="text-lg text-gray-300 mt-6">
+                        Gignite guides you through every step, ensuring no details are overlooked. From customs paperwork to visas, we've got you covered.
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8 mt-16">
+                    <!-- Feature Card 1 -->
+                    <div class="feature-card p-8 reveal-on-scroll">
+                        <div class="feature-card-content">
+                            <svg class="w-12 h-12 text-cyan-400 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2v10m0-10a2 2 0 012 2v3m-2-5a2 2 0 00-2 2v3m0 0v.01M12 18v-2m0 2v2m0-2a2 2 0 012-2h3m-5 2a2 2 0 00-2-2H9m5 2v.01M15 12v.01M9 12v.01M12 12v.01M10 2.25h.01M14 2.25h.01M7 16.25h.01M17 16.25h.01M4 12.25h.01M19.75 12.25h.01M10 21.75h.01M14 21.75h.01"></path></svg>
+                            <h3 class="gignite-heading text-2xl font-bold mb-4">End-to-end event control</h3>
+                            <p class="text-gray-300">
+                                Be guided through a step-by-step process, evaluate options, and make bookings with confidence. All in one place.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Feature Card 2 -->
+                    <div class="feature-card p-8 reveal-on-scroll" style="transition-delay: 200ms;">
+                        <div class="feature-card-content">
+                            <svg class="w-12 h-12 text-cyan-400 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m4 4l-4-4m4 4l-4 4m-4-8v12m0 0l-4-4m4 4l4-4"></path></svg>
+                            <h3 class="gignite-heading text-2xl font-bold mb-4">Streamlining logistics</h3>
+                            <p class="text-gray-300">
+                                Efficiency and sustainability are built in. Plan tour dates to minimise road and air miles, reducing your costs and carbon footprint.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Feature Card 3 -->
+                    <div class="feature-card p-8 reveal-on-scroll" style="transition-delay: 300ms;">
+                        <div class="feature-card-content">
+                            <svg class="w-12 h-12 text-cyan-400 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                            <h3 class="gignite-heading text-2xl font-bold mb-4">Marketing for gig success</h3>
+                            <p class="text-gray-300">
+                                Our tech helps you create tour posters, promotions, branding, and even order your tour merchandise directly.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Feature Card 4 -->
+                    <div class="feature-card p-8 reveal-on-scroll" style="transition-delay: 400ms;">
+                        <div class="feature-card-content">
+                            <svg class="w-12 h-12 text-cyan-400 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            <h3 class="gignite-heading text-2xl font-bold mb-4">Success you can measure</h3>
+                            <p class="text-gray-300">
+                                Understand gig profitability from the outset. Get clarity on financials to actively build your career and reputation.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Section Divider 3 -->
+        <section class="py-16 bg-gray-950 w-full">
+            <div class="w-full flex items-center h-10">
+                <div class="h-[3px] bg-white" style="width: 10%;"></div>
+                <div class="h-10 flex items-center justify-between" style="width: 30%;">
+                    <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 0.8s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 0.8s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.3s; animation-duration: 0.8s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 0.8s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 0.8s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.4s; animation-duration: 0.8s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.3s; animation-duration: 0.8s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.5s; animation-duration: 0.8s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 0.8s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 0.8s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.3s; animation-duration: 0.8s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.4s; animation-duration: 0.8s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 0.8s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 0.8s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.5s; animation-duration: 0.8s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 0.8s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 0.8s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.3s; animation-duration: 0.8s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 0.8s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 0.8s;"></div>
+                </div>
+                <div class="h-[3px] bg-white" style="width: 60%;"></div>
+            </div>
+        </section>
+
+        <!-- 5. Benefits Section (Quick Facts) -->
+        <section class="py-20 md:py-32 bg-black">
+            <div class="container mx-auto px-6">
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-12 text-center">
+                    
+                    <!-- Benefit 1 -->
+                    <div class="reveal-on-scroll">
+                        <svg class="w-12 h-12 text-cyan-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.105 0 2 .895 2 2s-.895 2-2 2-2-.895-2-2 .895-2 2-2zm0 8c-1.105 0-2 .895-2 2s.895 2 2 2 2-.895 2-2-.895-2-2-2zm-9 4h18M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+                        <h3 class="gignite-heading text-2xl font-bold mt-6">No subscription fees</h3>
+                        <p class="text-gray-300 mt-2">Platform access is free for artists and bands. Gignite was created to increase your revenues.</p>
+                    </div>
+
+                    <!-- Benefit 2 -->
+                    <div class="reveal-on-scroll" style="transition-delay: 200ms;">
+                        <svg class="w-12 h-12 text-cyan-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                        <h3 class="gignite-heading text-2xl font-bold mt-6">You are in control</h3>
+                        <p class="text-gray-300 mt-2">All details, correspondence, and orders are in one place. You're in charge, 24/7.</p>
+                    </div>
+
+                    <!-- Benefit 3 -->
+                    <div class="reveal-on-scroll" style="transition-delay: 300ms;">
+                        <svg class="w-12 h-12 text-cyan-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <h3 class="gignite-heading text-2xl font-bold mt-6">Better event experiences</h3>
+                        <p class="text-gray-300 mt-2">The performance rules. Smooth-running events are a joy for you and your fans.</p>
+                    </div>
+
+                    <!-- Benefit 4 -->
+                    <div class="reveal-on-scroll" style="transition-delay: 400ms;">
+                        <svg class="w-12 h-12 text-cyan-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                        <h3 class="gignite-heading text-2xl font-bold mt-6">Success you can measure</h3>
+                        <p class="text-gray-300 mt-2">Understand gig profitability from the outset to actively build your career and reputation.</p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Section Divider 4 -->
+        <section class="bg-black py-10 w-full">
+            <div class="w-full flex items-center h-10">
+                <div class="h-[3px] bg-white" style="width: 60%;"></div>
+                <div class="h-10 flex items-center justify-between" style="width: 35%;">
+                    <div class="sample-bar" style="animation-delay: 0.4s; animation-duration: 1.3s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 1.3s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.3s; animation-duration: 1.3s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 1.3s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.5s; animation-duration: 1.3s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 1.3s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 1.3s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.3s; animation-duration: 1.3s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 1.3s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.4s; animation-duration: 1.3s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 1.3s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.5s; animation-duration: 1.3s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.3s; animation-duration: 1.3s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 1.3s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 1.3s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.4s; animation-duration: 1.3s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.3s; animation-duration: 1.3s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.5s; animation-duration: 1.3s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 1.3s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 1.3s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.3s; animation-duration: 1.3s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.4s; animation-duration: 1.3s;"></div>
+                </div>
+                <div class="h-[3px] bg-white" style="width: 5%;"></div>
+            </div>
+        </section>
+
+        <!-- 6. Final CTA -->
+        <section class="py-20 md:py-32 bg-gray-950 text-center">
+            <div class="container mx-auto px-6 reveal-on-scroll">
+                <h2 class="gignite-heading text-4xl md:text-6xl font-bold">The performance rules.</h2>
+                <p class="text-xl md:text-2xl text-gray-300 mt-6 max-w-3xl mx-auto">
+                    Smooth-running events are a joy for you and your fans.
+                    Stop the admin headaches and get back to the music.
+                </p>
+                <!-- UPDATED: Button Style 3 -->
+                <a href="#" class="gignite-button mt-12 inline-block py-4 px-12 border-[3px] border-cyan-500 text-white font-bold text-lg uppercase tracking-widest transform transition-all duration-300 hover:bg-cyan-500 hover:text-black hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/30">
+                    Get Started For Free
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Section Divider 5 -->
+    <section class="bg-gray-950 py-10 w-full">
+        <div class="w-full flex items-center h-10">
+            <div class="h-[3px] bg-white" style="width: 40%;"></div>
+            <div class="h-10 flex items-center justify-between" style="width: 25%;">
+                <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 1.0s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 1.0s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.4s; animation-duration: 1.0s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.3s; animation-duration: 1.0s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 1.0s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 1.0s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 1.0s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.4s; animation-duration: 1.0s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 1.0s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.5s; animation-duration: 1.0s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.3s; animation-duration: 1.0s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 1.0s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 1.0s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.4s; animation-duration: 1.0s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.3s; animation-duration: 1.0s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.5s; animation-duration: 1.0s;"></div>
+            </div>
+            <div class="h-[3px] bg-white" style="width: 35%;"></div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black py-12">
+        <div class="container mx-auto px-6 text-center text-gray-500">
+            <p>&copy; <span id="current-year"></span> Gignite. All rights reserved.</p>
+            <p class="mt-2 text-sm">Empowering artists. One gig at a time.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Set current year in footer
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        // Intersection Observer for scroll-triggered animations
+        const revealElements = document.querySelectorAll('.reveal-on-scroll');
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    // No need to unobserve, let it stay
+                }
+            });
+        }, {
+            threshold: 0.1 // Trigger when 10% of the element is visible
+        });
+
+        revealElements.forEach(el => {
+            observer.observe(el);
+        });
+
+        // 3D Hover Effect Script (for feature cards)
+        const featureCards = document.querySelectorAll('.feature-card');
+
+        featureCards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left; // x position within the element.
+                const y = e.clientY - rect.top;  // y position within the element.
+
+                const { width, height } = rect;
+                
+                const rotateX = (y - height / 2) / (height / 2) * -5; // Max 5deg tilt
+                const rotateY = (x - width / 2) / (width / 2) * 5;  // Max 5deg tilt
+
+                card.style.transform = `scale(1.05) perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            });
+
+            card.addEventListener('mouseleave', () => {
+                /* UPDATED: Reset scale to 1.0, not 1.05 */
+                card.style.transform = 'scale(1.0) perspective(1000px) rotateX(0deg) rotateY(0deg)';
+            });
+        });
+
+        // Carousel Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const slides = document.querySelectorAll('.carousel-slide');
+            const dots = document.querySelectorAll('.carousel-dot');
+            const title = document.getElementById('carousel-title');
+            const slideTitles = ['My Tour Dashboard', 'Logistics Hub', 'Marketing Suite'];
+            let currentSlide = 0;
+
+            function showSlide(index) {
+                slides.forEach((slide, i) => {
+                    slide.classList.remove('active');
+                    dots[i].classList.remove('active');
+                });
+                
+                slides[index].classList.add('active');
+                dots[index].classList.add('active');
+                title.textContent = slideTitles[index];
+                currentSlide = index;
+            }
+            
+            setInterval(() => {
+                const nextSlide = (currentSlide + 1) % slides.length;
+                showSlide(nextSlide);
+            }, 3000); // Change slide every 3 seconds
+        });
+    </script>
+
+</body>
+</html>
