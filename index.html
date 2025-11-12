@@ -47,11 +47,44 @@
             object-position: bottom;
             z-index: 0;
             opacity: 0;
-            transition: opacity 0.1s ease;
+            transition: opacity 1s ease;
         }
 
         .hero-bg-image.active {
             opacity: 1;
+        }
+
+        /* Hide content initially for intro sequence */
+        .hero-content-hidden {
+            opacity: 0;
+        }
+
+        .hero-content-visible {
+            opacity: 1;
+            transition: opacity 1s ease;
+        }
+
+        /* Typewriter effect */
+        .typewriter {
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 3px solid #fff;
+            animation: typing 2s steps(22) forwards, blink-caret 0.75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            50% { border-color: #fff; }
+        }
+
+        .typing-complete {
+            animation: none;
+            border-right: none;
         }
 
         /* Continuous zoom with curved pan and glitch trembles */
@@ -506,8 +539,8 @@
 
     <!-- 1. Hero Section -->
     <section class="h-screen w-full relative overflow-hidden">
-        <!-- Background Images (Carousel) -->
-        <img src="img/GN 29.png" alt="GIGNITE Background" class="hero-bg-image active" data-slide="0" />
+        <!-- Background Images (Carousel) - First image fades in after typewriter -->
+        <img src="img/GN 29.png" alt="GIGNITE Background" class="hero-bg-image" data-slide="0" />
         <img src="img/GN 44.png" alt="GIGNITE Background" class="hero-bg-image" data-slide="1" />
         <img src="img/GN 48.png" alt="GIGNITE Background" class="hero-bg-image" data-slide="2" />
         <img src="img/GN 45.png" alt="GIGNITE Background" class="hero-bg-image" data-slide="3" />
@@ -523,20 +556,22 @@
 
         <!-- Content -->
         <!-- UPDATED: Converted to flex container to force centering of all child elements -->
-        <div class="absolute inset-0 z-30 flex items-center justify-center text-center px-4 reveal-on-scroll is-visible">
+        <div class="absolute inset-0 z-30 flex items-center justify-center text-center px-4">
             <div class="w-full">
-            <!-- UPDATED: Added text-center -->
-            <h1 class="gignite-h1 text-5xl md:text-8xl font-black uppercase tracking-tighter text-center">
+            <!-- UPDATED: Added text-center with typewriter effect -->
+            <h1 id="hero-title" class="gignite-h1 text-5xl md:text-8xl font-black uppercase tracking-tighter text-center typewriter inline-block">
                 Your Audience Awaits.
             </h1>
-            <!-- UPDATED: Added text-center and removed redundant mx-auto -->
-            <p class="text-xl md:text-2xl mt-6 max-w-3xl mx-auto text-gray-200 text-center">
-                Our platform will help you build out your tour plan step by step, making your ambitions a reality.
-            </p>
-            <!-- UPDATED: Button Style 1 -->
-            <a href="#features" class="glitch-button gignite-button mt-12 inline-block py-3 px-10 bg-transparent text-white border-[3px] border-cyan-500 font-bold text-lg uppercase shadow-lg shadow-cyan-500/30 transform transition-all duration-300 hover:scale-105 hover:bg-cyan-500 hover:text-black hover:border-cyan-500">
-                Start Planning
-            </a>
+            <!-- UPDATED: Added text-center and removed redundant mx-auto - hidden initially -->
+            <div id="hero-rest-content" class="hero-content-hidden">
+                <p class="text-xl md:text-2xl mt-6 max-w-3xl mx-auto text-gray-200 text-center">
+                    Our platform will help you build out your tour plan step by step, making your ambitions a reality.
+                </p>
+                <!-- UPDATED: Button Style 1 -->
+                <a href="#features" class="glitch-button gignite-button mt-12 inline-block py-3 px-10 bg-transparent text-white border-[3px] border-cyan-500 font-bold text-lg uppercase shadow-lg shadow-cyan-500/30 transform transition-all duration-300 hover:scale-105 hover:bg-cyan-500 hover:text-black hover:border-cyan-500">
+                    Start Planning
+                </a>
+            </div>
             </div>
         </div>
     </section>
@@ -1010,8 +1045,27 @@
             }, 3000); // Change slide every 3 seconds
         });
 
-        // Hero Background Image Carousel with Equalizer Transition
+        // Intro sequence on page load
+        const heroTitle = document.getElementById('hero-title');
+        const heroRestContent = document.getElementById('hero-rest-content');
         const heroImages = document.querySelectorAll('.hero-bg-image');
+
+        // After typewriter animation completes
+        setTimeout(() => {
+            // Remove typing cursor
+            heroTitle.classList.add('typing-complete');
+
+            // Wait a moment, then show rest of content
+            setTimeout(() => {
+                heroRestContent.classList.remove('hero-content-hidden');
+                heroRestContent.classList.add('hero-content-visible');
+
+                // Fade in first background image
+                heroImages[0].classList.add('active');
+            }, 500);
+        }, 2000); // Typewriter takes 2 seconds
+
+        // Hero Background Image Carousel with Equalizer Transition
         const equalizerContainer = document.getElementById('equalizer-transition');
         const darkOverlay = document.getElementById('transition-dark-overlay');
         let currentImageIndex = 0;
@@ -1065,9 +1119,13 @@
 
                     // PHASE 3: Fade image transition WHILE bars are locked at top
                     setTimeout(() => {
-                        // Fade: hide old image and remove dark overlay
+                        // Fade: hide old image
                         currentImage.classList.remove('active');
-                        darkOverlay.classList.remove('active');
+
+                        // Remove dark overlay with slight delay to ensure smooth fade
+                        setTimeout(() => {
+                            darkOverlay.classList.remove('active');
+                        }, 50);
 
                         // PHASE 4: After fade completes, drop bars back down
                         setTimeout(() => {
@@ -1106,8 +1164,12 @@
             currentImageIndex = nextImageIndex;
         }
 
-        // Start the carousel - transition every 6 seconds
-        setInterval(transitionToNextImage, 6000);
+        // Start the carousel after intro sequence completes (typewriter + content fade)
+        // Intro takes 2s (typewriter) + 0.5s (delay) + 1s (content fade) = 3.5s total
+        setTimeout(() => {
+            // First transition happens 6 seconds after intro completes
+            setInterval(transitionToNextImage, 6000);
+        }, 3500 + 6000); // Wait for intro + first full display duration
 
         // Random pixelation effect
         function applyRandomPixelation() {
