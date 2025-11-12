@@ -47,11 +47,15 @@
             object-position: bottom;
             z-index: 0;
             opacity: 0;
-            transition: opacity 1s ease;
         }
 
         .hero-bg-image.active {
             opacity: 1;
+        }
+
+        /* Only transition opacity when fading between images */
+        .hero-bg-image.fading {
+            transition: opacity 1s ease;
         }
 
         /* Hide content initially for intro sequence */
@@ -96,6 +100,7 @@
             padding: 0.2em 0.4em;
             box-decoration-break: clone;
             -webkit-box-decoration-break: clone;
+            line-height: 1.8;
         }
 
         .subtitle-text.reveal {
@@ -1099,8 +1104,14 @@
                 // Trigger subtitle highlight reveal animation
                 subtitleText.classList.add('reveal');
 
-                // Fade in first background image
+                // Fade in first background image with transition
+                heroImages[0].classList.add('fading');
                 heroImages[0].classList.add('active');
+
+                // Remove fading class after transition completes
+                setTimeout(() => {
+                    heroImages[0].classList.remove('fading');
+                }, 1000);
 
                 // After subtitle animation completes (800ms), fade in button
                 setTimeout(() => {
@@ -1156,6 +1167,10 @@
 
                 // PHASE 2: After all bars reach the top and lock, THEN change image
                 setTimeout(() => {
+                    // Add fading class to both images for smooth transition
+                    currentImage.classList.add('fading');
+                    nextImage.classList.add('fading');
+
                     // Show next image underneath
                     nextImage.classList.add('active');
 
@@ -1170,6 +1185,12 @@
                         // Remove dark overlay with slight delay to ensure smooth fade
                         setTimeout(() => {
                             darkOverlay.classList.remove('active');
+
+                            // Remove fading class after transition completes
+                            setTimeout(() => {
+                                currentImage.classList.remove('fading');
+                                nextImage.classList.remove('fading');
+                            }, 1000);
                         }, 50);
 
                         // PHASE 4: After fade completes, drop bars back down
