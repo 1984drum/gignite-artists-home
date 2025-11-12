@@ -53,6 +53,11 @@
             opacity: 1;
         }
 
+        /* Smooth fade-in for first image during intro */
+        .hero-bg-image.intro-fade {
+            transition: opacity 1.5s ease;
+        }
+
         /* Hide content initially for intro sequence */
         .hero-content-hidden {
             opacity: 0;
@@ -63,51 +68,71 @@
             transition: opacity 1s ease;
         }
 
-        /* Typewriter effect */
-        .typewriter {
+        /* Title drop and fade-in effect */
+        .title-drop {
+            opacity: 0.1;
+            animation: dropAndFadeIn 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        @keyframes dropAndFadeIn {
+            0% {
+                transform: translateY(-300px);
+                opacity: 0.1;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* White flash explosion */
+        .white-flash {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.4) 50%, rgba(255, 255, 255, 0) 100%);
+            z-index: 40;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .white-flash.active {
+            animation: flashExplosion 0.8s ease-out forwards;
+        }
+
+        @keyframes flashExplosion {
+            0% {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            30% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(1.5);
+            }
+        }
+
+        /* Subtitle typing effect */
+        .subtitle-text {
+            display: inline-block;
             overflow: hidden;
             white-space: nowrap;
-            border-right: 3px solid #fff;
-            animation: typing 2s steps(22) forwards, blink-caret 0.75s step-end infinite;
-        }
-
-        @keyframes typing {
-            from { width: 0; }
-            to { width: 100%; }
-        }
-
-        @keyframes blink-caret {
-            from, to { border-color: transparent; }
-            50% { border-color: #fff; }
-        }
-
-        .typing-complete {
-            animation: none;
-            border-right: none;
-        }
-
-        /* Subtitle text highlight reveal animation */
-        .subtitle-text {
-            display: inline;
-            background: linear-gradient(to right, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.85) 100%);
-            background-size: 0% 100%;
-            background-repeat: no-repeat;
-            padding: 0.2em 0.4em;
-            box-decoration-break: clone;
-            -webkit-box-decoration-break: clone;
+            width: 0;
             line-height: 1.8;
         }
 
-        .subtitle-text.reveal {
-            animation: highlightReveal 0.8s ease-out forwards;
+        .subtitle-text.typing {
+            animation: subtitleTyping 2.5s steps(94) forwards;
         }
 
-        @keyframes highlightReveal {
+        @keyframes subtitleTyping {
             from {
-                background-size: 0% 100%;
+                width: 0;
             }
             to {
-                background-size: 100% 100%;
+                width: 100%;
             }
         }
 
@@ -570,20 +595,22 @@
         <!-- Gradient Overlay (fades to black at top) -->
         <div class="hero-gradient-overlay"></div>
 
+        <!-- White flash explosion overlay -->
+        <div id="white-flash" class="white-flash"></div>
+
         <!-- Content -->
-        <!-- UPDATED: Converted to flex container to force centering of all child elements -->
         <div class="absolute inset-0 z-30 flex items-center justify-center text-center px-4">
             <div class="w-full">
-            <!-- UPDATED: Added text-center with typewriter effect -->
-            <h1 id="hero-title" class="gignite-h1 text-5xl md:text-8xl font-black uppercase tracking-tighter text-center typewriter inline-block">
+            <!-- Title with drop animation -->
+            <h1 id="hero-title" class="gignite-h1 text-5xl md:text-8xl font-black uppercase tracking-tighter text-center title-drop">
                 Your Audience Awaits.
             </h1>
-            <!-- UPDATED: Added text-center and removed redundant mx-auto - hidden initially -->
+            <!-- Rest of content - hidden initially -->
             <div id="hero-rest-content" class="hero-content-hidden">
                 <p class="text-xl md:text-2xl mt-6 max-w-3xl mx-auto text-gray-200 text-center">
                     <span id="subtitle-text" class="subtitle-text">Our platform will help you build out your tour plan step by step, making your ambitions a reality.</span>
                 </p>
-                <!-- UPDATED: Button Style 1 -->
+                <!-- Button -->
                 <a id="start-planning-btn" href="#features" class="glitch-button gignite-button button-hidden mt-12 inline-block py-3 px-10 bg-transparent text-white border-[3px] border-cyan-500 font-bold text-lg uppercase shadow-lg shadow-cyan-500/30 transform transition-all duration-300 hover:scale-105 hover:bg-cyan-500 hover:text-black hover:border-cyan-500">
                     Start Planning
                 </a>
@@ -1066,31 +1093,36 @@
         const heroRestContent = document.getElementById('hero-rest-content');
         const subtitleText = document.getElementById('subtitle-text');
         const startPlanningBtn = document.getElementById('start-planning-btn');
+        const whiteFlash = document.getElementById('white-flash');
         const heroImages = document.querySelectorAll('.hero-bg-image');
 
-        // After typewriter animation completes
+        // Title drop animation takes 2.5s
+        // When title reaches center (2.5s), trigger white flash
         setTimeout(() => {
-            // Remove typing cursor
-            heroTitle.classList.add('typing-complete');
+            // Trigger white flash explosion
+            whiteFlash.classList.add('active');
 
-            // Wait a moment, then show rest of content and start subtitle reveal
+            // Start fading in background image during flash (slight delay)
+            setTimeout(() => {
+                heroImages[0].classList.add('intro-fade');
+                heroImages[0].classList.add('active');
+            }, 200);
+
+            // After flash completes (0.8s), show rest of content and start subtitle typing
             setTimeout(() => {
                 heroRestContent.classList.remove('hero-content-hidden');
                 heroRestContent.classList.add('hero-content-visible');
 
-                // Trigger subtitle highlight reveal animation
-                subtitleText.classList.add('reveal');
+                // Start subtitle typing animation
+                subtitleText.classList.add('typing');
 
-                // Show first background image
-                heroImages[0].classList.add('active');
-
-                // After subtitle animation completes (800ms), fade in button
+                // After subtitle typing completes (2.5s), fade in button
                 setTimeout(() => {
                     startPlanningBtn.classList.remove('button-hidden');
                     startPlanningBtn.classList.add('button-visible');
-                }, 800);
-            }, 500);
-        }, 2000); // Typewriter takes 2 seconds
+                }, 2500);
+            }, 800);
+        }, 2500);
 
         // Hero Background Image Carousel with Equalizer Transition
         const equalizerContainer = document.getElementById('equalizer-transition');
@@ -1178,12 +1210,12 @@
             currentImageIndex = nextImageIndex;
         }
 
-        // Start the carousel after intro sequence completes (typewriter + content fade)
-        // Intro takes 2s (typewriter) + 0.5s (delay) + 1s (content fade) = 3.5s total
+        // Start the carousel after intro sequence completes
+        // Intro takes 2.5s (title drop) + 0.8s (flash) + 2.5s (subtitle typing) = 5.8s total
         setTimeout(() => {
             // First transition happens 6 seconds after intro completes
             setInterval(transitionToNextImage, 6000);
-        }, 3500 + 6000); // Wait for intro + first full display duration
+        }, 5800 + 6000); // Wait for intro + first full display duration
 
         // Random pixelation effect
         function applyRandomPixelation() {
