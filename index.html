@@ -87,6 +87,40 @@
             border-right: none;
         }
 
+        /* Subtitle text highlight reveal animation */
+        .subtitle-text {
+            display: inline;
+            background: linear-gradient(to right, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.85) 100%);
+            background-size: 0% 100%;
+            background-repeat: no-repeat;
+            padding: 0.2em 0.4em;
+            box-decoration-break: clone;
+            -webkit-box-decoration-break: clone;
+        }
+
+        .subtitle-text.reveal {
+            animation: highlightReveal 0.8s ease-out forwards;
+        }
+
+        @keyframes highlightReveal {
+            from {
+                background-size: 0% 100%;
+            }
+            to {
+                background-size: 100% 100%;
+            }
+        }
+
+        /* Button fade-in after subtitle */
+        .button-hidden {
+            opacity: 0;
+        }
+
+        .button-visible {
+            opacity: 1;
+            transition: opacity 0.6s ease;
+        }
+
         /* Continuous zoom with curved pan and glitch trembles */
         .hero-bg-image[data-slide="0"].active {
             animation: zoomPanCurveLeftGlitch 6s linear forwards;
@@ -565,10 +599,10 @@
             <!-- UPDATED: Added text-center and removed redundant mx-auto - hidden initially -->
             <div id="hero-rest-content" class="hero-content-hidden">
                 <p class="text-xl md:text-2xl mt-6 max-w-3xl mx-auto text-gray-200 text-center">
-                    Our platform will help you build out your tour plan step by step, making your ambitions a reality.
+                    <span id="subtitle-text" class="subtitle-text">Our platform will help you build out your tour plan step by step, making your ambitions a reality.</span>
                 </p>
                 <!-- UPDATED: Button Style 1 -->
-                <a href="#features" class="glitch-button gignite-button mt-12 inline-block py-3 px-10 bg-transparent text-white border-[3px] border-cyan-500 font-bold text-lg uppercase shadow-lg shadow-cyan-500/30 transform transition-all duration-300 hover:scale-105 hover:bg-cyan-500 hover:text-black hover:border-cyan-500">
+                <a id="start-planning-btn" href="#features" class="glitch-button gignite-button button-hidden mt-12 inline-block py-3 px-10 bg-transparent text-white border-[3px] border-cyan-500 font-bold text-lg uppercase shadow-lg shadow-cyan-500/30 transform transition-all duration-300 hover:scale-105 hover:bg-cyan-500 hover:text-black hover:border-cyan-500">
                     Start Planning
                 </a>
             </div>
@@ -1048,6 +1082,8 @@
         // Intro sequence on page load
         const heroTitle = document.getElementById('hero-title');
         const heroRestContent = document.getElementById('hero-rest-content');
+        const subtitleText = document.getElementById('subtitle-text');
+        const startPlanningBtn = document.getElementById('start-planning-btn');
         const heroImages = document.querySelectorAll('.hero-bg-image');
 
         // After typewriter animation completes
@@ -1055,13 +1091,22 @@
             // Remove typing cursor
             heroTitle.classList.add('typing-complete');
 
-            // Wait a moment, then show rest of content
+            // Wait a moment, then show rest of content and start subtitle reveal
             setTimeout(() => {
                 heroRestContent.classList.remove('hero-content-hidden');
                 heroRestContent.classList.add('hero-content-visible');
 
+                // Trigger subtitle highlight reveal animation
+                subtitleText.classList.add('reveal');
+
                 // Fade in first background image
                 heroImages[0].classList.add('active');
+
+                // After subtitle animation completes (800ms), fade in button
+                setTimeout(() => {
+                    startPlanningBtn.classList.remove('button-hidden');
+                    startPlanningBtn.classList.add('button-visible');
+                }, 800);
             }, 500);
         }, 2000); // Typewriter takes 2 seconds
 
