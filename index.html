@@ -53,11 +53,6 @@
             opacity: 1;
         }
 
-        /* Only transition opacity when fading between images */
-        .hero-bg-image.fading {
-            transition: opacity 1s ease;
-        }
-
         /* Hide content initially for intro sequence */
         .hero-content-hidden {
             opacity: 0;
@@ -331,21 +326,6 @@
             transform-origin: bottom;
         }
 
-        /* Dark overlay for next image during transition */
-        .transition-dark-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 2;
-            opacity: 0;
-            transition: opacity 1s ease;
-            pointer-events: none;
-        }
-
-        .transition-dark-overlay.active {
-            opacity: 1;
-        }
-
         /* Bar animation - grow up and lock at top */
         @keyframes barGrowUp {
             0% {
@@ -583,9 +563,6 @@
         <img src="img/GN 44.png" alt="GIGNITE Background" class="hero-bg-image" data-slide="1" />
         <img src="img/GN 48.png" alt="GIGNITE Background" class="hero-bg-image" data-slide="2" />
         <img src="img/GN 45.png" alt="GIGNITE Background" class="hero-bg-image" data-slide="3" />
-
-        <!-- Dark overlay for next image during transition -->
-        <div class="transition-dark-overlay" id="transition-dark-overlay"></div>
 
         <!-- Equalizer Transition Overlay -->
         <div class="equalizer-transition" id="equalizer-transition"></div>
@@ -1104,14 +1081,8 @@
                 // Trigger subtitle highlight reveal animation
                 subtitleText.classList.add('reveal');
 
-                // Fade in first background image with transition
-                heroImages[0].classList.add('fading');
+                // Show first background image
                 heroImages[0].classList.add('active');
-
-                // Remove fading class after transition completes
-                setTimeout(() => {
-                    heroImages[0].classList.remove('fading');
-                }, 1000);
 
                 // After subtitle animation completes (800ms), fade in button
                 setTimeout(() => {
@@ -1123,7 +1094,6 @@
 
         // Hero Background Image Carousel with Equalizer Transition
         const equalizerContainer = document.getElementById('equalizer-transition');
-        const darkOverlay = document.getElementById('transition-dark-overlay');
         let currentImageIndex = 0;
 
         // Create simple equalizer bars
@@ -1167,61 +1137,39 @@
 
                 // PHASE 2: After all bars reach the top and lock, THEN change image
                 setTimeout(() => {
-                    // Add fading class to both images for smooth transition
-                    currentImage.classList.add('fading');
-                    nextImage.classList.add('fading');
+                    // Instantly hide old image (bars are covering it anyway)
+                    currentImage.classList.remove('active');
 
-                    // Show next image underneath
+                    // Instantly show next image (still covered by bars)
                     nextImage.classList.add('active');
 
-                    // Show dark overlay briefly (50% opacity) on next image
-                    darkOverlay.classList.add('active');
-
-                    // PHASE 3: Fade image transition WHILE bars are locked at top
+                    // PHASE 3: Wait a brief moment, then drop bars
                     setTimeout(() => {
-                        // Fade: hide old image
-                        currentImage.classList.remove('active');
+                        let maxDropDuration = 0;
 
-                        // Remove dark overlay with slight delay to ensure smooth fade
+                        bars.forEach((bar) => {
+                            // Random delay for staggered drop
+                            const dropDelay = Math.random() * 0.4;
+                            const dropDuration = 0.4 + Math.random() * 0.3; // 0.4-0.7s
+
+                            // Reset and animate down
+                            bar.style.animation = 'none';
+                            bar.offsetHeight; // Force reflow
+                            bar.style.animation = `barDropDown ${dropDuration}s ease-in ${dropDelay}s forwards`;
+
+                            // Track max drop duration
+                            const totalDropTime = dropDelay + dropDuration;
+                            if (totalDropTime > maxDropDuration) {
+                                maxDropDuration = totalDropTime;
+                            }
+                        });
+
+                        // Hide equalizer after bars finish dropping
                         setTimeout(() => {
-                            darkOverlay.classList.remove('active');
+                            equalizerContainer.classList.remove('active');
+                        }, (maxDropDuration * 1000) + 100);
 
-                            // Remove fading class after transition completes
-                            setTimeout(() => {
-                                currentImage.classList.remove('fading');
-                                nextImage.classList.remove('fading');
-                            }, 1000);
-                        }, 50);
-
-                        // PHASE 4: After fade completes, drop bars back down
-                        setTimeout(() => {
-                            let maxDropDuration = 0;
-
-                            bars.forEach((bar) => {
-                                // Random delay for staggered drop
-                                const dropDelay = Math.random() * 0.4;
-                                const dropDuration = 0.4 + Math.random() * 0.3; // 0.4-0.7s
-
-                                // Reset and animate down
-                                bar.style.animation = 'none';
-                                bar.offsetHeight; // Force reflow
-                                bar.style.animation = `barDropDown ${dropDuration}s ease-in ${dropDelay}s forwards`;
-
-                                // Track max drop duration
-                                const totalDropTime = dropDelay + dropDuration;
-                                if (totalDropTime > maxDropDuration) {
-                                    maxDropDuration = totalDropTime;
-                                }
-                            });
-
-                            // Hide equalizer after bars finish dropping
-                            setTimeout(() => {
-                                equalizerContainer.classList.remove('active');
-                            }, (maxDropDuration * 1000) + 100);
-
-                        }, 300); // Wait 300ms for fade to complete before dropping bars
-
-                    }, 100); // Brief moment for next image to appear before fade
+                    }, 100); // Brief moment before dropping bars
 
                 }, (maxGrowDuration * 1000) + 100);
 
