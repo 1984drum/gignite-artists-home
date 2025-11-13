@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gignite - Your Audience Awaits</title>
+    <title>Gignite - Your Audience Awaits.</title>
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -35,6 +35,341 @@
         }
         h1, .gignite-h1 { font-weight: 900; } /* Heavier for H1 */
 
+
+        /* Hero background image styles */
+        .hero-bg-image {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: bottom;
+            z-index: 0;
+            opacity: 0;
+        }
+
+        .hero-bg-image.active {
+            opacity: 1;
+        }
+
+        /* Smooth fade-in for first image during intro */
+        .hero-bg-image.intro-fade {
+            transition: opacity 1.5s ease;
+        }
+
+        /* Hide content initially for intro sequence */
+        .hero-content-hidden {
+            opacity: 0;
+        }
+
+        .hero-content-visible {
+            opacity: 1;
+            transition: opacity 1s ease;
+        }
+
+        /* Title drop and fade-in effect */
+        .title-drop {
+            opacity: 0.1;
+            animation: dropAndFadeIn 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        @keyframes dropAndFadeIn {
+            0% {
+                transform: translateY(-300px);
+                opacity: 0.1;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* White flash explosion */
+        .white-flash {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.4) 50%, rgba(255, 255, 255, 0) 100%);
+            z-index: 40;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .white-flash.active {
+            animation: flashExplosion 0.8s ease-out forwards;
+        }
+
+        @keyframes flashExplosion {
+            0% {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            30% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(1.5);
+            }
+        }
+
+        /* Subtitle typing effect */
+        .subtitle-text {
+            display: inline-block;
+            overflow: hidden;
+            white-space: nowrap;
+            width: 0;
+            line-height: 1.8;
+        }
+
+        .subtitle-text.typing {
+            animation: subtitleTyping 2.5s steps(94) forwards;
+        }
+
+        @keyframes subtitleTyping {
+            from {
+                width: 0;
+            }
+            to {
+                width: 100%;
+            }
+        }
+
+        /* Button fade-in after subtitle */
+        .button-hidden {
+            opacity: 0;
+        }
+
+        .button-visible {
+            opacity: 1;
+            transition: opacity 0.6s ease;
+        }
+
+        /* Continuous zoom with curved pan and glitch trembles */
+        .hero-bg-image[data-slide="0"].active {
+            animation: zoomPanCurveLeftGlitch 6s linear forwards;
+        }
+
+        .hero-bg-image[data-slide="1"].active {
+            animation: zoomPanCurveRightGlitch 6s linear forwards;
+        }
+
+        .hero-bg-image[data-slide="2"].active {
+            animation: zoomPanCurveLeftGlitch 6s linear forwards;
+        }
+
+        .hero-bg-image[data-slide="3"].active {
+            animation: zoomPanCurveRightGlitch 6s linear forwards;
+        }
+
+        @keyframes zoomPanCurveLeftGlitch {
+            0% {
+                transform: scale(1.1) translate(3%, -1%);
+            }
+            8% {
+                transform: scale(1.13) translate(2.3%, -0.5%);
+            }
+            8.3% {
+                transform: scale(1.13) translate(1.8%, -0.3%) rotate(-0.5deg);
+            }
+            8.6% {
+                transform: scale(1.13) translate(2.5%, -0.7%) rotate(0.3deg);
+            }
+            9% {
+                transform: scale(1.13) translate(2.3%, -0.5%);
+            }
+            20% {
+                transform: scale(1.16) translate(1%, 0.5%);
+            }
+            20.2% {
+                transform: scale(1.16) translate(0.2%, 1.2%);
+            }
+            20.4% {
+                transform: scale(1.16) translate(1.5%, 0%);
+            }
+            20.6% {
+                transform: scale(1.16) translate(1%, 0.5%);
+            }
+            35% {
+                transform: scale(1.2) translate(-0.5%, 1.5%);
+            }
+            45% {
+                transform: scale(1.23) translate(-1.5%, 1%);
+            }
+            45.2% {
+                transform: scale(1.23) translate(-2.5%, 1.8%);
+            }
+            45.5% {
+                transform: scale(1.23) translate(-0.8%, 0.5%);
+            }
+            45.8% {
+                transform: scale(1.23) translate(-1.5%, 1%);
+            }
+            62% {
+                transform: scale(1.26) translate(-2.5%, 0%);
+            }
+            62.2% {
+                transform: scale(1.26) translate(-3.2%, -0.8%) rotate(-0.8deg);
+            }
+            62.5% {
+                transform: scale(1.26) translate(-2%, 0.5%) rotate(0.5deg);
+            }
+            62.8% {
+                transform: scale(1.26) translate(-2.5%, 0%);
+            }
+            80% {
+                transform: scale(1.28) translate(-3%, -1%);
+            }
+            88% {
+                transform: scale(1.295) translate(-3.2%, -1.3%);
+            }
+            88.2% {
+                transform: scale(1.295) translate(-4%, -2%) rotate(0.6deg);
+            }
+            88.4% {
+                transform: scale(1.295) translate(-2.5%, -0.8%) rotate(-0.4deg);
+            }
+            88.7% {
+                transform: scale(1.295) translate(-3.2%, -1.3%);
+            }
+            100% {
+                transform: scale(1.3) translate(-3%, -1.5%);
+            }
+        }
+
+        @keyframes zoomPanCurveRightGlitch {
+            0% {
+                transform: scale(1.1) translate(-3%, -1%);
+            }
+            12% {
+                transform: scale(1.13) translate(-2%, -0.3%);
+            }
+            12.2% {
+                transform: scale(1.13) translate(-2.8%, -1%);
+            }
+            12.5% {
+                transform: scale(1.13) translate(-1.5%, 0.2%);
+            }
+            12.8% {
+                transform: scale(1.13) translate(-2%, -0.3%);
+            }
+            28% {
+                transform: scale(1.17) translate(-0.8%, 0.8%);
+            }
+            28.2% {
+                transform: scale(1.17) translate(-0.2%, 1.5%) rotate(0.5deg);
+            }
+            28.5% {
+                transform: scale(1.17) translate(-1.3%, 0.3%) rotate(-0.3deg);
+            }
+            28.8% {
+                transform: scale(1.17) translate(-0.8%, 0.8%);
+            }
+            42% {
+                transform: scale(1.21) translate(0.5%, 1.5%);
+            }
+            55% {
+                transform: scale(1.24) translate(1.8%, 0.8%);
+            }
+            55.3% {
+                transform: scale(1.24) translate(2.8%, 1.5%) rotate(-0.7deg);
+            }
+            55.6% {
+                transform: scale(1.24) translate(1.2%, 0.2%) rotate(0.6deg);
+            }
+            56% {
+                transform: scale(1.24) translate(1.8%, 0.8%);
+            }
+            70% {
+                transform: scale(1.27) translate(2.5%, -0.2%);
+            }
+            70.2% {
+                transform: scale(1.27) translate(3.2%, -1%);
+            }
+            70.5% {
+                transform: scale(1.27) translate(2%, 0.3%);
+            }
+            70.8% {
+                transform: scale(1.27) translate(2.5%, -0.2%);
+            }
+            85% {
+                transform: scale(1.29) translate(3%, -1.2%);
+            }
+            92% {
+                transform: scale(1.295) translate(3.2%, -1.4%);
+            }
+            92.3% {
+                transform: scale(1.295) translate(4%, -2.2%) rotate(0.8deg);
+            }
+            92.6% {
+                transform: scale(1.295) translate(2.5%, -0.8%) rotate(-0.5deg);
+            }
+            93% {
+                transform: scale(1.295) translate(3.2%, -1.4%);
+            }
+            100% {
+                transform: scale(1.3) translate(3%, -1.5%);
+            }
+        }
+
+        /* Random pixelation effect */
+        .hero-bg-image.pixelated {
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+            filter: blur(0) contrast(1.5);
+        }
+
+        /* Gradient fade from bottom to top (transparent to black) */
+        .hero-gradient-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.7) 30%, rgba(0, 0, 0, 0) 100%);
+            z-index: 5;
+        }
+
+        /* Pixelated Equalizer Transition Overlay */
+        .equalizer-transition {
+            position: absolute;
+            inset: 0;
+            z-index: 3;
+            display: flex;
+            gap: 8px;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        .equalizer-transition.active {
+            opacity: 1;
+        }
+
+        .equalizer-bar {
+            flex: 1;
+            background: #000;
+            transform: scaleY(0);
+            transform-origin: bottom;
+        }
+
+        /* Bar animation - grow up and lock at top */
+        @keyframes barGrowUp {
+            0% {
+                transform: scaleY(0);
+            }
+            100% {
+                transform: scaleY(1);
+            }
+        }
+
+        /* Bar animation - drop back down */
+        @keyframes barDropDown {
+            0% {
+                transform: scaleY(1);
+            }
+            100% {
+                transform: scaleY(0);
+            }
+        }
 
         /* Hero video flicker fix */
         .video-bg {
@@ -114,55 +449,175 @@
             background-color: white;
             animation: sample-wave-anim 1.2s infinite ease-in-out;
         }
+
+        /* Header styles */
+        .site-header {
+            background-color: #000;
+            border-bottom: 3px solid #fff;
+            padding: 1rem 2rem;
+        }
+
+        .logo {
+            font-family: "brother-1816", sans-serif;
+            font-weight: 900;
+            font-size: 2rem;
+            color: #fff;
+            letter-spacing: 0.1em;
+        }
+
+        .login-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.5rem;
+            background-color: transparent;
+            color: #fff;
+            border: 3px solid #06b6d4; /* cyan-500 - matches Start Planning button */
+            font-family: "brother-1816", sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .login-btn:hover {
+            background-color: #06b6d4;
+            color: #000;
+        }
+
+        .login-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Glitch effect for Start Planning button */
+        .glitch-button {
+            position: relative;
+            background: rgba(0, 0, 0, 0.5) !important;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .glitch-button:hover {
+            background: #06b6d4 !important;
+            backdrop-filter: blur(0);
+            -webkit-backdrop-filter: blur(0);
+        }
+
+        .glitch-button::before,
+        .glitch-button::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: transparent;
+            border: 3px solid #06b6d4;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .glitch-button::before {
+            animation: glitch1 3s infinite;
+        }
+
+        .glitch-button::after {
+            animation: glitch2 2.5s infinite;
+        }
+
+        @keyframes glitch1 {
+            0%, 90%, 100% {
+                opacity: 0;
+                transform: translate(0);
+            }
+            91% {
+                opacity: 0.8;
+                transform: translate(-2px, 2px);
+            }
+            92% {
+                opacity: 0.6;
+                transform: translate(2px, -2px);
+            }
+            93% {
+                opacity: 0;
+                transform: translate(0);
+            }
+        }
+
+        @keyframes glitch2 {
+            0%, 94%, 100% {
+                opacity: 0;
+                transform: translate(0);
+            }
+            95% {
+                opacity: 0.7;
+                transform: translate(3px, -1px);
+            }
+            96% {
+                opacity: 0.5;
+                transform: translate(-3px, 1px);
+            }
+            97% {
+                opacity: 0;
+                transform: translate(0);
+            }
+        }
     </style>
 </head>
 <body class="bg-black">
 
-    <!-- 1. Hero Section -->
-    <header class="h-screen w-full relative flex items-center justify-center text-center overflow-hidden">
-        <!-- Background Video -->
-        <video 
-            playsinline 
-            autoplay 
-            muted 
-            loop 
-            <!-- UPDATED: Changed poster text to uppercase GIGNITE -->
-            poster="https://placehold.co/1920x1080/000000/cccccc?text=GIGNITE" 
-            class="video-bg absolute inset-0 w-full h-full object-cover z-0"
-        >
-            <source src="https://videos.pexels.com/video-files/3130634/3130634-hd_1920_1080_25fps.mp4" type="video/mp4">
-        </video>
-        
-        <!-- Overlay -->
-        <!-- UPDATED: Set to z-10 -->
-        <div class="absolute inset-0 bg-black/70 z-10"></div>
+    <!-- Site Header -->
+    <header class="site-header">
+        <div class="flex items-center justify-between">
+            <!-- Logo -->
+            <div class="logo">GIGNITE</div>
 
-        <!-- Background GIGNITE text -->
-        <!-- UPDATED: z-index fix + !important inline style to force uppercase -->
-        <div class="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
-            <!-- UPDATED: Made text larger as requested -->
-            <h1 class="text-[28vw] font-black text-white/5 tracking-tighter" style="text-transform: uppercase !important;">
-                GIGNITE
-            </h1>
-        </div>
-
-        <!-- Content -->
-        <!-- UPDATED: Converted to flex container to force centering of all child elements -->
-        <div class="relative z-30 px-4 mx-auto flex flex-col items-center reveal-on-scroll is-visible">
-            <!-- UPDATED: Added text-center -->
-            <h1 class="gignite-h1 text-5xl md:text-8xl font-black uppercase tracking-tighter text-center">
-                Your Audience Awaits
-            </h1>
-            <!-- UPDATED: Added text-center and removed redundant mx-auto -->
-            <p class="text-xl md:text-2xl mt-6 max-w-3xl text-gray-200 text-center">
-                Our platform will help you build out your tour plan step by step, making your ambitions a reality.
-            </p>
-            <!-- UPDATED: Button Style 1 -->
-            <a href="#features" class="gignite-button mt-12 inline-block py-3 px-10 bg-transparent text-white border-[3px] border-cyan-500 font-bold text-lg uppercase shadow-lg shadow-cyan-500/30 transform transition-all duration-300 hover:scale-105 hover:bg-cyan-500 hover:text-black hover:border-cyan-500">
-                Start Planning
-            </a>
+            <!-- Login Button -->
+            <button class="login-btn">
+                Login
+                <svg class="login-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                </svg>
+            </button>
         </div>
     </header>
+
+    <!-- 1. Hero Section -->
+    <section class="h-screen w-full relative overflow-hidden">
+        <!-- Background Images (Carousel) - First image fades in after typewriter -->
+        <img src="img/GN 29.png" alt="GIGNITE Background" class="hero-bg-image" data-slide="0" />
+        <img src="img/GN 44.png" alt="GIGNITE Background" class="hero-bg-image" data-slide="1" />
+        <img src="img/GN 48.png" alt="GIGNITE Background" class="hero-bg-image" data-slide="2" />
+        <img src="img/GN 45.png" alt="GIGNITE Background" class="hero-bg-image" data-slide="3" />
+
+        <!-- Equalizer Transition Overlay -->
+        <div class="equalizer-transition" id="equalizer-transition"></div>
+
+        <!-- Gradient Overlay (fades to black at top) -->
+        <div class="hero-gradient-overlay"></div>
+
+        <!-- White flash explosion overlay -->
+        <div id="white-flash" class="white-flash"></div>
+
+        <!-- Content -->
+        <div class="absolute inset-0 z-30 flex items-center justify-center text-center px-4">
+            <div class="w-full">
+            <!-- Title with drop animation -->
+            <h1 id="hero-title" class="gignite-h1 text-5xl md:text-8xl font-black uppercase tracking-tighter text-center title-drop">
+                Your Audience Awaits.
+            </h1>
+            <!-- Rest of content - hidden initially -->
+            <div id="hero-rest-content" class="hero-content-hidden">
+                <p class="text-xl md:text-2xl mt-6 max-w-3xl mx-auto text-gray-200 text-center">
+                    <span id="subtitle-text" class="subtitle-text">Our platform will help you build out your tour plan step by step, making your ambitions a reality.</span>
+                </p>
+                <!-- Button -->
+                <a id="start-planning-btn" href="#features" class="glitch-button gignite-button button-hidden mt-12 inline-block py-3 px-10 bg-transparent text-white border-[3px] border-cyan-500 font-bold text-lg uppercase shadow-lg shadow-cyan-500/30 transform transition-all duration-300 hover:scale-105 hover:bg-cyan-500 hover:text-black hover:border-cyan-500">
+                    Start Planning
+                </a>
+            </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Section Divider 1 -->
     <section class="bg-black py-10 w-full">
@@ -632,6 +1087,157 @@
                 showSlide(nextSlide);
             }, 3000); // Change slide every 3 seconds
         });
+
+        // Intro sequence on page load
+        const heroTitle = document.getElementById('hero-title');
+        const heroRestContent = document.getElementById('hero-rest-content');
+        const subtitleText = document.getElementById('subtitle-text');
+        const startPlanningBtn = document.getElementById('start-planning-btn');
+        const whiteFlash = document.getElementById('white-flash');
+        const heroImages = document.querySelectorAll('.hero-bg-image');
+
+        // Title drop animation takes 2.5s
+        // When title reaches center (2.5s), trigger white flash
+        setTimeout(() => {
+            // Trigger white flash explosion
+            whiteFlash.classList.add('active');
+
+            // Start fading in background image during flash (slight delay)
+            setTimeout(() => {
+                heroImages[0].classList.add('intro-fade');
+                heroImages[0].classList.add('active');
+            }, 200);
+
+            // After flash completes (0.8s), show rest of content and start subtitle typing
+            setTimeout(() => {
+                heroRestContent.classList.remove('hero-content-hidden');
+                heroRestContent.classList.add('hero-content-visible');
+
+                // Start subtitle typing animation
+                subtitleText.classList.add('typing');
+
+                // After subtitle typing completes (2.5s), fade in button
+                setTimeout(() => {
+                    startPlanningBtn.classList.remove('button-hidden');
+                    startPlanningBtn.classList.add('button-visible');
+                }, 2500);
+            }, 800);
+        }, 2500);
+
+        // Hero Background Image Carousel with Equalizer Transition
+        const equalizerContainer = document.getElementById('equalizer-transition');
+        let currentImageIndex = 0;
+
+        // Create simple equalizer bars
+        const numBars = 20;
+
+        for (let i = 0; i < numBars; i++) {
+            const bar = document.createElement('div');
+            bar.className = 'equalizer-bar';
+            equalizerContainer.appendChild(bar);
+        }
+
+        function transitionToNextImage() {
+            const currentImage = heroImages[currentImageIndex];
+            const nextImageIndex = (currentImageIndex + 1) % heroImages.length;
+            const nextImage = heroImages[nextImageIndex];
+
+            // Show equalizer transition
+            equalizerContainer.classList.add('active');
+
+            // PHASE 1: Animate bars UP
+            setTimeout(() => {
+                const bars = equalizerContainer.querySelectorAll('.equalizer-bar');
+                let maxGrowDuration = 0;
+
+                bars.forEach((bar) => {
+                    // Random delay for staggered start
+                    const delay = Math.random() * 0.4;
+                    const duration = 0.5 + Math.random() * 0.3; // 0.5-0.8s
+
+                    // Reset and animate up
+                    bar.style.animation = 'none';
+                    bar.offsetHeight; // Force reflow
+                    bar.style.animation = `barGrowUp ${duration}s ease-out ${delay}s forwards`;
+
+                    // Track max duration
+                    const totalTime = delay + duration;
+                    if (totalTime > maxGrowDuration) {
+                        maxGrowDuration = totalTime;
+                    }
+                });
+
+                // PHASE 2: After all bars reach the top and lock, THEN change image
+                setTimeout(() => {
+                    // Instantly hide old image (bars are covering it anyway)
+                    currentImage.classList.remove('active');
+
+                    // Instantly show next image (still covered by bars)
+                    nextImage.classList.add('active');
+
+                    // PHASE 3: Wait a brief moment, then drop bars
+                    setTimeout(() => {
+                        let maxDropDuration = 0;
+
+                        bars.forEach((bar) => {
+                            // Random delay for staggered drop
+                            const dropDelay = Math.random() * 0.4;
+                            const dropDuration = 0.4 + Math.random() * 0.3; // 0.4-0.7s
+
+                            // Reset and animate down
+                            bar.style.animation = 'none';
+                            bar.offsetHeight; // Force reflow
+                            bar.style.animation = `barDropDown ${dropDuration}s ease-in ${dropDelay}s forwards`;
+
+                            // Track max drop duration
+                            const totalDropTime = dropDelay + dropDuration;
+                            if (totalDropTime > maxDropDuration) {
+                                maxDropDuration = totalDropTime;
+                            }
+                        });
+
+                        // Hide equalizer after bars finish dropping
+                        setTimeout(() => {
+                            equalizerContainer.classList.remove('active');
+                        }, (maxDropDuration * 1000) + 100);
+
+                    }, 100); // Brief moment before dropping bars
+
+                }, (maxGrowDuration * 1000) + 100);
+
+            }, 50);
+
+            currentImageIndex = nextImageIndex;
+        }
+
+        // Start the carousel after intro sequence completes
+        // Intro takes 2.5s (title drop) + 0.8s (flash) + 2.5s (subtitle typing) = 5.8s total
+        setTimeout(() => {
+            // First transition happens 6 seconds after intro completes
+            setInterval(transitionToNextImage, 6000);
+        }, 5800 + 6000); // Wait for intro + first full display duration
+
+        // Random pixelation effect
+        function applyRandomPixelation() {
+            const activeImage = document.querySelector('.hero-bg-image.active');
+            if (activeImage && !equalizerContainer.classList.contains('active')) {
+                // Add pixelation
+                activeImage.classList.add('pixelated');
+
+                // Remove after 50-150ms for quick glitch effect
+                const pixelDuration = 50 + Math.random() * 100;
+                setTimeout(() => {
+                    activeImage.classList.remove('pixelated');
+                }, pixelDuration);
+            }
+
+            // Schedule next pixelation randomly between 0.25-1 seconds
+            const nextPixelation = 250 + Math.random() * 750;
+            setTimeout(applyRandomPixelation, nextPixelation);
+        }
+
+        // Start pixelation effect
+        applyRandomPixelation();
     </script>
 
 </body>
