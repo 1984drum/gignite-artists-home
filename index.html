@@ -85,32 +85,279 @@
             }
         }
 
-        /* White flash explosion */
+        /* White flash explosion - organic brownian motion */
         .white-flash {
             position: absolute;
             inset: 0;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.4) 50%, rgba(255, 255, 255, 0) 100%);
+            background: radial-gradient(ellipse at 48% 52%,
+                rgba(255, 255, 255, 0.95) 0%,
+                rgba(255, 255, 255, 0.85) 8%,
+                rgba(255, 255, 255, 0.7) 15%,
+                rgba(255, 255, 255, 0.55) 25%,
+                rgba(255, 255, 255, 0.4) 35%,
+                rgba(255, 255, 255, 0.25) 50%,
+                rgba(255, 255, 255, 0.1) 65%,
+                rgba(255, 255, 255, 0) 100%);
             z-index: 40;
             opacity: 0;
             pointer-events: none;
+            filter: blur(0px);
+        }
+
+        /* Additional fractal layers for organic effect */
+        .white-flash::before,
+        .white-flash::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .white-flash::before {
+            background: radial-gradient(ellipse at 55% 45%,
+                rgba(255, 255, 255, 0.7) 0%,
+                rgba(255, 255, 255, 0.5) 12%,
+                rgba(255, 255, 255, 0.3) 25%,
+                rgba(255, 255, 255, 0.15) 45%,
+                rgba(255, 255, 255, 0) 70%);
+            opacity: 0;
+        }
+
+        .white-flash::after {
+            background: radial-gradient(ellipse at 42% 58%,
+                rgba(255, 255, 255, 0.8) 0%,
+                rgba(255, 255, 255, 0.6) 10%,
+                rgba(255, 255, 255, 0.35) 20%,
+                rgba(255, 255, 255, 0.18) 40%,
+                rgba(255, 255, 255, 0) 65%);
+            opacity: 0;
         }
 
         .white-flash.active {
-            animation: flashExplosion 0.8s ease-out forwards;
+            animation: organicFlashExplosion 5.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
         }
 
-        @keyframes flashExplosion {
+        .white-flash.active::before {
+            animation: fractalLayer1 5.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.15s forwards;
+        }
+
+        .white-flash.active::after {
+            animation: fractalLayer2 5.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s forwards;
+        }
+
+        @keyframes organicFlashExplosion {
             0% {
                 opacity: 0;
-                transform: scale(0.8);
+                transform: scale(0.3) rotate(0deg);
+                filter: blur(0px);
+            }
+            5% {
+                opacity: 0.4;
+                transform: scale(0.5) rotate(3deg);
+                filter: blur(2px);
+            }
+            10% {
+                opacity: 0.75;
+                transform: scale(0.7) rotate(-2deg);
+                filter: blur(4px);
+            }
+            15% {
+                opacity: 0.95;
+                transform: scale(0.85) rotate(1deg);
+                filter: blur(6px);
+            }
+            20% {
+                opacity: 1;
+                transform: scale(1.0) rotate(-1deg);
+                filter: blur(8px);
+            }
+            25% {
+                opacity: 1;
+                transform: scale(1.15) rotate(2deg);
+                filter: blur(10px);
             }
             30% {
-                opacity: 1;
-                transform: scale(1.2);
+                opacity: 0.98;
+                transform: scale(1.3) rotate(-1.5deg);
+                filter: blur(12px);
+            }
+            35% {
+                opacity: 0.92;
+                transform: scale(1.45) rotate(0.5deg);
+                filter: blur(14px);
+            }
+            40% {
+                opacity: 0.85;
+                transform: scale(1.6) rotate(-0.8deg);
+                filter: blur(16px);
+            }
+            45% {
+                opacity: 0.75;
+                transform: scale(1.75) rotate(1.2deg);
+                filter: blur(18px);
+            }
+            50% {
+                opacity: 0.65;
+                transform: scale(1.9) rotate(-0.6deg);
+                filter: blur(20px);
+            }
+            55% {
+                opacity: 0.55;
+                transform: scale(2.05) rotate(0.9deg);
+                filter: blur(22px);
+            }
+            60% {
+                opacity: 0.45;
+                transform: scale(2.2) rotate(-0.4deg);
+                filter: blur(24px);
+            }
+            65% {
+                opacity: 0.35;
+                transform: scale(2.35) rotate(0.7deg);
+                filter: blur(26px);
+            }
+            70% {
+                opacity: 0.28;
+                transform: scale(2.5) rotate(-0.3deg);
+                filter: blur(28px);
+            }
+            75% {
+                opacity: 0.22;
+                transform: scale(2.65) rotate(0.5deg);
+                filter: blur(30px);
+            }
+            80% {
+                opacity: 0.16;
+                transform: scale(2.8) rotate(-0.2deg);
+                filter: blur(32px);
+            }
+            85% {
+                opacity: 0.11;
+                transform: scale(2.95) rotate(0.3deg);
+                filter: blur(34px);
+            }
+            90% {
+                opacity: 0.07;
+                transform: scale(3.1) rotate(-0.15deg);
+                filter: blur(36px);
+            }
+            95% {
+                opacity: 0.03;
+                transform: scale(3.25) rotate(0.1deg);
+                filter: blur(38px);
             }
             100% {
                 opacity: 0;
-                transform: scale(1.5);
+                transform: scale(3.4) rotate(0deg);
+                filter: blur(40px);
+            }
+        }
+
+        /* Fractal layer 1 - spirals in opposite direction */
+        @keyframes fractalLayer1 {
+            0% {
+                opacity: 0;
+                transform: scale(0.4) rotate(0deg) translate(5%, -3%);
+                filter: blur(0px);
+            }
+            8% {
+                opacity: 0.5;
+                transform: scale(0.65) rotate(-4deg) translate(3%, -2%);
+                filter: blur(3px);
+            }
+            18% {
+                opacity: 0.8;
+                transform: scale(0.95) rotate(2.5deg) translate(-2%, 1%);
+                filter: blur(7px);
+            }
+            28% {
+                opacity: 0.85;
+                transform: scale(1.25) rotate(-1.8deg) translate(1%, 3%);
+                filter: blur(11px);
+            }
+            40% {
+                opacity: 0.75;
+                transform: scale(1.6) rotate(1.3deg) translate(-3%, -1%);
+                filter: blur(15px);
+            }
+            52% {
+                opacity: 0.6;
+                transform: scale(1.95) rotate(-0.9deg) translate(2%, 2%);
+                filter: blur(19px);
+            }
+            64% {
+                opacity: 0.45;
+                transform: scale(2.3) rotate(0.6deg) translate(-1%, -2%);
+                filter: blur(23px);
+            }
+            76% {
+                opacity: 0.3;
+                transform: scale(2.65) rotate(-0.4deg) translate(1%, 1%);
+                filter: blur(27px);
+            }
+            88% {
+                opacity: 0.15;
+                transform: scale(3.0) rotate(0.2deg) translate(-1%, 0%);
+                filter: blur(31px);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(3.35) rotate(0deg) translate(0%, 0%);
+                filter: blur(35px);
+            }
+        }
+
+        /* Fractal layer 2 - irregular brownian motion */
+        @keyframes fractalLayer2 {
+            0% {
+                opacity: 0;
+                transform: scale(0.35) rotate(0deg) translate(-4%, 5%);
+                filter: blur(0px);
+            }
+            7% {
+                opacity: 0.45;
+                transform: scale(0.6) rotate(3.5deg) translate(-2%, 3%);
+                filter: blur(4px);
+            }
+            16% {
+                opacity: 0.75;
+                transform: scale(0.9) rotate(-2.2deg) translate(1%, -1%);
+                filter: blur(8px);
+            }
+            26% {
+                opacity: 0.8;
+                transform: scale(1.2) rotate(1.6deg) translate(3%, 2%);
+                filter: blur(12px);
+            }
+            38% {
+                opacity: 0.7;
+                transform: scale(1.55) rotate(-1.1deg) translate(-2%, -3%);
+                filter: blur(16px);
+            }
+            50% {
+                opacity: 0.55;
+                transform: scale(1.9) rotate(0.8deg) translate(1%, 1%);
+                filter: blur(20px);
+            }
+            62% {
+                opacity: 0.4;
+                transform: scale(2.25) rotate(-0.5deg) translate(-1%, 2%);
+                filter: blur(24px);
+            }
+            74% {
+                opacity: 0.25;
+                transform: scale(2.6) rotate(0.35deg) translate(2%, -1%);
+                filter: blur(28px);
+            }
+            86% {
+                opacity: 0.12;
+                transform: scale(2.95) rotate(-0.18deg) translate(-1%, 1%);
+                filter: blur(32px);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(3.3) rotate(0deg) translate(0%, 0%);
+                filter: blur(36px);
             }
         }
 
@@ -121,6 +368,10 @@
             white-space: nowrap;
             width: 0;
             line-height: 1.8;
+            background-color: #000;
+            padding: 0.75rem 1.5rem;
+            box-decoration-break: clone;
+            -webkit-box-decoration-break: clone;
         }
 
         .subtitle-text.typing {
@@ -1108,7 +1359,7 @@
                 heroImages[0].classList.add('active');
             }, 200);
 
-            // After flash completes (0.8s), show rest of content and start subtitle typing
+            // After flash completes (5.5s), show rest of content and start subtitle typing
             setTimeout(() => {
                 heroRestContent.classList.remove('hero-content-hidden');
                 heroRestContent.classList.add('hero-content-visible');
@@ -1121,7 +1372,7 @@
                     startPlanningBtn.classList.remove('button-hidden');
                     startPlanningBtn.classList.add('button-visible');
                 }, 2500);
-            }, 800);
+            }, 5500);
         }, 2500);
 
         // Hero Background Image Carousel with Equalizer Transition
@@ -1211,11 +1462,11 @@
         }
 
         // Start the carousel after intro sequence completes
-        // Intro takes 2.5s (title drop) + 0.8s (flash) + 2.5s (subtitle typing) = 5.8s total
+        // Intro takes 2.5s (title drop) + 5.5s (flash) + 2.5s (subtitle typing) = 10.5s total
         setTimeout(() => {
             // First transition happens 6 seconds after intro completes
             setInterval(transitionToNextImage, 6000);
-        }, 5800 + 6000); // Wait for intro + first full display duration
+        }, 10500 + 6000); // Wait for intro + first full display duration
 
         // Random pixelation effect
         function applyRandomPixelation() {
