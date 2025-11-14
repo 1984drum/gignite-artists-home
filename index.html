@@ -1978,76 +1978,30 @@
                 let leaderY = mouseY + swayY;
 
                 dots.forEach((dot, index) => {
-                    // Check if hovering over a benefit card
-                    if (isHoveringBenefit && benefitCardRect) {
-                        // Position dots in a rectangle around the card
-                        const padding = 20; // Padding around card
-                        const rectWidth = benefitCardRect.width + padding * 2;
-                        const rectHeight = benefitCardRect.height + padding * 2;
-                        const perimeter = (rectWidth + rectHeight) * 2;
-                        const dotSpacing = perimeter / trailLength;
+                    // Lerp (Linear Interpolation) for smooth following
+                    const speed = 0.15;
 
-                        // Calculate position on rectangle perimeter
-                        const distanceAlongPerimeter = (index * dotSpacing + Date.now() * 0.05) % perimeter;
+                    dot.x += (leaderX - dot.x) * speed;
+                    dot.y += (leaderY - dot.y) * speed;
 
-                        let targetX, targetY;
+                    dot.element.style.left = `${dot.x}px`;
+                    dot.element.style.top = `${dot.y}px`;
 
-                        if (distanceAlongPerimeter < rectWidth) {
-                            // Top edge
-                            targetX = benefitCardRect.left - padding + distanceAlongPerimeter;
-                            targetY = benefitCardRect.top - padding;
-                        } else if (distanceAlongPerimeter < rectWidth + rectHeight) {
-                            // Right edge
-                            targetX = benefitCardRect.right + padding;
-                            targetY = benefitCardRect.top - padding + (distanceAlongPerimeter - rectWidth);
-                        } else if (distanceAlongPerimeter < rectWidth * 2 + rectHeight) {
-                            // Bottom edge
-                            targetX = benefitCardRect.right + padding - (distanceAlongPerimeter - rectWidth - rectHeight);
-                            targetY = benefitCardRect.bottom + padding;
-                        } else {
-                            // Left edge
-                            targetX = benefitCardRect.left - padding;
-                            targetY = benefitCardRect.bottom + padding - (distanceAlongPerimeter - rectWidth * 2 - rectHeight);
-                        }
+                    // Make the dots get smaller towards the end of the tail
+                    const linearScale = 1 - (index / trailLength);
+                    const tailScale = Math.pow(linearScale, 2);
 
-                        // Smooth transition to rectangle position
-                        const speed = 0.2;
-                        dot.x += (targetX - dot.x) * speed;
-                        dot.y += (targetY - dot.y) * speed;
+                    // Add random pulsating to each dot with individual pulse speed
+                    const pulse = Math.sin(pulseTime * dot.pulseSpeed + dot.pulseOffset) * 0.15 + 1;
 
-                        dot.element.style.left = `${dot.x}px`;
-                        dot.element.style.top = `${dot.y}px`;
+                    // Apply base scale, tail scale, pulse, and random size variation
+                    const finalScale = baseScale * tailScale * pulse * dot.sizeVariation;
 
-                        // All dots same size for rectangular highlight
-                        const finalScale = baseScale * 1.2;
-                        dot.element.style.transform = `translate(-50%, -50%) scale(${finalScale})`;
-                    } else {
-                        // Normal blob behavior
-                        // Lerp (Linear Interpolation) for smooth following
-                        const speed = 0.15;
+                    dot.element.style.transform = `translate(-50%, -50%) scale(${finalScale})`;
 
-                        dot.x += (leaderX - dot.x) * speed;
-                        dot.y += (leaderY - dot.y) * speed;
-
-                        dot.element.style.left = `${dot.x}px`;
-                        dot.element.style.top = `${dot.y}px`;
-
-                        // Make the dots get smaller towards the end of the tail
-                        const linearScale = 1 - (index / trailLength);
-                        const tailScale = Math.pow(linearScale, 2);
-
-                        // Add random pulsating to each dot with individual pulse speed
-                        const pulse = Math.sin(pulseTime * dot.pulseSpeed + dot.pulseOffset) * 0.15 + 1;
-
-                        // Apply base scale, tail scale, pulse, and random size variation
-                        const finalScale = baseScale * tailScale * pulse * dot.sizeVariation;
-
-                        dot.element.style.transform = `translate(-50%, -50%) scale(${finalScale})`;
-
-                        // The next dot follows the current dot
-                        leaderX = dot.x;
-                        leaderY = dot.y;
-                    }
+                    // The next dot follows the current dot
+                    leaderX = dot.x;
+                    leaderY = dot.y;
                 });
 
                 // Animate and clean up splashes
@@ -2129,24 +2083,6 @@
 
         // Initialize light sabers after page loads
         initLightSabers();
-
-        // Rectangular highlight for benefit cards
-        const benefitCards = document.querySelectorAll('.benefit-card');
-        const trailContainer = document.getElementById('trail-container');
-        let isHoveringBenefit = false;
-        let benefitCardRect = null;
-
-        benefitCards.forEach(card => {
-            card.addEventListener('mouseenter', () => {
-                isHoveringBenefit = true;
-                benefitCardRect = card.getBoundingClientRect();
-            });
-
-            card.addEventListener('mouseleave', () => {
-                isHoveringBenefit = false;
-                benefitCardRect = null;
-            });
-        });
 
         // Fade out cursor text on button hover
         const spinningCursorText = document.getElementById('spinning-text-cursor');
