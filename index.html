@@ -598,7 +598,14 @@
 
         .equalizer-bar {
             flex: 1;
-            background: #000;
+            /* Segmented equalizer effect using repeating gradient */
+            background: repeating-linear-gradient(
+                to top,
+                #000 0px,
+                #000 12px,
+                transparent 12px,
+                transparent 16px
+            );
             transform: scaleY(0);
             transform-origin: bottom;
         }
