@@ -765,6 +765,16 @@
             background: #06b6d4 !important;
             backdrop-filter: blur(0);
             -webkit-backdrop-filter: blur(0);
+            animation: buttonGrow 3s ease-out forwards;
+        }
+
+        @keyframes buttonGrow {
+            0% {
+                transform: scale(1);
+            }
+            100% {
+                transform: scale(1.2);
+            }
         }
 
         .glitch-button::before,
