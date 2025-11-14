@@ -1210,15 +1210,15 @@
                 <!-- 1. Blur the source graphic (blobs) -->
                 <feGaussianBlur in="SourceGraphic" stdDeviation="80" result="blur" />
 
-                <!-- 2. Create an animating fractal noise pattern - reduced for smoother effect -->
-                <feTurbulence type="fractalNoise" baseFrequency="0.002 0.003"
-                              numOctaves="1" seed="1" result="turbulence">
+                <!-- 2. Create an animating fractal noise pattern - increased for more organic effect -->
+                <feTurbulence type="fractalNoise" baseFrequency="0.008 0.01"
+                              numOctaves="3" seed="1" result="turbulence">
                     <!-- Slower animation for more chilled out effect -->
                     <animate attributeName="seed" from="1" to="100" dur="20s" repeatCount="indefinite" />
                 </feTurbulence>
 
-                <!-- 3. Use the noise to displace (warp) the blurred blobs - reduced scale for gentler movement -->
-                <feDisplacementMap in="blur" in2="turbulence" scale="30" result="warp" />
+                <!-- 3. Use the noise to displace (warp) the blurred blobs - increased for more organic/patchy look -->
+                <feDisplacementMap in="blur" in2="turbulence" scale="100" result="warp" />
 
                 <!-- 4. Sharpen the *warped* blobs. Updated with very high contrast for a crisp edge. -->
                 <feColorMatrix in="warp" mode="matrix" values="
