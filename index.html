@@ -374,39 +374,45 @@
             padding: 0.5rem 1rem;
             line-height: 2.2;
             opacity: 0;
-            overflow: hidden;
-            white-space: nowrap;
-            border-right: 3px solid #fff;
-            max-width: 100%;
+            position: relative;
         }
 
-        .subtitle-text.typing {
-            animation: typewriter 2s steps(90) forwards, blinkCursor 0.75s step-end infinite;
+        .subtitle-text::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: #fff;
+            opacity: 0;
+        }
+
+        .subtitle-text.typing::after {
+            animation: blinkCursor 0.75s step-end infinite;
             opacity: 1;
         }
 
-        .subtitle-text.typing-complete {
-            border-right: none;
-            white-space: normal;
-            opacity: 1;
-        }
-
-        @keyframes typewriter {
-            from {
-                width: 0;
-            }
-            to {
-                width: 100%;
-            }
+        .subtitle-text.typing-complete::after {
+            display: none;
         }
 
         @keyframes blinkCursor {
             from, to {
-                border-color: transparent;
+                opacity: 0;
             }
             50% {
-                border-color: #fff;
+                opacity: 1;
             }
+        }
+
+        /* Character reveal animation */
+        .subtitle-text .char {
+            opacity: 0;
+        }
+
+        .subtitle-text .char.visible {
+            opacity: 1;
         }
 
         /* Button fade-in after subtitle */
@@ -739,8 +745,14 @@
 
         /* Helper class for the animated waveform bars */
         .sample-bar {
-            width: 2px; /* Fixed width for bars */
-            background-color: white;
+            width: 3px; /* Fixed width for bars */
+            background: repeating-linear-gradient(
+                to bottom,
+                white 0px,
+                white 4px,
+                transparent 4px,
+                transparent 8px
+            );
             /* Animation will be set via JavaScript for randomness */
         }
 
@@ -911,15 +923,19 @@
             z-index: 9999;
             pointer-events: none;
             opacity: 1; /* Always visible */
-            isolation: isolate; /* Prevent blend mode interactions from layers below */
+            /* Remove isolation to allow masking */
         }
 
         #spinning-text-cursor text {
             font-family: 'Inter', sans-serif;
             font-weight: 900;
             font-size: 16px;
-            fill: #ffffff;
+            fill: #000000; /* Black fill for mask effect */
             letter-spacing: 1.5px;
+        }
+
+        #spinning-text-cursor circle {
+            fill: #000000; /* Black fill for mask effect */
         }
 
         /* Light Saber Effects for Buttons */
@@ -1082,8 +1098,8 @@
             <!-- Define the circular path. The text will follow this. -->
             <path id="text-circle-cursor" d="M 50, 50 m -35, 0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0"></path>
         </defs>
-        <!-- Center blob like a crotchet note -->
-        <circle cx="50" cy="50" r="6" fill="#ffffff" />
+        <!-- Center blob like a crotchet note - black for mask effect -->
+        <circle cx="50" cy="50" r="6" fill="#000000" />
         <text>
             <!-- Attach the text to the circular path -->
             <textPath href="#text-circle-cursor">
@@ -1631,16 +1647,36 @@
                 heroRestContent.classList.remove('hero-content-hidden');
                 heroRestContent.classList.add('hero-content-visible');
 
-                // Start subtitle typewriter animation
+                // Start subtitle typewriter animation - character by character
+                const text = subtitleText.textContent;
+                subtitleText.textContent = '';
+                subtitleText.style.opacity = 1;
                 subtitleText.classList.add('typing');
 
-                // After typewriter completes (2s), remove cursor and show button
-                setTimeout(() => {
-                    subtitleText.classList.remove('typing');
-                    subtitleText.classList.add('typing-complete');
-                    startPlanningBtn.classList.remove('button-hidden');
-                    startPlanningBtn.classList.add('button-visible');
-                }, 2000);
+                // Wrap each character in a span
+                const chars = text.split('').map(char => {
+                    const span = document.createElement('span');
+                    span.className = 'char';
+                    span.textContent = char;
+                    subtitleText.appendChild(span);
+                    return span;
+                });
+
+                // Reveal characters one by one
+                let charIndex = 0;
+                const typeSpeed = 25; // milliseconds per character
+                const typeInterval = setInterval(() => {
+                    if (charIndex < chars.length) {
+                        chars[charIndex].classList.add('visible');
+                        charIndex++;
+                    } else {
+                        clearInterval(typeInterval);
+                        subtitleText.classList.remove('typing');
+                        subtitleText.classList.add('typing-complete');
+                        startPlanningBtn.classList.remove('button-hidden');
+                        startPlanningBtn.classList.add('button-visible');
+                    }
+                }, typeSpeed);
             }, 5500);
         }, 2500);
 
