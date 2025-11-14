@@ -890,6 +890,20 @@
             letter-spacing: 1.5px;
         }
 
+        /* Center cursor dot - always visible at exact mouse position */
+        #cursor-center-dot {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 12px;
+            height: 12px;
+            background: #ffffff;
+            border-radius: 50%;
+            z-index: 10000;
+            pointer-events: none;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
         /* Light Saber Effects for Buttons */
         .gignite-button {
             position: relative;
@@ -1155,6 +1169,9 @@
     </section>
 
     <!-- Cursor Blob Elements -->
+    <!-- Center dot at exact cursor position -->
+    <div id="cursor-center-dot"></div>
+
     <!-- SVG for the spinning, circular text -->
     <svg id="spinning-text-cursor" viewBox="0 0 100 100">
         <defs>
@@ -1828,14 +1845,23 @@
 
         // Initialize spinning cursor text immediately
         const cursorText = document.getElementById('spinning-text-cursor');
+        const centerDot = document.getElementById('cursor-center-dot');
         let mouseX = window.innerWidth / 2;
         let mouseY = window.innerHeight / 2;
         let cursorRotation = 0;
+        let idleTime = 0;
+        let lastMoveTime = Date.now();
+        let cursorScale = 1;
 
         // Track mouse movement for cursor text
         document.addEventListener('mousemove', (e) => {
             mouseX = e.clientX;
             mouseY = e.clientY;
+            lastMoveTime = Date.now();
+            idleTime = 0;
+
+            // Update center dot position immediately (no sway)
+            centerDot.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
         });
 
         // Animate cursor text rotation from the start
@@ -1845,10 +1871,22 @@
             const swayY = Math.sin(time * 0.8) * 25;
             cursorRotation = (Date.now() * 0.05) % 360;
 
+            // Calculate idle time in seconds
+            idleTime = (Date.now() - lastMoveTime) / 1000;
+
+            // Grow cursor when idle (max 2.5x after 3 seconds)
+            if (idleTime > 0.5) {
+                const growthFactor = Math.min((idleTime - 0.5) / 3, 1); // 0 to 1 over 3 seconds
+                cursorScale = 1 + (growthFactor * 1.5); // Grow from 1 to 2.5
+            } else {
+                cursorScale = 1;
+            }
+
             cursorText.style.transform = `
                 translate(${mouseX + swayX}px, ${mouseY + swayY}px)
                 translate(-50%, -50%)
                 rotate(${cursorRotation}deg)
+                scale(${cursorScale})
             `;
 
             requestAnimationFrame(animateCursorText);
@@ -1918,8 +1956,8 @@
                     // Add random pulsating to each dot
                     const pulse = Math.sin(pulseTime + dot.pulseOffset) * 0.15 + 1; // Oscillates between 0.85 and 1.15
 
-                    // Apply base scale, tail scale, and pulse
-                    const finalScale = baseScale * tailScale * pulse;
+                    // Apply base scale, tail scale, pulse, and idle growth
+                    const finalScale = baseScale * tailScale * pulse * cursorScale;
 
                     dot.element.style.transform = `translate(-50%, -50%) scale(${finalScale})`;
 
