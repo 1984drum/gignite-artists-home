@@ -373,18 +373,38 @@
             box-decoration-break: clone;
             -webkit-box-decoration-break: clone;
             opacity: 0;
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 3px solid #fff;
         }
 
         .subtitle-text.typing {
-            animation: subtitleFadeIn 1.5s ease-out forwards;
+            animation: typewriter 2s steps(90) forwards, blinkCursor 0.75s step-end infinite;
         }
 
-        @keyframes subtitleFadeIn {
+        .subtitle-text.typing-complete {
+            border-right: none;
+            white-space: normal;
+            opacity: 1;
+        }
+
+        @keyframes typewriter {
             from {
-                opacity: 0;
+                width: 0;
+                opacity: 1;
             }
             to {
+                width: 100%;
                 opacity: 1;
+            }
+        }
+
+        @keyframes blinkCursor {
+            from, to {
+                border-color: transparent;
+            }
+            50% {
+                border-color: #fff;
             }
         }
 
@@ -1577,14 +1597,16 @@
                 heroRestContent.classList.remove('hero-content-hidden');
                 heroRestContent.classList.add('hero-content-visible');
 
-                // Start subtitle fade-in animation
+                // Start subtitle typewriter animation
                 subtitleText.classList.add('typing');
 
-                // After subtitle animation completes (1.5s), fade in button
+                // After typewriter completes (2s), remove cursor and show button
                 setTimeout(() => {
+                    subtitleText.classList.remove('typing');
+                    subtitleText.classList.add('typing-complete');
                     startPlanningBtn.classList.remove('button-hidden');
                     startPlanningBtn.classList.add('button-visible');
-                }, 1500);
+                }, 2000);
             }, 5500);
         }, 2500);
 
@@ -1744,7 +1766,7 @@
             // Configuration
             const trailLength = 20; // Number of blobs in the trail
             const container = document.getElementById('trail-container');
-            const baseScale = 0.6; // Increased for better visibility
+            const baseScale = 0.45; // 75% of original size
 
             // Store dots
             const dots = [];
