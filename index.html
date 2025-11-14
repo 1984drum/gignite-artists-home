@@ -20,6 +20,9 @@
     <!-- 3. Load Inter for cursor blob text -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@900&display=swap" rel="stylesheet">
 
+    <!-- 4. Load Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <style>
         /* REMOVED: @import url("https://use.typekit.net/hat1wfl.css"); */
 
@@ -39,6 +42,11 @@
         h1, .gignite-h1 { font-weight: 900; } /* Heavier for H1 */
 
 
+        /* Hero section background */
+        .hero-section {
+            background-color: #000;
+        }
+
         /* Hero background image styles */
         .hero-bg-image {
             position: absolute;
@@ -50,10 +58,11 @@
             object-position: bottom;
             z-index: 0;
             opacity: 0;
+            filter: blur(3px);
         }
 
         .hero-bg-image.active {
-            opacity: 1;
+            opacity: 0.7;
         }
 
         /* Smooth fade-in for first image during intro */
@@ -366,26 +375,50 @@
 
         /* Subtitle typing effect */
         .subtitle-text {
-            display: inline;
+            display: inline-block;
             background-color: #000;
             padding: 0.5rem 1rem;
             line-height: 2.2;
-            box-decoration-break: clone;
-            -webkit-box-decoration-break: clone;
+            opacity: 0;
+            position: relative;
+        }
+
+        .subtitle-text::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: #fff;
             opacity: 0;
         }
 
-        .subtitle-text.typing {
-            animation: subtitleFadeIn 1.5s ease-out forwards;
+        .subtitle-text.typing::after {
+            animation: blinkCursor 0.75s step-end infinite;
+            opacity: 1;
         }
 
-        @keyframes subtitleFadeIn {
-            from {
+        .subtitle-text.typing-complete::after {
+            display: none;
+        }
+
+        @keyframes blinkCursor {
+            from, to {
                 opacity: 0;
             }
-            to {
+            50% {
                 opacity: 1;
             }
+        }
+
+        /* Character reveal animation */
+        .subtitle-text .char {
+            opacity: 0;
+        }
+
+        .subtitle-text .char.visible {
+            opacity: 1;
         }
 
         /* Button fade-in after subtitle */
@@ -598,7 +631,14 @@
 
         .equalizer-bar {
             flex: 1;
-            background: #000;
+            /* Segmented equalizer effect using repeating gradient */
+            background: repeating-linear-gradient(
+                to top,
+                #000 0px,
+                #000 12px,
+                transparent 12px,
+                transparent 16px
+            );
             transform: scaleY(0);
             transform-origin: bottom;
         }
@@ -628,13 +668,34 @@
             filter: brightness(0.7);
         }
         
-        @keyframes sample-wave-anim {
-            0%, 100% {
-                height: 3px; /* Flat part of the wave */
-            }
-            50% {
-                height: 30px; /* Peak of the wave */
-            }
+        @keyframes sample-wave-anim-1 {
+            0%, 100% { height: 3px; }
+            50% { height: 35px; }
+        }
+
+        @keyframes sample-wave-anim-2 {
+            0%, 100% { height: 3px; }
+            50% { height: 25px; }
+        }
+
+        @keyframes sample-wave-anim-3 {
+            0%, 100% { height: 3px; }
+            50% { height: 40px; }
+        }
+
+        @keyframes sample-wave-anim-4 {
+            0%, 100% { height: 3px; }
+            50% { height: 18px; }
+        }
+
+        @keyframes sample-wave-anim-5 {
+            0%, 100% { height: 3px; }
+            50% { height: 28px; }
+        }
+
+        @keyframes sample-wave-anim-6 {
+            0%, 100% { height: 3px; }
+            50% { height: 45px; }
         }
 
         /* Carousel slide styles */
@@ -697,9 +758,88 @@
 
         /* Helper class for the animated waveform bars */
         .sample-bar {
-            width: 2px; /* Fixed width for bars */
-            background-color: white;
-            animation: sample-wave-anim 1.2s infinite ease-in-out;
+            width: 3px; /* Fixed width for bars */
+            background: repeating-linear-gradient(
+                to bottom,
+                white 0px,
+                white 4px,
+                transparent 4px,
+                transparent 8px
+            );
+            /* Animation will be set via JavaScript for randomness */
+        }
+
+        /* Problem/Solution Section Background */
+        .problem-solution-section {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .problem-solution-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url('img/GN 64.png');
+            background-size: cover;
+            background-position: center;
+            filter: blur(8px);
+            z-index: 0;
+            opacity: 0.3;
+        }
+
+        .problem-solution-section > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Features Section Background */
+        .features-section {
+            position: relative;
+            overflow: hidden;
+            background-color: #000;
+        }
+
+        .features-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url('img/GN 69.png');
+            background-size: cover;
+            background-position: center;
+            filter: contrast(1.3);
+            z-index: 0;
+            opacity: 0.8;
+        }
+
+        .features-section > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Final CTA Section Background with Parallax */
+        .final-cta-section {
+            position: relative;
+            overflow: hidden;
+            background-color: #000;
+        }
+
+        .final-cta-section::before {
+            content: '';
+            position: absolute;
+            inset: -10%;
+            background-image: url('img/1984drum_A_dynamic_long-exposure_photograph._The_static_stage_1d984278-e076-4baa-9338-daf1edf5dae0_1.png');
+            background-size: cover;
+            background-position: center;
+            filter: brightness(0.4);
+            z-index: 0;
+            transition: transform 0.1s ease-out;
+            will-change: transform;
+            transform: translate(var(--parallax-x, 0px), var(--parallax-y, 0px));
+        }
+
+        .final-cta-section > * {
+            position: relative;
+            z-index: 1;
         }
 
         /* Header styles */
@@ -755,6 +895,16 @@
             background: #06b6d4 !important;
             backdrop-filter: blur(0);
             -webkit-backdrop-filter: blur(0);
+            animation: buttonGrow 3s ease-out forwards;
+        }
+
+        @keyframes buttonGrow {
+            0% {
+                transform: scale(1);
+            }
+            100% {
+                transform: scale(1.2);
+            }
         }
 
         .glitch-button::before,
@@ -851,7 +1001,7 @@
             background: #ffffff;
             border-radius: 50%;
             transform: translate(-50%, -50%);
-            opacity: 1;
+            opacity: 0.5;
         }
 
         /* Growing animation for blobs */
@@ -869,15 +1019,53 @@
             z-index: 9999;
             pointer-events: none;
             opacity: 1; /* Always visible */
-            isolation: isolate; /* Prevent blend mode interactions from layers below */
+            /* Remove isolation to allow masking */
+            transition: opacity 0.3s ease, width 0.5s ease, height 0.5s ease;
+        }
+
+        #spinning-text-cursor.hidden {
+            opacity: 0;
+        }
+
+        #spinning-text-cursor.faded {
+            opacity: 0;
+        }
+
+        #spinning-text-cursor.idle {
+            width: 200px;
+            height: 200px;
         }
 
         #spinning-text-cursor text {
             font-family: 'Inter', sans-serif;
             font-weight: 900;
             font-size: 16px;
-            fill: #ffffff;
+            fill: #000000; /* Black fill for mask effect */
             letter-spacing: 1.5px;
+            transition: font-size 0.5s ease;
+        }
+
+        #spinning-text-cursor.idle text {
+            font-size: 13px;
+        }
+
+        #spinning-text-cursor circle {
+            fill: #000000; /* Black fill for mask effect */
+            transition: r 0.5s ease;
+        }
+
+        /* Center cursor dot - always visible at exact mouse position */
+        #cursor-center-dot {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 12px;
+            height: 12px;
+            background: #ffffff;
+            border-radius: 50%;
+            z-index: 10000;
+            pointer-events: none;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
         }
 
         /* Light Saber Effects for Buttons */
@@ -975,6 +1163,164 @@
                 height: 8px;
             }
         }
+
+        /* Background image for Problem/Solution section */
+        .section-problem-solution {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-problem-solution::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('img/GN 64.png');
+            background-size: cover;
+            background-position: center;
+            filter: blur(4px);
+            z-index: 0;
+        }
+
+        .section-problem-solution > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Background image for Features section */
+        .section-features {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-features::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #000;
+            z-index: 0;
+        }
+
+        .section-features::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('img/GN 69.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.8;
+            filter: contrast(1.2);
+            z-index: 1;
+        }
+
+        .section-features > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Background image for Final CTA section with parallax */
+        .section-final-cta {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-final-cta-bg {
+            position: absolute;
+            top: -50px;
+            left: -50px;
+            right: -50px;
+            bottom: -50px;
+            background-image: url('img/1984drum_A_dynamic_long-exposure_photograph._The_static_stage_1d984278-e076-4baa-9338-daf1edf5dae0_1.png');
+            background-size: cover;
+            background-position: center;
+            z-index: 0;
+            transition: transform 0.1s ease-out;
+        }
+
+        .section-final-cta > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Background image for Benefits section */
+        .section-benefits {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-benefits::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('img/GN 71.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.3;
+            z-index: 0;
+        }
+
+        .section-benefits > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* MailChimp Form Styles */
+        .mailchimp-form {
+            max-width: 100%;
+        }
+
+        .mailchimp-input {
+            width: 100%;
+            background-color: #000;
+            border: 3px solid #374151; /* gray-700 */
+            color: #fff;
+            padding: 1rem 1.25rem;
+            font-size: 1rem;
+            font-family: 'Noto Sans', sans-serif;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .mailchimp-input:focus {
+            border-color: #06b6d4; /* cyan-500 */
+            box-shadow: 0 0 0 1px #06b6d4;
+        }
+
+        .mailchimp-input::placeholder {
+            color: #6b7280; /* gray-500 */
+        }
+
+        #mc_embed_signup {
+            background: transparent !important;
+            clear: none !important;
+        }
+
+        #mce-responses .response {
+            margin: 0 0 1rem 0;
+            padding: 0.75rem;
+            font-weight: 600;
+        }
+
+        #mce-error-response {
+            background-color: rgba(239, 68, 68, 0.1);
+            border: 2px solid #ef4444;
+        }
+
+        #mce-success-response {
+            background-color: rgba(34, 197, 94, 0.1);
+            border: 2px solid #22c55e;
+        }
     </style>
 </head>
 <body class="bg-black">
@@ -996,7 +1342,7 @@
     </header>
 
     <!-- 1. Hero Section -->
-    <section class="h-screen w-full relative overflow-hidden">
+    <section class="hero-section h-screen w-full relative overflow-hidden">
         <!-- Background Images (Carousel) - First image fades in after typewriter -->
         <img src="img/GN 29.png" alt="GIGNITE Background" class="hero-bg-image" data-slide="0" />
         <img src="img/GN 44.png" alt="GIGNITE Background" class="hero-bg-image" data-slide="1" />
@@ -1025,7 +1371,7 @@
                     <span id="subtitle-text" class="subtitle-text">Our platform will help you build out your tour plan step by step, making your ambitions a reality.</span>
                 </p>
                 <!-- Button -->
-                <a id="start-planning-btn" href="#features" class="glitch-button gignite-button button-hidden mt-12 inline-block py-3 px-10 bg-transparent text-white border-[3px] border-cyan-500 font-bold text-lg uppercase shadow-lg shadow-cyan-500/30 transform transition-all duration-300 hover:scale-105 hover:bg-cyan-500 hover:text-black hover:border-cyan-500">
+                <a id="start-planning-btn" href="https://mailchi.mp/YOUR_SIGNUP_URL" target="_blank" rel="noopener noreferrer" class="glitch-button gignite-button button-hidden mt-12 inline-block py-3 px-10 bg-transparent text-white border-[3px] border-cyan-500 font-bold text-lg uppercase shadow-lg shadow-cyan-500/30 transform transition-all duration-300 hover:scale-105 hover:bg-cyan-500 hover:text-black hover:border-cyan-500">
                     Start Planning
                 </a>
             </div>
@@ -1034,18 +1380,23 @@
     </section>
 
     <!-- Cursor Blob Elements -->
+    <!-- Center dot at exact cursor position -->
+    <div id="cursor-center-dot"></div>
+
     <!-- SVG for the spinning, circular text -->
     <svg id="spinning-text-cursor" viewBox="0 0 100 100">
         <defs>
             <!-- Define the circular path. The text will follow this. -->
             <path id="text-circle-cursor" d="M 50, 50 m -35, 0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0"></path>
+            <!-- Larger path for idle state -->
+            <path id="text-circle-cursor-large" d="M 50, 50 m -45, 0 a 45,45 0 1,1 90,0 a 45,45 0 1,1 -90,0"></path>
         </defs>
-        <!-- Center blob like a crotchet note -->
-        <circle cx="50" cy="50" r="6" fill="#ffffff" />
+        <!-- Center blob like a crotchet note - black for mask effect -->
+        <circle id="cursor-center-dot" cx="50" cy="50" r="6" fill="#000000" />
         <text>
             <!-- Attach the text to the circular path -->
-            <textPath href="#text-circle-cursor" textLength="220" lengthAdjust="spacing">
-                YOU  HAVE  THE  POWER
+            <textPath id="cursor-text-path" href="#text-circle-cursor">
+                YOU  HAVE  THE  POWER&#x20;&#x20;
             </textPath>
         </text>
     </svg>
@@ -1064,8 +1415,9 @@
                 <!-- 2. Create an animating fractal noise pattern - increased for more abstract shapes -->
                 <feTurbulence type="fractalNoise" baseFrequency="0.004 0.006"
                               numOctaves="4" seed="1" result="turbulence">
-                    <!-- Slower animation for more chilled out effect -->
-                    <animate attributeName="seed" from="1" to="100" dur="20s" repeatCount="indefinite" />
+                    <!-- Variable speed animation for irregular changes -->
+                    <animate attributeName="seed" from="1" to="100" dur="15s" repeatCount="indefinite" />
+                    <animate attributeName="baseFrequency" values="0.004 0.006; 0.006 0.008; 0.003 0.005; 0.004 0.006" dur="8s" repeatCount="indefinite" />
                 </feTurbulence>
 
                 <!-- 3. Use the noise to displace (warp) the blurred blobs - increased scale for more abstract shape -->
@@ -1115,7 +1467,7 @@
 
     <main>
         <!-- 2. Problem/Solution Section -->
-        <section class="py-20 md:py-32 bg-black">
+        <section class="problem-solution-section py-20 md:py-32 bg-black">
             <div class="container mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
                 <!-- Text Content -->
                 <div class="reveal-on-scroll">
@@ -1130,7 +1482,7 @@
                         <span>All your bookings and info in one place, planned to perfection. You get clarity and transparency on the financials, enabling you to drive a more rewarding future for your band.</span>
                     </p>
                     <!-- UPDATED: Button Style 2 -->
-                    <a href="#" class="gignite-button mt-10 inline-block py-3 px-10 bg-transparent text-white border-[3px] border-cyan-500 font-bold text-lg uppercase shadow-lg shadow-cyan-500/30 transform transition-all duration-300 hover:scale-105 hover:bg-cyan-500 hover:text-black hover:border-cyan-500">
+                    <a href="https://mailchi.mp/YOUR_SIGNUP_URL" target="_blank" rel="noopener noreferrer" class="gignite-button mt-10 inline-block py-3 px-10 bg-transparent text-white border-[3px] border-cyan-500 font-bold text-lg uppercase shadow-lg shadow-cyan-500/30 transform transition-all duration-300 hover:scale-105 hover:bg-cyan-500 hover:text-black hover:border-cyan-500">
                         Get Started
                     </a>
                 </div>
@@ -1275,12 +1627,12 @@
         </section>
 
         <!-- 3. Features Section (Interactive Cards) -->
-        <section id="features" class="py-20 md:py-32 bg-gray-950">
+        <section id="features" class="features-section py-20 md:py-32 bg-gray-950">
             <div class="container mx-auto px-6">
                 <div class="text-center max-w-3xl mx-auto reveal-on-scroll">
                     <h2 class="gignite-heading text-4xl md:text-6xl font-bold tracking-tight">Your Virtual Tour Manager</h2>
                     <p class="text-lg text-gray-300 mt-6">
-                        Gignite guides you through every step, ensuring no details are overlooked. From customs paperwork to visas, we've got you covered.
+                        <span style="background-color: #000; padding: 0.5rem 1rem; display: inline-block; line-height: 1.8;">Gignite guides you through every step, ensuring no details are overlooked. From customs paperwork to visas, we've got you covered.</span>
                     </p>
                 </div>
 
@@ -1288,7 +1640,7 @@
                     <!-- Feature Card 1 -->
                     <div class="feature-card p-8 reveal-on-scroll">
                         <div class="feature-card-content">
-                            <svg class="w-12 h-12 text-cyan-400 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2v10m0-10a2 2 0 012 2v3m-2-5a2 2 0 00-2 2v3m0 0v.01M12 18v-2m0 2v2m0-2a2 2 0 012-2h3m-5 2a2 2 0 00-2-2H9m5 2v.01M15 12v.01M9 12v.01M12 12v.01M10 2.25h.01M14 2.25h.01M7 16.25h.01M17 16.25h.01M4 12.25h.01M19.75 12.25h.01M10 21.75h.01M14 21.75h.01"></path></svg>
+                            <i class="fa-solid fa-calendar-users text-cyan-400 mb-6" style="font-size: 3rem;"></i>
                             <h3 class="gignite-heading text-2xl font-bold mb-4">End-to-end event control</h3>
                             <p class="text-gray-300">
                                 Be guided through a step-by-step process, evaluate options, and make bookings with confidence. All in one place.
@@ -1299,7 +1651,7 @@
                     <!-- Feature Card 2 -->
                     <div class="feature-card p-8 reveal-on-scroll" style="transition-delay: 200ms;">
                         <div class="feature-card-content">
-                            <svg class="w-12 h-12 text-cyan-400 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m4 4l-4-4m4 4l-4 4m-4-8v12m0 0l-4-4m4 4l4-4"></path></svg>
+                            <i class="fa-solid fa-seedling text-cyan-400 mb-6" style="font-size: 3rem;"></i>
                             <h3 class="gignite-heading text-2xl font-bold mb-4">Streamlining logistics</h3>
                             <p class="text-gray-300">
                                 Efficiency and sustainability are built in. Plan tour dates to minimise road and air miles, reducing your costs and carbon footprint.
@@ -1310,7 +1662,7 @@
                     <!-- Feature Card 3 -->
                     <div class="feature-card p-8 reveal-on-scroll" style="transition-delay: 300ms;">
                         <div class="feature-card-content">
-                            <svg class="w-12 h-12 text-cyan-400 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                            <i class="fa-solid fa-display-chart-up text-cyan-400 mb-6" style="font-size: 3rem;"></i>
                             <h3 class="gignite-heading text-2xl font-bold mb-4">Marketing for gig success</h3>
                             <p class="text-gray-300">
                                 Our tech helps you create tour posters, promotions, branding, and even order your tour merchandise directly.
@@ -1321,7 +1673,7 @@
                     <!-- Feature Card 4 -->
                     <div class="feature-card p-8 reveal-on-scroll" style="transition-delay: 400ms;">
                         <div class="feature-card-content">
-                            <svg class="w-12 h-12 text-cyan-400 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            <i class="fa-solid fa-coins text-cyan-400 mb-6" style="font-size: 3rem;"></i>
                             <h3 class="gignite-heading text-2xl font-bold mb-4">Success you can measure</h3>
                             <p class="text-gray-300">
                                 Understand gig profitability from the outset. Get clarity on financials to actively build your career and reputation.
@@ -1363,34 +1715,34 @@
         </section>
 
         <!-- 5. Benefits Section (Quick Facts) -->
-        <section class="py-20 md:py-32 bg-black">
+        <section class="section-benefits py-20 md:py-32 bg-black">
             <div class="container mx-auto px-6">
                 <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-12 text-center">
-                    
+
                     <!-- Benefit 1 -->
-                    <div class="reveal-on-scroll">
-                        <svg class="w-12 h-12 text-cyan-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.105 0 2 .895 2 2s-.895 2-2 2-2-.895-2-2 .895-2 2-2zm0 8c-1.105 0-2 .895-2 2s.895 2 2 2 2-.895 2-2-.895-2-2-2zm-9 4h18M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+                    <div class="benefit-card reveal-on-scroll">
+                        <i class="fa-solid fa-circle-heart text-cyan-400 mx-auto" style="font-size: 3rem;"></i>
                         <h3 class="gignite-heading text-2xl font-bold mt-6">No subscription fees</h3>
                         <p class="text-gray-300 mt-2">Platform access is free for artists and bands. Gignite was created to increase your revenues.</p>
                     </div>
 
                     <!-- Benefit 2 -->
-                    <div class="reveal-on-scroll" style="transition-delay: 200ms;">
-                        <svg class="w-12 h-12 text-cyan-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                    <div class="benefit-card reveal-on-scroll" style="transition-delay: 200ms;">
+                        <i class="fa-solid fa-bars-progress text-cyan-400 mx-auto" style="font-size: 3rem;"></i>
                         <h3 class="gignite-heading text-2xl font-bold mt-6">You are in control</h3>
                         <p class="text-gray-300 mt-2">All details, correspondence, and orders are in one place. You're in charge, 24/7.</p>
                     </div>
 
                     <!-- Benefit 3 -->
-                    <div class="reveal-on-scroll" style="transition-delay: 300ms;">
-                        <svg class="w-12 h-12 text-cyan-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <div class="benefit-card reveal-on-scroll" style="transition-delay: 300ms;">
+                        <i class="fa-solid fa-face-smile text-cyan-400 mx-auto" style="font-size: 3rem;"></i>
                         <h3 class="gignite-heading text-2xl font-bold mt-6">Better event experiences</h3>
                         <p class="text-gray-300 mt-2">The performance rules. Smooth-running events are a joy for you and your fans.</p>
                     </div>
 
                     <!-- Benefit 4 -->
-                    <div class="reveal-on-scroll" style="transition-delay: 400ms;">
-                        <svg class="w-12 h-12 text-cyan-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    <div class="benefit-card reveal-on-scroll" style="transition-delay: 400ms;">
+                        <i class="fa-solid fa-arrow-up-right-dots text-cyan-400 mx-auto" style="font-size: 3rem;"></i>
                         <h3 class="gignite-heading text-2xl font-bold mt-6">Success you can measure</h3>
                         <p class="text-gray-300 mt-2">Understand gig profitability from the outset to actively build your career and reputation.</p>
                     </div>
@@ -1432,7 +1784,7 @@
         </section>
 
         <!-- 6. Final CTA -->
-        <section class="py-20 md:py-32 bg-gray-950 text-center">
+        <section id="final-cta" class="final-cta-section py-20 md:py-32 bg-gray-950 text-center">
             <div class="container mx-auto px-6 reveal-on-scroll">
                 <h2 class="gignite-heading text-4xl md:text-6xl font-bold">The performance rules.</h2>
                 <p class="text-xl md:text-2xl text-gray-300 mt-6 max-w-3xl mx-auto">
@@ -1440,7 +1792,7 @@
                     Stop the admin headaches and get back to the music.
                 </p>
                 <!-- UPDATED: Button Style 3 -->
-                <a href="#" class="gignite-button mt-12 inline-block py-4 px-12 border-[3px] border-cyan-500 text-white font-bold text-lg uppercase tracking-widest transform transition-all duration-300 hover:bg-cyan-500 hover:text-black hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/30">
+                <a href="https://mailchi.mp/YOUR_SIGNUP_URL" target="_blank" rel="noopener noreferrer" class="gignite-button mt-12 inline-block py-4 px-12 border-[3px] border-cyan-500 text-white font-bold text-lg uppercase tracking-widest transform transition-all duration-300 hover:bg-cyan-500 hover:text-black hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/30">
                     Get Started For Free
                 </a>
             </div>
@@ -1473,6 +1825,64 @@
         </div>
     </section>
 
+    <!-- Newsletter Subscription Section -->
+    <section class="bg-black py-20">
+        <div class="container mx-auto px-6">
+            <div class="max-w-2xl mx-auto">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl md:text-5xl font-bold mb-4 gignite-heading">Stay in the Loop</h2>
+                    <p class="text-gray-400 text-lg">Get updates on new features, tips for artists, and exclusive content delivered to your inbox.</p>
+                </div>
+
+                <div id="mc_embed_signup" class="mailchimp-form">
+                    <form action="https://live.us19.list-manage.com/subscribe/post?u=0af904bb923e40ef979e3dff4&amp;id=ea7e5d6226&amp;f_id=00c53be3f0" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank">
+                        <div id="mc_embed_signup_scroll">
+                            <div class="mb-6">
+                                <label for="mce-EMAIL" class="block text-white font-semibold mb-2 text-sm uppercase tracking-wide">Email Address <span class="text-cyan-500">*</span></label>
+                                <input type="email" name="EMAIL" class="mailchimp-input" id="mce-EMAIL" required="" value="" placeholder="your@email.com">
+                            </div>
+
+                            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                                <div>
+                                    <label for="mce-FNAME" class="block text-white font-semibold mb-2 text-sm uppercase tracking-wide">First Name</label>
+                                    <input type="text" name="FNAME" class="mailchimp-input" id="mce-FNAME" value="" placeholder="First Name">
+                                </div>
+                                <div>
+                                    <label for="mce-LNAME" class="block text-white font-semibold mb-2 text-sm uppercase tracking-wide">Last Name</label>
+                                    <input type="text" name="LNAME" class="mailchimp-input" id="mce-LNAME" value="" placeholder="Last Name">
+                                </div>
+                            </div>
+
+                            <div class="mb-8">
+                                <label for="mce-BANDARTIST" class="block text-white font-semibold mb-2 text-sm uppercase tracking-wide">Band or Artist Name</label>
+                                <input type="text" name="BANDARTIST" class="mailchimp-input" id="mce-BANDARTIST" value="" placeholder="Your Artist Name">
+                            </div>
+
+                            <div hidden="">
+                                <input type="hidden" name="tags" value="4077392">
+                            </div>
+
+                            <div id="mce-responses" class="clear mb-4">
+                                <div class="response text-red-400 text-center" id="mce-error-response" style="display: none;"></div>
+                                <div class="response text-green-400 text-center" id="mce-success-response" style="display: none;"></div>
+                            </div>
+
+                            <div aria-hidden="true" style="position: absolute; left: -5000px;">
+                                <input type="text" name="b_0af904bb923e40ef979e3dff4_ea7e5d6226" tabindex="-1" value="">
+                            </div>
+
+                            <div class="text-center">
+                                <button type="submit" name="subscribe" id="mc-embedded-subscribe" class="gignite-button inline-block py-4 px-12 border-[3px] border-cyan-500 text-white font-bold text-lg uppercase tracking-widest transform transition-all duration-300 hover:bg-cyan-500 hover:text-black hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/30">
+                                    Subscribe
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer class="bg-black py-12">
         <div class="container mx-auto px-6 text-center text-gray-500">
@@ -1484,6 +1894,17 @@
     <script>
         // Set current year in footer
         document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        // Randomize sample bar animations
+        document.addEventListener('DOMContentLoaded', () => {
+            const sampleBars = document.querySelectorAll('.sample-bar');
+            sampleBars.forEach(bar => {
+                const animNum = Math.floor(Math.random() * 6) + 1; // Random 1-6
+                const duration = 0.6 + Math.random() * 1.2; // Random 0.6-1.8s
+                const delay = Math.random() * 0.8; // Random 0-0.8s delay
+                bar.style.animation = `sample-wave-anim-${animNum} ${duration}s infinite ease-in-out ${delay}s`;
+            });
+        });
 
         // Intersection Observer for scroll-triggered animations
         const revealElements = document.querySelectorAll('.reveal-on-scroll');
@@ -1577,14 +1998,36 @@
                 heroRestContent.classList.remove('hero-content-hidden');
                 heroRestContent.classList.add('hero-content-visible');
 
-                // Start subtitle fade-in animation
+                // Start subtitle typewriter animation - character by character
+                const text = subtitleText.textContent;
+                subtitleText.textContent = '';
+                subtitleText.style.opacity = 1;
                 subtitleText.classList.add('typing');
 
-                // After subtitle animation completes (1.5s), fade in button
-                setTimeout(() => {
-                    startPlanningBtn.classList.remove('button-hidden');
-                    startPlanningBtn.classList.add('button-visible');
-                }, 1500);
+                // Wrap each character in a span
+                const chars = text.split('').map(char => {
+                    const span = document.createElement('span');
+                    span.className = 'char';
+                    span.textContent = char;
+                    subtitleText.appendChild(span);
+                    return span;
+                });
+
+                // Reveal characters one by one
+                let charIndex = 0;
+                const typeSpeed = 25; // milliseconds per character
+                const typeInterval = setInterval(() => {
+                    if (charIndex < chars.length) {
+                        chars[charIndex].classList.add('visible');
+                        charIndex++;
+                    } else {
+                        clearInterval(typeInterval);
+                        subtitleText.classList.remove('typing');
+                        subtitleText.classList.add('typing-complete');
+                        startPlanningBtn.classList.remove('button-hidden');
+                        startPlanningBtn.classList.add('button-visible');
+                    }
+                }, typeSpeed);
             }, 5500);
         }, 2500);
 
@@ -1705,14 +2148,23 @@
 
         // Initialize spinning cursor text immediately
         const cursorText = document.getElementById('spinning-text-cursor');
+        const centerDot = document.getElementById('cursor-center-dot');
         let mouseX = window.innerWidth / 2;
         let mouseY = window.innerHeight / 2;
         let cursorRotation = 0;
+        let idleTime = 0;
+        let lastMoveTime = Date.now();
+        let cursorScale = 1;
 
         // Track mouse movement for cursor text
         document.addEventListener('mousemove', (e) => {
             mouseX = e.clientX;
             mouseY = e.clientY;
+            lastMoveTime = Date.now();
+            idleTime = 0;
+
+            // Update center dot position immediately (no sway)
+            centerDot.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
         });
 
         // Animate cursor text rotation from the start
@@ -1722,10 +2174,22 @@
             const swayY = Math.sin(time * 0.8) * 25;
             cursorRotation = (Date.now() * 0.05) % 360;
 
+            // Calculate idle time in seconds
+            idleTime = (Date.now() - lastMoveTime) / 1000;
+
+            // Grow cursor when idle (max 2.5x after 3 seconds)
+            if (idleTime > 0.5) {
+                const growthFactor = Math.min((idleTime - 0.5) / 3, 1); // 0 to 1 over 3 seconds
+                cursorScale = 1 + (growthFactor * 1.5); // Grow from 1 to 2.5
+            } else {
+                cursorScale = 1;
+            }
+
             cursorText.style.transform = `
                 translate(${mouseX + swayX}px, ${mouseY + swayY}px)
                 translate(-50%, -50%)
                 rotate(${cursorRotation}deg)
+                scale(${cursorScale})
             `;
 
             requestAnimationFrame(animateCursorText);
@@ -1744,7 +2208,8 @@
             // Configuration
             const trailLength = 20; // Number of blobs in the trail
             const container = document.getElementById('trail-container');
-            const baseScale = 0.6; // Increased for better visibility
+            const baseScale = 0.45; // 75% of original size
+            const splashes = []; // Store splash elements
 
             // Store dots
             const dots = [];
@@ -1760,9 +2225,36 @@
                     x: mouseX,
                     y: mouseY,
                     pulseOffset: Math.random() * Math.PI * 2, // Random starting point for pulse
+                    pulseSpeed: 0.8 + Math.random() * 1.4, // Random pulse speed (0.8x - 2.2x)
                     sizeVariation: 0.7 + Math.random() * 0.6 // Random size between 0.7x and 1.3x
                 });
             }
+
+            // Function to create a splash
+            function createSplash(x, y) {
+                const splash = document.createElement('div');
+                splash.classList.add('trail-dot');
+                splash.style.left = `${x}px`;
+                splash.style.top = `${y}px`;
+                container.appendChild(splash);
+
+                const size = 0.3 + Math.random() * 0.4; // Random splash size
+                const lifetime = 800 + Math.random() * 1200; // 0.8-2s lifetime
+
+                splashes.push({
+                    element: splash,
+                    createdAt: Date.now(),
+                    lifetime: lifetime,
+                    maxSize: size
+                });
+            }
+
+            // Randomly create splashes
+            setInterval(() => {
+                if (Math.random() > 0.7) { // 30% chance every interval
+                    createSplash(mouseX, mouseY);
+                }
+            }, 300 + Math.random() * 700); // Every 0.3-1s
 
             // Animation Loop
             function animate() {
@@ -1772,8 +2264,8 @@
                 const swayX = Math.cos(time) * swayAmount;
                 const swayY = Math.sin(time * 0.8) * swayAmount;
 
-                // Random pulsating effect
-                const pulseTime = Date.now() * 0.002; // Pulse speed
+                // Random pulsating effect with variable speed per dot
+                const pulseTime = Date.now() * 0.002;
 
                 // The first dot follows the mouse with sway
                 let leaderX = mouseX + swayX;
@@ -1793,8 +2285,8 @@
                     const linearScale = 1 - (index / trailLength);
                     const tailScale = Math.pow(linearScale, 2);
 
-                    // Add random pulsating to each dot
-                    const pulse = Math.sin(pulseTime + dot.pulseOffset) * 0.15 + 1; // Oscillates between 0.85 and 1.15
+                    // Add random pulsating to each dot with individual pulse speed
+                    const pulse = Math.sin(pulseTime * dot.pulseSpeed + dot.pulseOffset) * 0.15 + 1;
 
                     // Apply base scale, tail scale, pulse, and random size variation
                     const finalScale = baseScale * tailScale * pulse * dot.sizeVariation;
@@ -1804,6 +2296,24 @@
                     // The next dot follows the current dot
                     leaderX = dot.x;
                     leaderY = dot.y;
+                });
+
+                // Animate and clean up splashes
+                splashes.forEach((splash, index) => {
+                    const age = Date.now() - splash.createdAt;
+                    const progress = age / splash.lifetime;
+
+                    if (progress >= 1) {
+                        // Remove expired splash
+                        splash.element.remove();
+                        splashes.splice(index, 1);
+                    } else {
+                        // Fade out and expand
+                        const scale = splash.maxSize * (1 + progress * 2); // Expand to 3x size
+                        const opacity = 1 - progress; // Fade out
+                        splash.element.style.transform = `translate(-50%, -50%) scale(${scale})`;
+                        splash.element.style.opacity = opacity;
+                    }
                 });
 
                 requestAnimationFrame(animate);
@@ -1867,6 +2377,166 @@
 
         // Initialize light sabers after page loads
         initLightSabers();
+
+        // Fade out cursor text on button hover
+        const spinningCursorText = document.getElementById('spinning-text-cursor');
+        const allButtons = document.querySelectorAll('button, a.gignite-button');
+
+        allButtons.forEach(button => {
+            button.addEventListener('mouseenter', () => {
+                spinningCursorText.classList.add('hidden');
+            });
+
+            button.addEventListener('mouseleave', () => {
+                spinningCursorText.classList.remove('hidden');
+            });
+        });
+
+        // 3D Parallax effect for Final CTA section background
+        const finalCtaSection = document.getElementById('final-cta');
+        if (finalCtaSection) {
+            finalCtaSection.addEventListener('mousemove', (e) => {
+                const rect = finalCtaSection.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+
+                // Calculate offset from center as percentage (-1 to 1)
+                const percentX = (x - centerX) / centerX;
+                const percentY = (y - centerY) / centerY;
+
+                // Apply subtle parallax movement (max 20px in each direction)
+                const moveX = percentX * 20;
+                const moveY = percentY * 20;
+
+                // Apply transform to ::before pseudo-element via CSS custom properties
+                finalCtaSection.style.setProperty('--parallax-x', `${moveX}px`);
+                finalCtaSection.style.setProperty('--parallax-y', `${moveY}px`);
+            });
+
+            finalCtaSection.addEventListener('mouseleave', () => {
+                // Reset to center position
+                finalCtaSection.style.setProperty('--parallax-x', '0px');
+                finalCtaSection.style.setProperty('--parallax-y', '0px');
+            });
+        }
+
+        // Cursor text fade out when over text elements and idle quote system
+        const cursorTextPath = document.getElementById('cursor-text-path');
+        const cursorCenterDot = document.getElementById('cursor-center-dot');
+        const spinningTextCursor = document.getElementById('spinning-text-cursor');
+
+        let mouseIdleTimer = null;
+        let isIdle = false;
+        let currentQuoteIndex = 0;
+
+        const artisticQuotes = [
+            "CREATE  YOUR  LEGACY",
+            "MUSIC  IS  FREEDOM",
+            "AMPLIFY  YOUR  VOICE",
+            "CRAFT  YOUR  SOUND",
+            "CHASE  THE  RHYTHM",
+            "LIVE  THE  MUSIC"
+        ];
+
+        // Check if cursor is over text elements
+        function checkTextUnderCursor(x, y) {
+            const elements = document.elementsFromPoint(x, y);
+            const hasText = elements.some(el => {
+                // Check if element has text content (excluding our cursor elements)
+                if (el.id === 'spinning-text-cursor' || el.id === 'trail-container') {
+                    return false;
+                }
+                const text = el.textContent?.trim();
+                return text && text.length > 0 && el.offsetParent !== null;
+            });
+
+            if (hasText && !spinningTextCursor.classList.contains('hidden')) {
+                spinningTextCursor.classList.add('faded');
+            } else if (!spinningTextCursor.classList.contains('hidden')) {
+                spinningTextCursor.classList.remove('faded');
+            }
+        }
+
+        // Enter idle mode with quotes
+        function enterIdleMode() {
+            if (!isIdle) {
+                isIdle = true;
+                spinningTextCursor.classList.add('idle');
+                cursorTextPath.setAttribute('href', '#text-circle-cursor-large');
+                cursorCenterDot.setAttribute('r', '10');
+                cycleQuote();
+            }
+        }
+
+        // Exit idle mode
+        function exitIdleMode() {
+            if (isIdle) {
+                isIdle = false;
+                spinningTextCursor.classList.remove('idle');
+                cursorTextPath.setAttribute('href', '#text-circle-cursor');
+                cursorTextPath.textContent = 'YOU  HAVE  THE  POWER  ';
+                cursorCenterDot.setAttribute('r', '6');
+            }
+        }
+
+        // Cycle through quotes
+        function cycleQuote() {
+            if (isIdle) {
+                cursorTextPath.textContent = artisticQuotes[currentQuoteIndex] + '  ';
+                currentQuoteIndex = (currentQuoteIndex + 1) % artisticQuotes.length;
+                setTimeout(cycleQuote, 3000); // Change quote every 3 seconds
+            }
+        }
+
+        // Track mouse movement
+        let lastMouseX = 0;
+        let lastMouseY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            const moved = Math.abs(e.clientX - lastMouseX) > 2 || Math.abs(e.clientY - lastMouseY) > 2;
+
+            if (moved) {
+                lastMouseX = e.clientX;
+                lastMouseY = e.clientY;
+
+                // Reset idle timer
+                clearTimeout(mouseIdleTimer);
+                exitIdleMode();
+
+                // Check if over text
+                checkTextUnderCursor(e.clientX, e.clientY);
+
+                // Set new idle timer
+                mouseIdleTimer = setTimeout(enterIdleMode, 4000);
+            }
+        });
+
+        // Start idle timer
+        mouseIdleTimer = setTimeout(enterIdleMode, 4000);
+    </script>
+
+    <!-- MailChimp Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js"></script>
+    <script type="text/javascript">
+        (function($) {
+            window.fnames = new Array();
+            window.ftypes = new Array();
+            fnames[0]='EMAIL';
+            ftypes[0]='email';
+            fnames[1]='FNAME';
+            ftypes[1]='text';
+            fnames[2]='LNAME';
+            ftypes[2]='text';
+            fnames[6]='BANDARTIST';
+            ftypes[6]='text';
+            fnames[4]='PHONE';
+            ftypes[4]='phone';
+        }(jQuery));
+        var $mcj = jQuery.noConflict(true);
     </script>
 
 </body>
