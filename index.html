@@ -1071,6 +1071,31 @@
             position: relative;
             z-index: 1;
         }
+
+        /* Background image for Benefits section */
+        .section-benefits {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-benefits::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('img/GN 71.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.3;
+            z-index: 0;
+        }
+
+        .section-benefits > * {
+            position: relative;
+            z-index: 1;
+        }
     </style>
 </head>
 <body class="bg-black">
@@ -1460,7 +1485,7 @@
         </section>
 
         <!-- 5. Benefits Section (Quick Facts) -->
-        <section class="py-20 md:py-32 bg-black">
+        <section class="section-benefits py-20 md:py-32 bg-black">
             <div class="container mx-auto px-6">
                 <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-12 text-center">
                     
