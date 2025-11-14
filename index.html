@@ -636,13 +636,13 @@
 
         .equalizer-bar {
             flex: 1;
-            /* Segmented equalizer effect using repeating gradient */
+            /* Segmented equalizer effect using repeating gradient - more square-like */
             background: repeating-linear-gradient(
                 to top,
                 #000 0px,
-                #000 12px,
-                transparent 12px,
-                transparent 16px
+                #000 18px,
+                transparent 18px,
+                transparent 22px
             );
             transform: scaleY(0);
             transform-origin: bottom;
@@ -1033,7 +1033,7 @@
         }
 
         #spinning-text-cursor.faded {
-            opacity: 0;
+            opacity: 0.3;
         }
 
         #spinning-text-cursor.idle {
@@ -1045,7 +1045,7 @@
             font-family: 'Inter', sans-serif;
             font-weight: 900;
             font-size: 16px;
-            fill: #000000; /* Black fill for mask effect */
+            fill: #ffffff; /* White fill to match center dot */
             letter-spacing: 1.5px;
             transition: font-size 0.5s ease;
         }
@@ -1070,8 +1070,16 @@
             border-radius: 50%;
             z-index: 10000;
             pointer-events: none;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
             mix-blend-mode: difference;
+        }
+
+        /* Hide cursor blob on mobile/tablet screens */
+        @media (max-width: 1024px) {
+            #spinning-text-cursor,
+            #cursor-center-dot,
+            .cursor-trail-container {
+                display: none !important;
+            }
         }
 
         /* Light Saber Effects for Buttons */
@@ -2383,19 +2391,18 @@
             "LIVE  THE  MUSIC"
         ];
 
-        // Check if cursor is over text elements
+        // Check if cursor is over buttons/links
         function checkTextUnderCursor(x, y) {
             const elements = document.elementsFromPoint(x, y);
-            const hasText = elements.some(el => {
-                // Check if element has text content (excluding our cursor elements)
-                if (el.id === 'spinning-text-cursor' || el.id === 'trail-container') {
-                    return false;
-                }
-                const text = el.textContent?.trim();
-                return text && text.length > 0 && el.offsetParent !== null;
+            const hasButton = elements.some(el => {
+                // Check if element is a button or link
+                return el.tagName === 'BUTTON' ||
+                       el.tagName === 'A' ||
+                       el.classList.contains('gignite-button') ||
+                       el.classList.contains('glitch-button');
             });
 
-            if (hasText && !spinningTextCursor.classList.contains('hidden')) {
+            if (hasButton && !spinningTextCursor.classList.contains('hidden')) {
                 spinningTextCursor.classList.add('faded');
             } else if (!spinningTextCursor.classList.contains('hidden')) {
                 spinningTextCursor.classList.remove('faded');
