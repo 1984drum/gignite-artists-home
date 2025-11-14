@@ -20,6 +20,9 @@
     <!-- 3. Load Inter for cursor blob text -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@900&display=swap" rel="stylesheet">
 
+    <!-- 4. Load Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <style>
         /* REMOVED: @import url("https://use.typekit.net/hat1wfl.css"); */
 
@@ -982,6 +985,92 @@
                 height: 8px;
             }
         }
+
+        /* Background image for Problem/Solution section */
+        .section-problem-solution {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-problem-solution::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('img/GN 64.png');
+            background-size: cover;
+            background-position: center;
+            filter: blur(4px);
+            z-index: 0;
+        }
+
+        .section-problem-solution > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Background image for Features section */
+        .section-features {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-features::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #000;
+            z-index: 0;
+        }
+
+        .section-features::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('img/GN 69.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.8;
+            filter: contrast(1.2);
+            z-index: 1;
+        }
+
+        .section-features > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Background image for Final CTA section with parallax */
+        .section-final-cta {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-final-cta-bg {
+            position: absolute;
+            top: -50px;
+            left: -50px;
+            right: -50px;
+            bottom: -50px;
+            background-image: url('img/1984drum_A_dynamic_long-exposure_photograph._The_static_stage_1d984278-e076-4baa-9338-daf1edf5dae0_1.png');
+            background-size: cover;
+            background-position: center;
+            z-index: 0;
+            transition: transform 0.1s ease-out;
+        }
+
+        .section-final-cta > * {
+            position: relative;
+            z-index: 1;
+        }
     </style>
 </head>
 <body class="bg-black">
@@ -1122,7 +1211,7 @@
 
     <main>
         <!-- 2. Problem/Solution Section -->
-        <section class="py-20 md:py-32 bg-black">
+        <section class="section-problem-solution py-20 md:py-32 bg-black">
             <div class="container mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
                 <!-- Text Content -->
                 <div class="reveal-on-scroll">
@@ -1282,7 +1371,7 @@
         </section>
 
         <!-- 3. Features Section (Interactive Cards) -->
-        <section id="features" class="py-20 md:py-32 bg-gray-950">
+        <section id="features" class="section-features py-20 md:py-32 bg-gray-950">
             <div class="container mx-auto px-6">
                 <div class="text-center max-w-3xl mx-auto reveal-on-scroll">
                     <h2 class="gignite-heading text-4xl md:text-6xl font-bold tracking-tight">Your Virtual Tour Manager</h2>
@@ -1306,7 +1395,7 @@
                     <!-- Feature Card 2 -->
                     <div class="feature-card p-8 reveal-on-scroll" style="transition-delay: 200ms;">
                         <div class="feature-card-content">
-                            <svg class="w-12 h-12 text-cyan-400 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m4 4l-4-4m4 4l-4 4m-4-8v12m0 0l-4-4m4 4l4-4"></path></svg>
+                            <i class="fa-solid fa-seedling text-cyan-400 mb-6" style="font-size: 3rem;"></i>
                             <h3 class="gignite-heading text-2xl font-bold mb-4">Streamlining logistics</h3>
                             <p class="text-gray-300">
                                 Efficiency and sustainability are built in. Plan tour dates to minimise road and air miles, reducing your costs and carbon footprint.
@@ -1317,7 +1406,7 @@
                     <!-- Feature Card 3 -->
                     <div class="feature-card p-8 reveal-on-scroll" style="transition-delay: 300ms;">
                         <div class="feature-card-content">
-                            <svg class="w-12 h-12 text-cyan-400 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                            <i class="fa-solid fa-display-chart-up text-cyan-400 mb-6" style="font-size: 3rem;"></i>
                             <h3 class="gignite-heading text-2xl font-bold mb-4">Marketing for gig success</h3>
                             <p class="text-gray-300">
                                 Our tech helps you create tour posters, promotions, branding, and even order your tour merchandise directly.
@@ -1328,7 +1417,7 @@
                     <!-- Feature Card 4 -->
                     <div class="feature-card p-8 reveal-on-scroll" style="transition-delay: 400ms;">
                         <div class="feature-card-content">
-                            <svg class="w-12 h-12 text-cyan-400 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            <i class="fa-solid fa-coins text-cyan-400 mb-6" style="font-size: 3rem;"></i>
                             <h3 class="gignite-heading text-2xl font-bold mb-4">Success you can measure</h3>
                             <p class="text-gray-300">
                                 Understand gig profitability from the outset. Get clarity on financials to actively build your career and reputation.
@@ -1439,7 +1528,8 @@
         </section>
 
         <!-- 6. Final CTA -->
-        <section class="py-20 md:py-32 bg-gray-950 text-center">
+        <section class="section-final-cta py-20 md:py-32 bg-gray-950 text-center">
+            <div class="section-final-cta-bg"></div>
             <div class="container mx-auto px-6 reveal-on-scroll">
                 <h2 class="gignite-heading text-4xl md:text-6xl font-bold">The performance rules.</h2>
                 <p class="text-xl md:text-2xl text-gray-300 mt-6 max-w-3xl mx-auto">
@@ -1873,6 +1963,37 @@
 
         // Initialize light sabers after page loads
         initLightSabers();
+
+        // Parallax effect for Final CTA background
+        function initParallaxCTA() {
+            const ctaSection = document.querySelector('.section-final-cta');
+            const ctaBg = document.querySelector('.section-final-cta-bg');
+
+            if (!ctaSection || !ctaBg) return;
+
+            ctaSection.addEventListener('mousemove', (e) => {
+                const rect = ctaSection.getBoundingClientRect();
+                const x = e.clientX - rect.left; // x position within the section
+                const y = e.clientY - rect.top;  // y position within the section
+
+                const { width, height } = rect;
+
+                // Calculate parallax offset (max 20px in each direction)
+                const offsetX = ((x / width) - 0.5) * 40;
+                const offsetY = ((y / height) - 0.5) * 40;
+
+                // Apply 3D transform to background
+                ctaBg.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(1.1)`;
+            });
+
+            ctaSection.addEventListener('mouseleave', () => {
+                // Reset to center position
+                ctaBg.style.transform = 'translate(0, 0) scale(1.1)';
+            });
+        }
+
+        // Initialize parallax effect
+        initParallaxCTA();
     </script>
 
 </body>
