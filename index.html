@@ -730,8 +730,8 @@
 
         /* 3D "Apple TV" hover effect for feature cards */
         .feature-card {
-            background-color: #111827; /* gray-900 */
-            border: 3px solid #374151; /* gray-700 */
+            background-color: #000; /* black */
+            border: 3px solid #ffffff; /* white */
             transform-style: preserve-d;
             transition: all 0.3s ease;
         }
@@ -1071,6 +1071,7 @@
             z-index: 10000;
             pointer-events: none;
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            mix-blend-mode: difference;
         }
 
         /* Light Saber Effects for Buttons */
@@ -1590,7 +1591,7 @@
                 <div class="text-center max-w-3xl mx-auto reveal-on-scroll">
                     <h2 class="gignite-heading text-4xl md:text-6xl font-bold tracking-tight">Your Virtual Tour Manager</h2>
                     <p class="text-lg text-gray-300 mt-6">
-                        <span style="background-color: #000; padding: 0.5rem 1rem; display: inline-block; line-height: 1.8;">Gignite guides you through every step, ensuring no details are overlooked. From customs paperwork to visas, we've got you covered.</span>
+                        <span id="tour-manager-text" class="subtitle-text">Gignite guides you through every step, ensuring no details are overlooked. From customs paperwork to visas, we've got you covered.</span>
                     </p>
                 </div>
 
@@ -1823,6 +1824,47 @@
         revealElements.forEach(el => {
             observer.observe(el);
         });
+
+        // Typing animation for Virtual Tour Manager text
+        const tourManagerText = document.getElementById('tour-manager-text');
+        const tourManagerObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !tourManagerText.classList.contains('typing-started')) {
+                    tourManagerText.classList.add('typing-started');
+                    const text = tourManagerText.textContent;
+                    tourManagerText.textContent = '';
+                    tourManagerText.style.opacity = 1;
+                    tourManagerText.classList.add('typing');
+
+                    // Wrap each character in a span
+                    const chars = text.split('').map(char => {
+                        const span = document.createElement('span');
+                        span.className = 'char';
+                        span.textContent = char;
+                        tourManagerText.appendChild(span);
+                        return span;
+                    });
+
+                    // Reveal characters one by one
+                    let charIndex = 0;
+                    const typeSpeed = 25; // milliseconds per character
+                    const typeInterval = setInterval(() => {
+                        if (charIndex < chars.length) {
+                            chars[charIndex].classList.add('visible');
+                            charIndex++;
+                        } else {
+                            clearInterval(typeInterval);
+                            tourManagerText.classList.remove('typing');
+                            tourManagerText.classList.add('typing-complete');
+                        }
+                    }, typeSpeed);
+                }
+            });
+        }, {
+            threshold: 0.5 // Trigger when 50% of the element is visible
+        });
+
+        tourManagerObserver.observe(tourManagerText);
 
         // 3D Hover Effect Script (for feature cards)
         const featureCards = document.querySelectorAll('.feature-card');
