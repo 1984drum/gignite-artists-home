@@ -1274,53 +1274,6 @@
             position: relative;
             z-index: 1;
         }
-
-        /* MailChimp Form Styles */
-        .mailchimp-form {
-            max-width: 100%;
-        }
-
-        .mailchimp-input {
-            width: 100%;
-            background-color: #000;
-            border: 3px solid #374151; /* gray-700 */
-            color: #fff;
-            padding: 1rem 1.25rem;
-            font-size: 1rem;
-            font-family: 'Noto Sans', sans-serif;
-            transition: all 0.3s ease;
-            outline: none;
-        }
-
-        .mailchimp-input:focus {
-            border-color: #06b6d4; /* cyan-500 */
-            box-shadow: 0 0 0 1px #06b6d4;
-        }
-
-        .mailchimp-input::placeholder {
-            color: #6b7280; /* gray-500 */
-        }
-
-        #mc_embed_signup {
-            background: transparent !important;
-            clear: none !important;
-        }
-
-        #mce-responses .response {
-            margin: 0 0 1rem 0;
-            padding: 0.75rem;
-            font-weight: 600;
-        }
-
-        #mce-error-response {
-            background-color: rgba(239, 68, 68, 0.1);
-            border: 2px solid #ef4444;
-        }
-
-        #mce-success-response {
-            background-color: rgba(34, 197, 94, 0.1);
-            border: 2px solid #22c55e;
-        }
     </style>
 </head>
 <body class="bg-black">
@@ -1822,64 +1775,6 @@
                 <div class="sample-bar" style="animation-delay: 0.5s; animation-duration: 1.0s;"></div>
             </div>
             <div class="h-[3px] bg-white" style="width: 35%;"></div>
-        </div>
-    </section>
-
-    <!-- Newsletter Subscription Section -->
-    <section class="bg-black py-20">
-        <div class="container mx-auto px-6">
-            <div class="max-w-2xl mx-auto">
-                <div class="text-center mb-12">
-                    <h2 class="text-4xl md:text-5xl font-bold mb-4 gignite-heading">Stay in the Loop</h2>
-                    <p class="text-gray-400 text-lg">Get updates on new features, tips for artists, and exclusive content delivered to your inbox.</p>
-                </div>
-
-                <div id="mc_embed_signup" class="mailchimp-form">
-                    <form action="https://live.us19.list-manage.com/subscribe/post?u=0af904bb923e40ef979e3dff4&amp;id=ea7e5d6226&amp;f_id=00c53be3f0" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank">
-                        <div id="mc_embed_signup_scroll">
-                            <div class="mb-6">
-                                <label for="mce-EMAIL" class="block text-white font-semibold mb-2 text-sm uppercase tracking-wide">Email Address <span class="text-cyan-500">*</span></label>
-                                <input type="email" name="EMAIL" class="mailchimp-input" id="mce-EMAIL" required="" value="" placeholder="your@email.com">
-                            </div>
-
-                            <div class="grid md:grid-cols-2 gap-6 mb-6">
-                                <div>
-                                    <label for="mce-FNAME" class="block text-white font-semibold mb-2 text-sm uppercase tracking-wide">First Name</label>
-                                    <input type="text" name="FNAME" class="mailchimp-input" id="mce-FNAME" value="" placeholder="First Name">
-                                </div>
-                                <div>
-                                    <label for="mce-LNAME" class="block text-white font-semibold mb-2 text-sm uppercase tracking-wide">Last Name</label>
-                                    <input type="text" name="LNAME" class="mailchimp-input" id="mce-LNAME" value="" placeholder="Last Name">
-                                </div>
-                            </div>
-
-                            <div class="mb-8">
-                                <label for="mce-BANDARTIST" class="block text-white font-semibold mb-2 text-sm uppercase tracking-wide">Band or Artist Name</label>
-                                <input type="text" name="BANDARTIST" class="mailchimp-input" id="mce-BANDARTIST" value="" placeholder="Your Artist Name">
-                            </div>
-
-                            <div hidden="">
-                                <input type="hidden" name="tags" value="4077392">
-                            </div>
-
-                            <div id="mce-responses" class="clear mb-4">
-                                <div class="response text-red-400 text-center" id="mce-error-response" style="display: none;"></div>
-                                <div class="response text-green-400 text-center" id="mce-success-response" style="display: none;"></div>
-                            </div>
-
-                            <div aria-hidden="true" style="position: absolute; left: -5000px;">
-                                <input type="text" name="b_0af904bb923e40ef979e3dff4_ea7e5d6226" tabindex="-1" value="">
-                            </div>
-
-                            <div class="text-center">
-                                <button type="submit" name="subscribe" id="mc-embedded-subscribe" class="gignite-button inline-block py-4 px-12 border-[3px] border-cyan-500 text-white font-bold text-lg uppercase tracking-widest transform transition-all duration-300 hover:bg-cyan-500 hover:text-black hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/30">
-                                    Subscribe
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
         </div>
     </section>
 
@@ -2516,27 +2411,6 @@
 
         // Start idle timer
         mouseIdleTimer = setTimeout(enterIdleMode, 4000);
-    </script>
-
-    <!-- MailChimp Scripts -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script type="text/javascript" src="//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js"></script>
-    <script type="text/javascript">
-        (function($) {
-            window.fnames = new Array();
-            window.ftypes = new Array();
-            fnames[0]='EMAIL';
-            ftypes[0]='email';
-            fnames[1]='FNAME';
-            ftypes[1]='text';
-            fnames[2]='LNAME';
-            ftypes[2]='text';
-            fnames[6]='BANDARTIST';
-            ftypes[6]='text';
-            fnames[4]='PHONE';
-            ftypes[4]='phone';
-        }(jQuery));
-        var $mcj = jQuery.noConflict(true);
     </script>
 
 </body>
