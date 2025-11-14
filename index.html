@@ -878,6 +878,99 @@
             fill: #ffffff;
             letter-spacing: 1.5px;
         }
+
+        /* Light Saber Effect on Buttons */
+        .gignite-button, #start-planning-btn {
+            position: relative;
+            overflow: visible;
+        }
+
+        /* Random firing animation */
+        @keyframes randomFire {
+            0%, 90% { opacity: 0; transform: translateY(-50%) scaleX(0); }
+            92% { opacity: 1; transform: translateY(-50%) scaleX(0.3); }
+            95% { opacity: 1; transform: translateY(-50%) scaleX(1); }
+            98% { opacity: 0.5; transform: translateY(-50%) scaleX(0.5); }
+            100% { opacity: 0; transform: translateY(-50%) scaleX(0); }
+        }
+
+        /* Wobbling laser effect on hover */
+        @keyframes wobbleLaser {
+            0% { transform: translateY(-50%) scaleX(1) translateY(0px); }
+            25% { transform: translateY(-50%) scaleX(1.1) translateY(-2px); }
+            50% { transform: translateY(-50%) scaleX(0.95) translateY(2px); }
+            75% { transform: translateY(-50%) scaleX(1.05) translateY(-1px); }
+            100% { transform: translateY(-50%) scaleX(1) translateY(0px); }
+        }
+
+        .gignite-button::before,
+        .gignite-button::after,
+        #start-planning-btn::before,
+        #start-planning-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            height: 3px;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                rgba(6, 182, 212, 0.2) 10%,
+                rgba(6, 182, 212, 0.6) 50%,
+                rgba(6, 182, 212, 0.2) 90%,
+                transparent 100%
+            );
+            box-shadow:
+                0 0 8px rgba(6, 182, 212, 0.5),
+                0 0 15px rgba(6, 182, 212, 0.3);
+            transform: translateY(-50%) scaleX(0);
+            transform-origin: center;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0;
+            /* Random firing animation */
+            animation: randomFire 8s ease-in-out infinite;
+        }
+
+        /* Left light beam */
+        .gignite-button::before,
+        #start-planning-btn::before {
+            right: 100%;
+            width: 100vw;
+            transform-origin: right center;
+            animation-delay: 0s;
+        }
+
+        /* Right light beam */
+        .gignite-button::after,
+        #start-planning-btn::after {
+            left: 100%;
+            width: 100vw;
+            transform-origin: left center;
+            animation-delay: 0s;
+        }
+
+        /* Extreme hover effect */
+        .gignite-button:hover::before,
+        .gignite-button:hover::after,
+        #start-planning-btn:hover::before,
+        #start-planning-btn:hover::after {
+            animation: wobbleLaser 0.15s ease-in-out infinite;
+            height: 6px;
+            opacity: 1 !important;
+            transform: translateY(-50%) scaleX(1);
+            background: linear-gradient(90deg,
+                transparent 0%,
+                rgba(6, 182, 212, 0.4) 5%,
+                rgba(6, 182, 212, 1) 50%,
+                rgba(6, 182, 212, 0.4) 95%,
+                transparent 100%
+            );
+            box-shadow:
+                0 0 20px rgba(6, 182, 212, 1),
+                0 0 40px rgba(6, 182, 212, 0.8),
+                0 0 60px rgba(6, 182, 212, 0.6),
+                0 0 80px rgba(6, 182, 212, 0.4);
+            filter: blur(1px);
+        }
     </style>
 </head>
 <body class="bg-black">
@@ -946,7 +1039,7 @@
         <text>
             <!-- Attach the text to the circular path -->
             <textPath href="#text-circle-cursor" textLength="220" lengthAdjust="spacing">
-                GIGNITE GIGNITE
+                YOU HAVE THE POWER
             </textPath>
         </text>
     </svg>
@@ -1635,11 +1728,8 @@
         // Start cursor text animation immediately
         animateCursorText();
 
-        // Cursor Blob Effect - Activate after typing sequence completes
-        // Timing: 2.5s (title) + 5.5s (flash) + 1.5s (subtitle) + 1.5s (button) = 11s
-        setTimeout(() => {
-            initCursorBlob();
-        }, 11000);
+        // Cursor Blob Effect - Start immediately with pulsating
+        initCursorBlob();
 
         function initCursorBlob() {
             // Add cursor-blob-active class to body to hide default cursor
@@ -1648,38 +1738,35 @@
             // Configuration
             const trailLength = 20; // Number of blobs in the trail
             const container = document.getElementById('trail-container');
-            const growStartTime = Date.now();
-            const growDuration = 2000; // 2 seconds to fully grow
+            const baseScale = 0.4; // Start at 40% - visible but small
 
             // Store dots
             const dots = [];
 
-            // Create trail dots - start at scale 0
+            // Create trail dots
             for (let i = 0; i < trailLength; i++) {
                 const dot = document.createElement('div');
-                dot.classList.add('trail-dot', 'growing');
-                dot.style.transform = 'translate(-50%, -50%) scale(0)';
+                dot.classList.add('trail-dot');
                 container.appendChild(dot);
                 // Each dot has its own position data
                 dots.push({
                     element: dot,
                     x: mouseX,
-                    y: mouseY
+                    y: mouseY,
+                    pulseOffset: Math.random() * Math.PI * 2 // Random pulse phase
                 });
             }
 
             // Animation Loop
             function animate() {
-                // Calculate grow progress (0 to 1)
-                const elapsed = Date.now() - growStartTime;
-                const growProgress = Math.min(elapsed / growDuration, 1);
-                const easeOutGrow = 1 - Math.pow(1 - growProgress, 3); // Ease-out cubic
-
                 // Add gentle autonomous movement (sway)
                 const time = Date.now() * 0.0003;
                 const swayAmount = 25;
                 const swayX = Math.cos(time) * swayAmount;
                 const swayY = Math.sin(time * 0.8) * swayAmount;
+
+                // Pulsating effect - slower and more visible
+                const pulseTime = Date.now() * 0.0015; // Slower pulse
 
                 // The first dot follows the mouse with sway
                 let leaderX = mouseX + swayX;
@@ -1699,8 +1786,11 @@
                     const linearScale = 1 - (index / trailLength);
                     const tailScale = Math.pow(linearScale, 2);
 
-                    // Apply both tail scale and grow animation
-                    const finalScale = tailScale * easeOutGrow;
+                    // Add pulsating - oscillates between 0.8 and 1.2
+                    const pulse = Math.sin(pulseTime + dot.pulseOffset) * 0.2 + 1;
+
+                    // Apply base scale, tail scale, and pulse
+                    const finalScale = baseScale * tailScale * pulse;
 
                     dot.element.style.transform = `translate(-50%, -50%) scale(${finalScale})`;
 
@@ -1712,7 +1802,7 @@
                 requestAnimationFrame(animate);
             }
 
-            // Fade in the cursor blob container
+            // Fade in the cursor blob container immediately
             setTimeout(() => {
                 container.classList.add('active');
             }, 100);
