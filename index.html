@@ -997,6 +997,11 @@
             pointer-events: none;
             opacity: 1; /* Always visible */
             /* Remove isolation to allow masking */
+            transition: opacity 0.3s ease;
+        }
+
+        #spinning-text-cursor.hidden {
+            opacity: 0;
         }
 
         #spinning-text-cursor text {
@@ -1498,30 +1503,30 @@
         <section class="py-20 md:py-32 bg-black">
             <div class="container mx-auto px-6">
                 <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-12 text-center">
-                    
+
                     <!-- Benefit 1 -->
-                    <div class="reveal-on-scroll">
+                    <div class="benefit-card reveal-on-scroll">
                         <svg class="w-12 h-12 text-cyan-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.105 0 2 .895 2 2s-.895 2-2 2-2-.895-2-2 .895-2 2-2zm0 8c-1.105 0-2 .895-2 2s.895 2 2 2 2-.895 2-2-.895-2-2-2zm-9 4h18M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
                         <h3 class="gignite-heading text-2xl font-bold mt-6">No subscription fees</h3>
                         <p class="text-gray-300 mt-2">Platform access is free for artists and bands. Gignite was created to increase your revenues.</p>
                     </div>
 
                     <!-- Benefit 2 -->
-                    <div class="reveal-on-scroll" style="transition-delay: 200ms;">
+                    <div class="benefit-card reveal-on-scroll" style="transition-delay: 200ms;">
                         <svg class="w-12 h-12 text-cyan-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                         <h3 class="gignite-heading text-2xl font-bold mt-6">You are in control</h3>
                         <p class="text-gray-300 mt-2">All details, correspondence, and orders are in one place. You're in charge, 24/7.</p>
                     </div>
 
                     <!-- Benefit 3 -->
-                    <div class="reveal-on-scroll" style="transition-delay: 300ms;">
+                    <div class="benefit-card reveal-on-scroll" style="transition-delay: 300ms;">
                         <svg class="w-12 h-12 text-cyan-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         <h3 class="gignite-heading text-2xl font-bold mt-6">Better event experiences</h3>
                         <p class="text-gray-300 mt-2">The performance rules. Smooth-running events are a joy for you and your fans.</p>
                     </div>
 
                     <!-- Benefit 4 -->
-                    <div class="reveal-on-scroll" style="transition-delay: 400ms;">
+                    <div class="benefit-card reveal-on-scroll" style="transition-delay: 400ms;">
                         <svg class="w-12 h-12 text-cyan-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                         <h3 class="gignite-heading text-2xl font-bold mt-6">Success you can measure</h3>
                         <p class="text-gray-300 mt-2">Understand gig profitability from the outset to actively build your career and reputation.</p>
@@ -1973,30 +1978,76 @@
                 let leaderY = mouseY + swayY;
 
                 dots.forEach((dot, index) => {
-                    // Lerp (Linear Interpolation) for smooth following
-                    const speed = 0.15;
+                    // Check if hovering over a benefit card
+                    if (isHoveringBenefit && benefitCardRect) {
+                        // Position dots in a rectangle around the card
+                        const padding = 20; // Padding around card
+                        const rectWidth = benefitCardRect.width + padding * 2;
+                        const rectHeight = benefitCardRect.height + padding * 2;
+                        const perimeter = (rectWidth + rectHeight) * 2;
+                        const dotSpacing = perimeter / trailLength;
 
-                    dot.x += (leaderX - dot.x) * speed;
-                    dot.y += (leaderY - dot.y) * speed;
+                        // Calculate position on rectangle perimeter
+                        const distanceAlongPerimeter = (index * dotSpacing + Date.now() * 0.05) % perimeter;
 
-                    dot.element.style.left = `${dot.x}px`;
-                    dot.element.style.top = `${dot.y}px`;
+                        let targetX, targetY;
 
-                    // Make the dots get smaller towards the end of the tail
-                    const linearScale = 1 - (index / trailLength);
-                    const tailScale = Math.pow(linearScale, 2);
+                        if (distanceAlongPerimeter < rectWidth) {
+                            // Top edge
+                            targetX = benefitCardRect.left - padding + distanceAlongPerimeter;
+                            targetY = benefitCardRect.top - padding;
+                        } else if (distanceAlongPerimeter < rectWidth + rectHeight) {
+                            // Right edge
+                            targetX = benefitCardRect.right + padding;
+                            targetY = benefitCardRect.top - padding + (distanceAlongPerimeter - rectWidth);
+                        } else if (distanceAlongPerimeter < rectWidth * 2 + rectHeight) {
+                            // Bottom edge
+                            targetX = benefitCardRect.right + padding - (distanceAlongPerimeter - rectWidth - rectHeight);
+                            targetY = benefitCardRect.bottom + padding;
+                        } else {
+                            // Left edge
+                            targetX = benefitCardRect.left - padding;
+                            targetY = benefitCardRect.bottom + padding - (distanceAlongPerimeter - rectWidth * 2 - rectHeight);
+                        }
 
-                    // Add random pulsating to each dot with individual pulse speed
-                    const pulse = Math.sin(pulseTime * dot.pulseSpeed + dot.pulseOffset) * 0.15 + 1;
+                        // Smooth transition to rectangle position
+                        const speed = 0.2;
+                        dot.x += (targetX - dot.x) * speed;
+                        dot.y += (targetY - dot.y) * speed;
 
-                    // Apply base scale, tail scale, pulse, and random size variation
-                    const finalScale = baseScale * tailScale * pulse * dot.sizeVariation;
+                        dot.element.style.left = `${dot.x}px`;
+                        dot.element.style.top = `${dot.y}px`;
 
-                    dot.element.style.transform = `translate(-50%, -50%) scale(${finalScale})`;
+                        // All dots same size for rectangular highlight
+                        const finalScale = baseScale * 1.2;
+                        dot.element.style.transform = `translate(-50%, -50%) scale(${finalScale})`;
+                    } else {
+                        // Normal blob behavior
+                        // Lerp (Linear Interpolation) for smooth following
+                        const speed = 0.15;
 
-                    // The next dot follows the current dot
-                    leaderX = dot.x;
-                    leaderY = dot.y;
+                        dot.x += (leaderX - dot.x) * speed;
+                        dot.y += (leaderY - dot.y) * speed;
+
+                        dot.element.style.left = `${dot.x}px`;
+                        dot.element.style.top = `${dot.y}px`;
+
+                        // Make the dots get smaller towards the end of the tail
+                        const linearScale = 1 - (index / trailLength);
+                        const tailScale = Math.pow(linearScale, 2);
+
+                        // Add random pulsating to each dot with individual pulse speed
+                        const pulse = Math.sin(pulseTime * dot.pulseSpeed + dot.pulseOffset) * 0.15 + 1;
+
+                        // Apply base scale, tail scale, pulse, and random size variation
+                        const finalScale = baseScale * tailScale * pulse * dot.sizeVariation;
+
+                        dot.element.style.transform = `translate(-50%, -50%) scale(${finalScale})`;
+
+                        // The next dot follows the current dot
+                        leaderX = dot.x;
+                        leaderY = dot.y;
+                    }
                 });
 
                 // Animate and clean up splashes
@@ -2078,6 +2129,38 @@
 
         // Initialize light sabers after page loads
         initLightSabers();
+
+        // Rectangular highlight for benefit cards
+        const benefitCards = document.querySelectorAll('.benefit-card');
+        const trailContainer = document.getElementById('trail-container');
+        let isHoveringBenefit = false;
+        let benefitCardRect = null;
+
+        benefitCards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                isHoveringBenefit = true;
+                benefitCardRect = card.getBoundingClientRect();
+            });
+
+            card.addEventListener('mouseleave', () => {
+                isHoveringBenefit = false;
+                benefitCardRect = null;
+            });
+        });
+
+        // Fade out cursor text on button hover
+        const spinningCursorText = document.getElementById('spinning-text-cursor');
+        const allButtons = document.querySelectorAll('button, a.gignite-button');
+
+        allButtons.forEach(button => {
+            button.addEventListener('mouseenter', () => {
+                spinningCursorText.classList.add('hidden');
+            });
+
+            button.addEventListener('mouseleave', () => {
+                spinningCursorText.classList.remove('hidden');
+            });
+        });
 
         // 3D Parallax effect for Final CTA section background
         const finalCtaSection = document.getElementById('final-cta');
