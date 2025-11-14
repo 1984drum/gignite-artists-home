@@ -869,6 +869,7 @@
             z-index: 9999;
             pointer-events: none;
             opacity: 1; /* Always visible */
+            isolation: isolate; /* Prevent blend mode interactions from layers below */
         }
 
         #spinning-text-cursor text {
@@ -1044,7 +1045,7 @@
         <text>
             <!-- Attach the text to the circular path -->
             <textPath href="#text-circle-cursor" textLength="220" lengthAdjust="spacing">
-                YOU  HAVE  THE  POWER
+                YOU HAVE THE POWER
             </textPath>
         </text>
     </svg>
