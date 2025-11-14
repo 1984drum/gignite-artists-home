@@ -854,6 +854,11 @@
             opacity: 1;
         }
 
+        /* Growing animation for blobs */
+        .trail-dot.growing {
+            transition: transform 2s ease-out;
+        }
+
         /* Styles for the spinning text SVG */
         #spinning-text-cursor {
             position: fixed;
@@ -863,13 +868,7 @@
             height: 100px;
             z-index: 9999;
             pointer-events: none;
-            /* Start hidden */
-            opacity: 0;
-            transition: opacity 1s ease-in-out;
-        }
-
-        #spinning-text-cursor.active {
-            opacity: 1;
+            opacity: 1; /* Always visible */
         }
 
         #spinning-text-cursor text {
@@ -946,7 +945,7 @@
         </defs>
         <text>
             <!-- Attach the text to the circular path -->
-            <textPath href="#text-circle-cursor">
+            <textPath href="#text-circle-cursor" textLength="220" lengthAdjust="spacing">
                 GIGNITE GIGNITE
             </textPath>
         </text>
@@ -1605,6 +1604,37 @@
         // Start pixelation effect
         applyRandomPixelation();
 
+        // Initialize spinning cursor text immediately
+        const cursorText = document.getElementById('spinning-text-cursor');
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        let cursorRotation = 0;
+
+        // Track mouse movement for cursor text
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        // Animate cursor text rotation from the start
+        function animateCursorText() {
+            const time = Date.now() * 0.0003;
+            const swayX = Math.cos(time) * 25;
+            const swayY = Math.sin(time * 0.8) * 25;
+            cursorRotation = (Date.now() * 0.05) % 360;
+
+            cursorText.style.transform = `
+                translate(${mouseX + swayX}px, ${mouseY + swayY}px)
+                translate(-50%, -50%)
+                rotate(${cursorRotation}deg)
+            `;
+
+            requestAnimationFrame(animateCursorText);
+        }
+
+        // Start cursor text animation immediately
+        animateCursorText();
+
         // Cursor Blob Effect - Activate after typing sequence completes
         // Timing: 2.5s (title) + 5.5s (flash) + 1.5s (subtitle) + 1.5s (button) = 11s
         setTimeout(() => {
@@ -1618,19 +1648,17 @@
             // Configuration
             const trailLength = 20; // Number of blobs in the trail
             const container = document.getElementById('trail-container');
-            const cursorText = document.getElementById('spinning-text-cursor');
-
-            // Store mouse position
-            let mouseX = window.innerWidth / 2;
-            let mouseY = window.innerHeight / 2;
+            const growStartTime = Date.now();
+            const growDuration = 2000; // 2 seconds to fully grow
 
             // Store dots
             const dots = [];
 
-            // Create trail dots
+            // Create trail dots - start at scale 0
             for (let i = 0; i < trailLength; i++) {
                 const dot = document.createElement('div');
-                dot.classList.add('trail-dot');
+                dot.classList.add('trail-dot', 'growing');
+                dot.style.transform = 'translate(-50%, -50%) scale(0)';
                 container.appendChild(dot);
                 // Each dot has its own position data
                 dots.push({
@@ -1640,22 +1668,18 @@
                 });
             }
 
-            // Track mouse movement
-            document.addEventListener('mousemove', (e) => {
-                mouseX = e.clientX;
-                mouseY = e.clientY;
-            });
-
             // Animation Loop
             function animate() {
+                // Calculate grow progress (0 to 1)
+                const elapsed = Date.now() - growStartTime;
+                const growProgress = Math.min(elapsed / growDuration, 1);
+                const easeOutGrow = 1 - Math.pow(1 - growProgress, 3); // Ease-out cubic
+
                 // Add gentle autonomous movement (sway)
-                const time = Date.now() * 0.0003; // Slow time increment
-                const swayAmount = 25; // How many pixels to sway
+                const time = Date.now() * 0.0003;
+                const swayAmount = 25;
                 const swayX = Math.cos(time) * swayAmount;
                 const swayY = Math.sin(time * 0.8) * swayAmount;
-
-                // Slowly increase rotation
-                const rotation = (Date.now() * 0.05) % 360;
 
                 // The first dot follows the mouse with sway
                 let leaderX = mouseX + swayX;
@@ -1663,7 +1687,7 @@
 
                 dots.forEach((dot, index) => {
                     // Lerp (Linear Interpolation) for smooth following
-                    const speed = 0.15; // Slower speed for heavier, stretchier feel
+                    const speed = 0.15;
 
                     dot.x += (leaderX - dot.x) * speed;
                     dot.y += (leaderY - dot.y) * speed;
@@ -1671,20 +1695,14 @@
                     dot.element.style.left = `${dot.x}px`;
                     dot.element.style.top = `${dot.y}px`;
 
-                    // Position and rotate the SVG text on the leader dot
-                    if (index === 0) {
-                        cursorText.style.transform = `
-                            translate(${dot.x}px, ${dot.y}px)
-                            translate(-50%, -50%)
-                            rotate(${rotation}deg)
-                        `;
-                    }
-
                     // Make the dots get smaller towards the end of the tail
                     const linearScale = 1 - (index / trailLength);
-                    const scale = Math.pow(linearScale, 2); // Quadratic falloff
+                    const tailScale = Math.pow(linearScale, 2);
 
-                    dot.element.style.transform = `translate(-50%, -50%) scale(${scale})`;
+                    // Apply both tail scale and grow animation
+                    const finalScale = tailScale * easeOutGrow;
+
+                    dot.element.style.transform = `translate(-50%, -50%) scale(${finalScale})`;
 
                     // The next dot follows the current dot
                     leaderX = dot.x;
@@ -1694,13 +1712,12 @@
                 requestAnimationFrame(animate);
             }
 
-            // Fade in the cursor blob
+            // Fade in the cursor blob container
             setTimeout(() => {
                 container.classList.add('active');
-                cursorText.classList.add('active');
             }, 100);
 
-            // Start animation
+            // Start blob animation
             animate();
         }
     </script>
