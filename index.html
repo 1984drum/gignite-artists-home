@@ -997,11 +997,20 @@
             pointer-events: none;
             opacity: 1; /* Always visible */
             /* Remove isolation to allow masking */
-            transition: opacity 0.3s ease;
+            transition: opacity 0.3s ease, width 0.5s ease, height 0.5s ease;
         }
 
         #spinning-text-cursor.hidden {
             opacity: 0;
+        }
+
+        #spinning-text-cursor.faded {
+            opacity: 0;
+        }
+
+        #spinning-text-cursor.idle {
+            width: 200px;
+            height: 200px;
         }
 
         #spinning-text-cursor text {
@@ -1010,10 +1019,16 @@
             font-size: 16px;
             fill: #000000; /* Black fill for mask effect */
             letter-spacing: 1.5px;
+            transition: font-size 0.5s ease;
+        }
+
+        #spinning-text-cursor.idle text {
+            font-size: 13px;
         }
 
         #spinning-text-cursor circle {
             fill: #000000; /* Black fill for mask effect */
+            transition: r 0.5s ease;
         }
 
         /* Light Saber Effects for Buttons */
@@ -1175,12 +1190,14 @@
         <defs>
             <!-- Define the circular path. The text will follow this. -->
             <path id="text-circle-cursor" d="M 50, 50 m -35, 0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0"></path>
+            <!-- Larger path for idle state -->
+            <path id="text-circle-cursor-large" d="M 50, 50 m -45, 0 a 45,45 0 1,1 90,0 a 45,45 0 1,1 -90,0"></path>
         </defs>
         <!-- Center blob like a crotchet note - black for mask effect -->
-        <circle cx="50" cy="50" r="6" fill="#000000" />
+        <circle id="cursor-center-dot" cx="50" cy="50" r="6" fill="#000000" />
         <text>
             <!-- Attach the text to the circular path -->
-            <textPath href="#text-circle-cursor">
+            <textPath id="cursor-text-path" href="#text-circle-cursor">
                 YOU  HAVE  THE  POWER&#x20;&#x20;
             </textPath>
         </text>
@@ -2128,6 +2145,100 @@
                 finalCtaSection.style.setProperty('--parallax-y', '0px');
             });
         }
+
+        // Cursor text fade out when over text elements and idle quote system
+        const cursorTextPath = document.getElementById('cursor-text-path');
+        const cursorCenterDot = document.getElementById('cursor-center-dot');
+        const spinningTextCursor = document.getElementById('spinning-text-cursor');
+
+        let mouseIdleTimer = null;
+        let isIdle = false;
+        let currentQuoteIndex = 0;
+
+        const artisticQuotes = [
+            "CREATE  YOUR  LEGACY",
+            "MUSIC  IS  FREEDOM",
+            "AMPLIFY  YOUR  VOICE",
+            "CRAFT  YOUR  SOUND",
+            "CHASE  THE  RHYTHM",
+            "LIVE  THE  MUSIC"
+        ];
+
+        // Check if cursor is over text elements
+        function checkTextUnderCursor(x, y) {
+            const elements = document.elementsFromPoint(x, y);
+            const hasText = elements.some(el => {
+                // Check if element has text content (excluding our cursor elements)
+                if (el.id === 'spinning-text-cursor' || el.id === 'trail-container') {
+                    return false;
+                }
+                const text = el.textContent?.trim();
+                return text && text.length > 0 && el.offsetParent !== null;
+            });
+
+            if (hasText && !spinningTextCursor.classList.contains('hidden')) {
+                spinningTextCursor.classList.add('faded');
+            } else if (!spinningTextCursor.classList.contains('hidden')) {
+                spinningTextCursor.classList.remove('faded');
+            }
+        }
+
+        // Enter idle mode with quotes
+        function enterIdleMode() {
+            if (!isIdle) {
+                isIdle = true;
+                spinningTextCursor.classList.add('idle');
+                cursorTextPath.setAttribute('href', '#text-circle-cursor-large');
+                cursorCenterDot.setAttribute('r', '10');
+                cycleQuote();
+            }
+        }
+
+        // Exit idle mode
+        function exitIdleMode() {
+            if (isIdle) {
+                isIdle = false;
+                spinningTextCursor.classList.remove('idle');
+                cursorTextPath.setAttribute('href', '#text-circle-cursor');
+                cursorTextPath.textContent = 'YOU  HAVE  THE  POWER  ';
+                cursorCenterDot.setAttribute('r', '6');
+            }
+        }
+
+        // Cycle through quotes
+        function cycleQuote() {
+            if (isIdle) {
+                cursorTextPath.textContent = artisticQuotes[currentQuoteIndex] + '  ';
+                currentQuoteIndex = (currentQuoteIndex + 1) % artisticQuotes.length;
+                setTimeout(cycleQuote, 3000); // Change quote every 3 seconds
+            }
+        }
+
+        // Track mouse movement
+        let lastMouseX = 0;
+        let lastMouseY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            const moved = Math.abs(e.clientX - lastMouseX) > 2 || Math.abs(e.clientY - lastMouseY) > 2;
+
+            if (moved) {
+                lastMouseX = e.clientX;
+                lastMouseY = e.clientY;
+
+                // Reset idle timer
+                clearTimeout(mouseIdleTimer);
+                exitIdleMode();
+
+                // Check if over text
+                checkTextUnderCursor(e.clientX, e.clientY);
+
+                // Set new idle timer
+                mouseIdleTimer = setTimeout(enterIdleMode, 4000);
+            }
+        });
+
+        // Start idle timer
+        mouseIdleTimer = setTimeout(enterIdleMode, 4000);
     </script>
 
 </body>
