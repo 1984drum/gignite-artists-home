@@ -363,27 +363,25 @@
 
         /* Subtitle typing effect */
         .subtitle-text {
-            display: inline-block;
-            overflow: hidden;
-            white-space: nowrap;
-            width: 0;
-            line-height: 1.8;
+            display: inline;
             background-color: #000;
-            padding: 0.75rem 1.5rem;
+            padding: 0.5rem 1rem;
+            line-height: 2.2;
             box-decoration-break: clone;
             -webkit-box-decoration-break: clone;
+            opacity: 0;
         }
 
         .subtitle-text.typing {
-            animation: subtitleTyping 2.5s steps(94) forwards;
+            animation: subtitleFadeIn 1.5s ease-out forwards;
         }
 
-        @keyframes subtitleTyping {
+        @keyframes subtitleFadeIn {
             from {
-                width: 0;
+                opacity: 0;
             }
             to {
-                width: 100%;
+                opacity: 1;
             }
         }
 
@@ -1364,14 +1362,14 @@
                 heroRestContent.classList.remove('hero-content-hidden');
                 heroRestContent.classList.add('hero-content-visible');
 
-                // Start subtitle typing animation
+                // Start subtitle fade-in animation
                 subtitleText.classList.add('typing');
 
-                // After subtitle typing completes (2.5s), fade in button
+                // After subtitle animation completes (1.5s), fade in button
                 setTimeout(() => {
                     startPlanningBtn.classList.remove('button-hidden');
                     startPlanningBtn.classList.add('button-visible');
-                }, 2500);
+                }, 1500);
             }, 5500);
         }, 2500);
 
@@ -1462,11 +1460,11 @@
         }
 
         // Start the carousel after intro sequence completes
-        // Intro takes 2.5s (title drop) + 5.5s (flash) + 2.5s (subtitle typing) = 10.5s total
+        // Intro takes 2.5s (title drop) + 5.5s (flash) + 1.5s (subtitle fade) = 9.5s total
         setTimeout(() => {
             // First transition happens 6 seconds after intro completes
             setInterval(transitionToNextImage, 6000);
-        }, 10500 + 6000); // Wait for intro + first full display duration
+        }, 9500 + 6000); // Wait for intro + first full display duration
 
         // Random pixelation effect
         function applyRandomPixelation() {
