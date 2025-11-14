@@ -764,13 +764,25 @@
         /* Helper class for the animated waveform bars */
         .sample-bar {
             width: 3px; /* Fixed width for bars */
-            background: repeating-linear-gradient(
-                to bottom,
-                white 0px,
-                white 4px,
-                transparent 4px,
-                transparent 8px
-            );
+            background:
+                /* Gradient overlay from cyan at edges to transparent in middle */
+                linear-gradient(
+                    to bottom,
+                    #06b6d4 0%,
+                    rgba(6, 182, 212, 0.6) 15%,
+                    rgba(255, 255, 255, 0) 40%,
+                    rgba(255, 255, 255, 0) 60%,
+                    rgba(6, 182, 212, 0.6) 85%,
+                    #06b6d4 100%
+                ),
+                /* Repeating pattern for segmented bars */
+                repeating-linear-gradient(
+                    to bottom,
+                    white 0px,
+                    white 4px,
+                    transparent 4px,
+                    transparent 8px
+                );
             /* Animation will be set via JavaScript for randomness */
         }
 
@@ -837,7 +849,7 @@
             background-position: center;
             filter: brightness(0.4);
             z-index: 0;
-            transition: transform 0.1s ease-out;
+            transition: transform 0.6s ease-out;
             will-change: transform;
             transform: translate(var(--parallax-x, 0px), var(--parallax-y, 0px));
         }
@@ -1059,24 +1071,9 @@
             transition: r 0.5s ease;
         }
 
-        /* Center cursor dot - always visible at exact mouse position */
-        #cursor-center-dot {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 12px;
-            height: 12px;
-            background: #ffffff;
-            border-radius: 50%;
-            z-index: 10000;
-            pointer-events: none;
-            mix-blend-mode: difference;
-        }
-
         /* Hide cursor blob on mobile/tablet screens */
         @media (max-width: 1024px) {
             #spinning-text-cursor,
-            #cursor-center-dot,
             .cursor-trail-container {
                 display: none !important;
             }
@@ -1350,9 +1347,6 @@
     </section>
 
     <!-- Cursor Blob Elements -->
-    <!-- Center dot at exact cursor position -->
-    <div id="cursor-center-dot"></div>
-
     <!-- SVG for the spinning, circular text -->
     <svg id="spinning-text-cursor" viewBox="0 0 100 100">
         <defs>
@@ -2165,7 +2159,6 @@
 
         // Initialize spinning cursor text immediately
         const cursorText = document.getElementById('spinning-text-cursor');
-        const centerDot = document.getElementById('cursor-center-dot');
         let mouseX = window.innerWidth / 2;
         let mouseY = window.innerHeight / 2;
         let cursorRotation = 0;
@@ -2179,9 +2172,6 @@
             mouseY = e.clientY;
             lastMoveTime = Date.now();
             idleTime = 0;
-
-            // Update center dot position immediately (no sway)
-            centerDot.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
         });
 
         // Animate cursor text rotation from the start
