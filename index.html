@@ -1136,8 +1136,9 @@
             <!-- Define the circular path. The text will follow this. -->
             <path id="text-circle-cursor" d="M 50, 50 m -35, 0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0"></path>
         </defs>
-        <!-- Center blob like a crotchet note -->
-        <circle cx="50" cy="50" r="6" fill="#ffffff" />
+        <!-- Center blob like a crotchet note - larger and with glow -->
+        <circle cx="50" cy="50" r="8" fill="#ffffff" opacity="0.3" />
+        <circle cx="50" cy="50" r="5" fill="#ffffff" />
         <text>
             <!-- Attach the text to the circular path -->
             <textPath href="#text-circle-cursor" textLength="220" lengthAdjust="spacing">
