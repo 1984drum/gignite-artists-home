@@ -20,8 +20,8 @@
     <!-- 3. Load Inter for cursor blob text -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@900&display=swap" rel="stylesheet">
 
-    <!-- Font Awesome Kit -->
-    <script src="https://kit.fontawesome.com/218e17b06d.js" crossorigin="anonymous"></script>
+    <!-- 4. Load Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
         /* REMOVED: @import url("https://use.typekit.net/hat1wfl.css"); */
@@ -895,6 +895,16 @@
             background: #06b6d4 !important;
             backdrop-filter: blur(0);
             -webkit-backdrop-filter: blur(0);
+            animation: buttonGrow 3s ease-out forwards;
+        }
+
+        @keyframes buttonGrow {
+            0% {
+                transform: scale(1);
+            }
+            100% {
+                transform: scale(1.2);
+            }
         }
 
         .glitch-button::before,
@@ -991,7 +1001,7 @@
             background: #ffffff;
             border-radius: 50%;
             transform: translate(-50%, -50%);
-            opacity: 1;
+            opacity: 0.5;
         }
 
         /* Growing animation for blobs */
@@ -1042,6 +1052,20 @@
         #spinning-text-cursor circle {
             fill: #000000; /* Black fill for mask effect */
             transition: r 0.5s ease;
+        }
+
+        /* Center cursor dot - always visible at exact mouse position */
+        #cursor-center-dot {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 12px;
+            height: 12px;
+            background: #ffffff;
+            border-radius: 50%;
+            z-index: 10000;
+            pointer-events: none;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
         }
 
         /* Light Saber Effects for Buttons */
@@ -1139,6 +1163,117 @@
                 height: 8px;
             }
         }
+
+        /* Background image for Problem/Solution section */
+        .section-problem-solution {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-problem-solution::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('img/GN 64.png');
+            background-size: cover;
+            background-position: center;
+            filter: blur(4px);
+            z-index: 0;
+        }
+
+        .section-problem-solution > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Background image for Features section */
+        .section-features {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-features::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #000;
+            z-index: 0;
+        }
+
+        .section-features::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('img/GN 69.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.8;
+            filter: contrast(1.2);
+            z-index: 1;
+        }
+
+        .section-features > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Background image for Final CTA section with parallax */
+        .section-final-cta {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-final-cta-bg {
+            position: absolute;
+            top: -50px;
+            left: -50px;
+            right: -50px;
+            bottom: -50px;
+            background-image: url('img/1984drum_A_dynamic_long-exposure_photograph._The_static_stage_1d984278-e076-4baa-9338-daf1edf5dae0_1.png');
+            background-size: cover;
+            background-position: center;
+            z-index: 0;
+            transition: transform 0.1s ease-out;
+        }
+
+        .section-final-cta > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Background image for Benefits section */
+        .section-benefits {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-benefits::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('img/GN 71.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.3;
+            z-index: 0;
+        }
+
+        .section-benefits > * {
+            position: relative;
+            z-index: 1;
+        }
     </style>
 </head>
 <body class="bg-black">
@@ -1189,7 +1324,7 @@
                     <span id="subtitle-text" class="subtitle-text">Our platform will help you build out your tour plan step by step, making your ambitions a reality.</span>
                 </p>
                 <!-- Button -->
-                <a id="start-planning-btn" href="#features" class="glitch-button gignite-button button-hidden mt-12 inline-block py-3 px-10 bg-transparent text-white border-[3px] border-cyan-500 font-bold text-lg uppercase shadow-lg shadow-cyan-500/30 transform transition-all duration-300 hover:scale-105 hover:bg-cyan-500 hover:text-black hover:border-cyan-500">
+                <a id="start-planning-btn" href="https://mailchi.mp/YOUR_SIGNUP_URL" target="_blank" rel="noopener noreferrer" class="glitch-button gignite-button button-hidden mt-12 inline-block py-3 px-10 bg-transparent text-white border-[3px] border-cyan-500 font-bold text-lg uppercase shadow-lg shadow-cyan-500/30 transform transition-all duration-300 hover:scale-105 hover:bg-cyan-500 hover:text-black hover:border-cyan-500">
                     Start Planning
                 </a>
             </div>
@@ -1198,6 +1333,9 @@
     </section>
 
     <!-- Cursor Blob Elements -->
+    <!-- Center dot at exact cursor position -->
+    <div id="cursor-center-dot"></div>
+
     <!-- SVG for the spinning, circular text -->
     <svg id="spinning-text-cursor" viewBox="0 0 100 100">
         <defs>
@@ -1297,7 +1435,7 @@
                         <span>All your bookings and info in one place, planned to perfection. You get clarity and transparency on the financials, enabling you to drive a more rewarding future for your band.</span>
                     </p>
                     <!-- UPDATED: Button Style 2 -->
-                    <a href="#" class="gignite-button mt-10 inline-block py-3 px-10 bg-transparent text-white border-[3px] border-cyan-500 font-bold text-lg uppercase shadow-lg shadow-cyan-500/30 transform transition-all duration-300 hover:scale-105 hover:bg-cyan-500 hover:text-black hover:border-cyan-500">
+                    <a href="https://mailchi.mp/YOUR_SIGNUP_URL" target="_blank" rel="noopener noreferrer" class="gignite-button mt-10 inline-block py-3 px-10 bg-transparent text-white border-[3px] border-cyan-500 font-bold text-lg uppercase shadow-lg shadow-cyan-500/30 transform transition-all duration-300 hover:scale-105 hover:bg-cyan-500 hover:text-black hover:border-cyan-500">
                         Get Started
                     </a>
                 </div>
@@ -1447,7 +1585,7 @@
                 <div class="text-center max-w-3xl mx-auto reveal-on-scroll">
                     <h2 class="gignite-heading text-4xl md:text-6xl font-bold tracking-tight">Your Virtual Tour Manager</h2>
                     <p class="text-lg text-gray-300 mt-6">
-                        Gignite guides you through every step, ensuring no details are overlooked. From customs paperwork to visas, we've got you covered.
+                        <span style="background-color: #000; padding: 0.5rem 1rem; display: inline-block; line-height: 1.8;">Gignite guides you through every step, ensuring no details are overlooked. From customs paperwork to visas, we've got you covered.</span>
                     </p>
                 </div>
 
@@ -1530,7 +1668,7 @@
         </section>
 
         <!-- 5. Benefits Section (Quick Facts) -->
-        <section class="py-20 md:py-32 bg-black">
+        <section class="section-benefits py-20 md:py-32 bg-black">
             <div class="container mx-auto px-6">
                 <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-12 text-center">
 
@@ -1607,7 +1745,7 @@
                     Stop the admin headaches and get back to the music.
                 </p>
                 <!-- UPDATED: Button Style 3 -->
-                <a href="#" class="gignite-button mt-12 inline-block py-4 px-12 border-[3px] border-cyan-500 text-white font-bold text-lg uppercase tracking-widest transform transition-all duration-300 hover:bg-cyan-500 hover:text-black hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/30">
+                <a href="https://mailchi.mp/YOUR_SIGNUP_URL" target="_blank" rel="noopener noreferrer" class="gignite-button mt-12 inline-block py-4 px-12 border-[3px] border-cyan-500 text-white font-bold text-lg uppercase tracking-widest transform transition-all duration-300 hover:bg-cyan-500 hover:text-black hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/30">
                     Get Started For Free
                 </a>
             </div>
@@ -1905,14 +2043,23 @@
 
         // Initialize spinning cursor text immediately
         const cursorText = document.getElementById('spinning-text-cursor');
+        const centerDot = document.getElementById('cursor-center-dot');
         let mouseX = window.innerWidth / 2;
         let mouseY = window.innerHeight / 2;
         let cursorRotation = 0;
+        let idleTime = 0;
+        let lastMoveTime = Date.now();
+        let cursorScale = 1;
 
         // Track mouse movement for cursor text
         document.addEventListener('mousemove', (e) => {
             mouseX = e.clientX;
             mouseY = e.clientY;
+            lastMoveTime = Date.now();
+            idleTime = 0;
+
+            // Update center dot position immediately (no sway)
+            centerDot.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
         });
 
         // Animate cursor text rotation from the start
@@ -1922,10 +2069,22 @@
             const swayY = Math.sin(time * 0.8) * 25;
             cursorRotation = (Date.now() * 0.05) % 360;
 
+            // Calculate idle time in seconds
+            idleTime = (Date.now() - lastMoveTime) / 1000;
+
+            // Grow cursor when idle (max 2.5x after 3 seconds)
+            if (idleTime > 0.5) {
+                const growthFactor = Math.min((idleTime - 0.5) / 3, 1); // 0 to 1 over 3 seconds
+                cursorScale = 1 + (growthFactor * 1.5); // Grow from 1 to 2.5
+            } else {
+                cursorScale = 1;
+            }
+
             cursorText.style.transform = `
                 translate(${mouseX + swayX}px, ${mouseY + swayY}px)
                 translate(-50%, -50%)
                 rotate(${cursorRotation}deg)
+                scale(${cursorScale})
             `;
 
             requestAnimationFrame(animateCursorText);
