@@ -803,6 +803,32 @@
             z-index: 1;
         }
 
+        /* Final CTA Section Background with Parallax */
+        .final-cta-section {
+            position: relative;
+            overflow: hidden;
+            background-color: #000;
+        }
+
+        .final-cta-section::before {
+            content: '';
+            position: absolute;
+            inset: -10%;
+            background-image: url('img/1984drum_A_dynamic_long-exposure_photograph._The_static_stage_1d984278-e076-4baa-9338-daf1edf5dae0_1.png');
+            background-size: cover;
+            background-position: center;
+            filter: brightness(0.4);
+            z-index: 0;
+            transition: transform 0.1s ease-out;
+            will-change: transform;
+            transform: translate(var(--parallax-x, 0px), var(--parallax-y, 0px));
+        }
+
+        .final-cta-section > * {
+            position: relative;
+            z-index: 1;
+        }
+
         /* Header styles */
         .site-header {
             background-color: #000;
@@ -1538,7 +1564,7 @@
         </section>
 
         <!-- 6. Final CTA -->
-        <section class="py-20 md:py-32 bg-gray-950 text-center">
+        <section id="final-cta" class="final-cta-section py-20 md:py-32 bg-gray-950 text-center">
             <div class="container mx-auto px-6 reveal-on-scroll">
                 <h2 class="gignite-heading text-4xl md:text-6xl font-bold">The performance rules.</h2>
                 <p class="text-xl md:text-2xl text-gray-300 mt-6 max-w-3xl mx-auto">
@@ -2052,6 +2078,37 @@
 
         // Initialize light sabers after page loads
         initLightSabers();
+
+        // 3D Parallax effect for Final CTA section background
+        const finalCtaSection = document.getElementById('final-cta');
+        if (finalCtaSection) {
+            finalCtaSection.addEventListener('mousemove', (e) => {
+                const rect = finalCtaSection.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+
+                // Calculate offset from center as percentage (-1 to 1)
+                const percentX = (x - centerX) / centerX;
+                const percentY = (y - centerY) / centerY;
+
+                // Apply subtle parallax movement (max 20px in each direction)
+                const moveX = percentX * 20;
+                const moveY = percentY * 20;
+
+                // Apply transform to ::before pseudo-element via CSS custom properties
+                finalCtaSection.style.setProperty('--parallax-x', `${moveX}px`);
+                finalCtaSection.style.setProperty('--parallax-y', `${moveY}px`);
+            });
+
+            finalCtaSection.addEventListener('mouseleave', () => {
+                // Reset to center position
+                finalCtaSection.style.setProperty('--parallax-x', '0px');
+                finalCtaSection.style.setProperty('--parallax-y', '0px');
+            });
+        }
     </script>
 
 </body>
