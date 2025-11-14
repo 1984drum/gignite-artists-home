@@ -756,6 +756,53 @@
             /* Animation will be set via JavaScript for randomness */
         }
 
+        /* Problem/Solution Section Background */
+        .problem-solution-section {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .problem-solution-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url('img/GN 64.png');
+            background-size: cover;
+            background-position: center;
+            filter: blur(8px);
+            z-index: 0;
+            opacity: 0.3;
+        }
+
+        .problem-solution-section > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Features Section Background */
+        .features-section {
+            position: relative;
+            overflow: hidden;
+            background-color: #000;
+        }
+
+        .features-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url('img/GN 69.png');
+            background-size: cover;
+            background-position: center;
+            filter: contrast(1.3);
+            z-index: 0;
+            opacity: 0.8;
+        }
+
+        .features-section > * {
+            position: relative;
+            z-index: 1;
+        }
+
         /* Header styles */
         .site-header {
             background-color: #000;
@@ -1174,7 +1221,7 @@
 
     <main>
         <!-- 2. Problem/Solution Section -->
-        <section class="py-20 md:py-32 bg-black">
+        <section class="problem-solution-section py-20 md:py-32 bg-black">
             <div class="container mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
                 <!-- Text Content -->
                 <div class="reveal-on-scroll">
@@ -1334,7 +1381,7 @@
         </section>
 
         <!-- 3. Features Section (Interactive Cards) -->
-        <section id="features" class="py-20 md:py-32 bg-gray-950">
+        <section id="features" class="features-section py-20 md:py-32 bg-gray-950">
             <div class="container mx-auto px-6">
                 <div class="text-center max-w-3xl mx-auto reveal-on-scroll">
                     <h2 class="gignite-heading text-4xl md:text-6xl font-bold tracking-tight">Your Virtual Tour Manager</h2>
