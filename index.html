@@ -16,7 +16,10 @@
     <!-- 2. Load Brother 1816 for headings/buttons -->
     <!-- UPDATED: Switched from @import to <link> for faster, more reliable font loading -->
     <link rel="stylesheet" href="https://use.typekit.net/hat1wfl.css">
-    
+
+    <!-- 3. Load Inter for cursor blob text -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@900&display=swap" rel="stylesheet">
+
     <style>
         /* REMOVED: @import url("https://use.typekit.net/hat1wfl.css"); */
 
@@ -810,6 +813,72 @@
                 transform: translate(0);
             }
         }
+
+        /* Cursor Blob Styles */
+        body.cursor-blob-active {
+            cursor: none; /* Hide default cursor when blob is active */
+        }
+
+        /* The container that applies the 'Gooey' filter to its children */
+        .cursor-trail-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9998;
+            /* This filter blurs the elements and then contrasts them to make them 'stick' */
+            filter: url('#goo-cursor');
+            /* This creates the color inversion effect */
+            mix-blend-mode: difference;
+            /* Start hidden */
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .cursor-trail-container.active {
+            opacity: 1;
+        }
+
+        /* The trailing blobs */
+        .trail-dot {
+            position: absolute;
+            /* Increased base size 4x */
+            width: 560px;
+            height: 560px;
+            /* Blob color must be white for mix-blend-mode to work */
+            background: #ffffff;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 1;
+        }
+
+        /* Styles for the spinning text SVG */
+        #spinning-text-cursor {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100px;
+            height: 100px;
+            z-index: 9999;
+            pointer-events: none;
+            /* Start hidden */
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        #spinning-text-cursor.active {
+            opacity: 1;
+        }
+
+        #spinning-text-cursor text {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            font-size: 16px;
+            fill: #ffffff;
+            letter-spacing: 1.5px;
+        }
     </style>
 </head>
 <body class="bg-black">
@@ -867,6 +936,54 @@
             </div>
         </div>
     </section>
+
+    <!-- Cursor Blob Elements -->
+    <!-- SVG for the spinning, circular text -->
+    <svg id="spinning-text-cursor" viewBox="0 0 100 100">
+        <defs>
+            <!-- Define the circular path. The text will follow this. -->
+            <path id="text-circle-cursor" d="M 50, 50 m -35, 0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0"></path>
+        </defs>
+        <text>
+            <!-- Attach the text to the circular path -->
+            <textPath href="#text-circle-cursor">
+                GIGNITE GIGNITE
+            </textPath>
+        </text>
+    </svg>
+
+    <!-- The blob container (will appear black on white, and white on black) -->
+    <div class="cursor-trail-container" id="trail-container">
+    </div>
+
+    <!-- SVG Filter for cursor blob goo effect -->
+    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="position: absolute; width: 0; height: 0;">
+        <defs>
+            <filter id="goo-cursor">
+                <!-- 1. Blur the source graphic (blobs) -->
+                <feGaussianBlur in="SourceGraphic" stdDeviation="80" result="blur" />
+
+                <!-- 2. Create an animating fractal noise pattern -->
+                <feTurbulence type="fractalNoise" baseFrequency="0.005 0.008"
+                              numOctaves="1" seed="1" result="turbulence">
+                    <!-- This animate tag makes the noise pattern change, creating the "misshapen" and "gradual movement" effect -->
+                    <animate attributeName="seed" from="1" to="100" dur="8s" repeatCount="indefinite" />
+                </feTurbulence>
+
+                <!-- 3. Use the noise to displace (warp) the blurred blobs -->
+                <feDisplacementMap in="blur" in2="turbulence" scale="60" result="warp" />
+
+                <!-- 4. Sharpen the *warped* blobs. Updated with very high contrast for a crisp edge. -->
+                <feColorMatrix in="warp" mode="matrix" values="
+                    1 0 0 0 0
+                    0 1 0 0 0
+                    0 0 1 0 0
+                    0 0 0 70 -30" result="goo" />
+
+                <feComposite in="SourceGraphic" in2="goo" operator="atop"/>
+            </filter>
+        </defs>
+    </svg>
 
     <!-- Section Divider 1 -->
     <section class="bg-black py-10 w-full">
@@ -1487,6 +1604,105 @@
 
         // Start pixelation effect
         applyRandomPixelation();
+
+        // Cursor Blob Effect - Activate after typing sequence completes
+        // Timing: 2.5s (title) + 5.5s (flash) + 1.5s (subtitle) + 1.5s (button) = 11s
+        setTimeout(() => {
+            initCursorBlob();
+        }, 11000);
+
+        function initCursorBlob() {
+            // Add cursor-blob-active class to body to hide default cursor
+            document.body.classList.add('cursor-blob-active');
+
+            // Configuration
+            const trailLength = 20; // Number of blobs in the trail
+            const container = document.getElementById('trail-container');
+            const cursorText = document.getElementById('spinning-text-cursor');
+
+            // Store mouse position
+            let mouseX = window.innerWidth / 2;
+            let mouseY = window.innerHeight / 2;
+
+            // Store dots
+            const dots = [];
+
+            // Create trail dots
+            for (let i = 0; i < trailLength; i++) {
+                const dot = document.createElement('div');
+                dot.classList.add('trail-dot');
+                container.appendChild(dot);
+                // Each dot has its own position data
+                dots.push({
+                    element: dot,
+                    x: mouseX,
+                    y: mouseY
+                });
+            }
+
+            // Track mouse movement
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            });
+
+            // Animation Loop
+            function animate() {
+                // Add gentle autonomous movement (sway)
+                const time = Date.now() * 0.0003; // Slow time increment
+                const swayAmount = 25; // How many pixels to sway
+                const swayX = Math.cos(time) * swayAmount;
+                const swayY = Math.sin(time * 0.8) * swayAmount;
+
+                // Slowly increase rotation
+                const rotation = (Date.now() * 0.05) % 360;
+
+                // The first dot follows the mouse with sway
+                let leaderX = mouseX + swayX;
+                let leaderY = mouseY + swayY;
+
+                dots.forEach((dot, index) => {
+                    // Lerp (Linear Interpolation) for smooth following
+                    const speed = 0.15; // Slower speed for heavier, stretchier feel
+
+                    dot.x += (leaderX - dot.x) * speed;
+                    dot.y += (leaderY - dot.y) * speed;
+
+                    dot.element.style.left = `${dot.x}px`;
+                    dot.element.style.top = `${dot.y}px`;
+
+                    // Position and rotate the SVG text on the leader dot
+                    if (index === 0) {
+                        cursorText.style.transform = `
+                            translate(${dot.x}px, ${dot.y}px)
+                            translate(-50%, -50%)
+                            rotate(${rotation}deg)
+                        `;
+                    }
+
+                    // Make the dots get smaller towards the end of the tail
+                    const linearScale = 1 - (index / trailLength);
+                    const scale = Math.pow(linearScale, 2); // Quadratic falloff
+
+                    dot.element.style.transform = `translate(-50%, -50%) scale(${scale})`;
+
+                    // The next dot follows the current dot
+                    leaderX = dot.x;
+                    leaderY = dot.y;
+                });
+
+                requestAnimationFrame(animate);
+            }
+
+            // Fade in the cursor blob
+            setTimeout(() => {
+                container.classList.add('active');
+                cursorText.classList.add('active');
+            }, 100);
+
+            // Start animation
+            animate();
+        }
     </script>
 
 </body>
