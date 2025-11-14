@@ -1085,8 +1085,9 @@
                 <!-- 2. Create an animating fractal noise pattern - increased for more abstract shapes -->
                 <feTurbulence type="fractalNoise" baseFrequency="0.004 0.006"
                               numOctaves="4" seed="1" result="turbulence">
-                    <!-- Slower animation for more chilled out effect -->
-                    <animate attributeName="seed" from="1" to="100" dur="20s" repeatCount="indefinite" />
+                    <!-- Variable speed animation for irregular changes -->
+                    <animate attributeName="seed" from="1" to="100" dur="15s" repeatCount="indefinite" />
+                    <animate attributeName="baseFrequency" values="0.004 0.006; 0.006 0.008; 0.003 0.005; 0.004 0.006" dur="8s" repeatCount="indefinite" />
                 </feTurbulence>
 
                 <!-- 3. Use the noise to displace (warp) the blurred blobs - increased scale for more abstract shape -->
@@ -1768,6 +1769,7 @@
             const trailLength = 20; // Number of blobs in the trail
             const container = document.getElementById('trail-container');
             const baseScale = 0.45; // 75% of original size
+            const splashes = []; // Store splash elements
 
             // Store dots
             const dots = [];
@@ -1783,9 +1785,36 @@
                     x: mouseX,
                     y: mouseY,
                     pulseOffset: Math.random() * Math.PI * 2, // Random starting point for pulse
+                    pulseSpeed: 0.8 + Math.random() * 1.4, // Random pulse speed (0.8x - 2.2x)
                     sizeVariation: 0.7 + Math.random() * 0.6 // Random size between 0.7x and 1.3x
                 });
             }
+
+            // Function to create a splash
+            function createSplash(x, y) {
+                const splash = document.createElement('div');
+                splash.classList.add('trail-dot');
+                splash.style.left = `${x}px`;
+                splash.style.top = `${y}px`;
+                container.appendChild(splash);
+
+                const size = 0.3 + Math.random() * 0.4; // Random splash size
+                const lifetime = 800 + Math.random() * 1200; // 0.8-2s lifetime
+
+                splashes.push({
+                    element: splash,
+                    createdAt: Date.now(),
+                    lifetime: lifetime,
+                    maxSize: size
+                });
+            }
+
+            // Randomly create splashes
+            setInterval(() => {
+                if (Math.random() > 0.7) { // 30% chance every interval
+                    createSplash(mouseX, mouseY);
+                }
+            }, 300 + Math.random() * 700); // Every 0.3-1s
 
             // Animation Loop
             function animate() {
@@ -1795,8 +1824,8 @@
                 const swayX = Math.cos(time) * swayAmount;
                 const swayY = Math.sin(time * 0.8) * swayAmount;
 
-                // Random pulsating effect
-                const pulseTime = Date.now() * 0.002; // Pulse speed
+                // Random pulsating effect with variable speed per dot
+                const pulseTime = Date.now() * 0.002;
 
                 // The first dot follows the mouse with sway
                 let leaderX = mouseX + swayX;
@@ -1816,8 +1845,8 @@
                     const linearScale = 1 - (index / trailLength);
                     const tailScale = Math.pow(linearScale, 2);
 
-                    // Add random pulsating to each dot
-                    const pulse = Math.sin(pulseTime + dot.pulseOffset) * 0.15 + 1; // Oscillates between 0.85 and 1.15
+                    // Add random pulsating to each dot with individual pulse speed
+                    const pulse = Math.sin(pulseTime * dot.pulseSpeed + dot.pulseOffset) * 0.15 + 1;
 
                     // Apply base scale, tail scale, pulse, and random size variation
                     const finalScale = baseScale * tailScale * pulse * dot.sizeVariation;
@@ -1827,6 +1856,24 @@
                     // The next dot follows the current dot
                     leaderX = dot.x;
                     leaderY = dot.y;
+                });
+
+                // Animate and clean up splashes
+                splashes.forEach((splash, index) => {
+                    const age = Date.now() - splash.createdAt;
+                    const progress = age / splash.lifetime;
+
+                    if (progress >= 1) {
+                        // Remove expired splash
+                        splash.element.remove();
+                        splashes.splice(index, 1);
+                    } else {
+                        // Fade out and expand
+                        const scale = splash.maxSize * (1 + progress * 2); // Expand to 3x size
+                        const opacity = 1 - progress; // Fade out
+                        splash.element.style.transform = `translate(-50%, -50%) scale(${scale})`;
+                        splash.element.style.opacity = opacity;
+                    }
                 });
 
                 requestAnimationFrame(animate);
