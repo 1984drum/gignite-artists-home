@@ -878,6 +878,104 @@
             fill: #ffffff;
             letter-spacing: 1.5px;
         }
+
+        /* Light Saber Effects for Buttons */
+        .gignite-button {
+            position: relative;
+            z-index: 10;
+        }
+
+        .light-saber {
+            position: absolute;
+            top: 50%;
+            width: 3px;
+            height: 0%;
+            background: linear-gradient(to bottom,
+                rgba(6, 182, 212, 0) 0%,
+                rgba(6, 182, 212, 0.6) 20%,
+                rgba(6, 182, 212, 1) 50%,
+                rgba(6, 182, 212, 0.6) 80%,
+                rgba(6, 182, 212, 0) 100%
+            );
+            transform: translateY(-50%);
+            opacity: 0;
+            z-index: 1;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            filter: blur(1px);
+            box-shadow:
+                0 0 10px rgba(6, 182, 212, 0.5),
+                0 0 20px rgba(6, 182, 212, 0.3),
+                0 0 30px rgba(6, 182, 212, 0.1);
+        }
+
+        .light-saber.left {
+            left: -20px;
+        }
+
+        .light-saber.right {
+            right: -20px;
+        }
+
+        .light-saber.active {
+            opacity: 1;
+            animation: saberFlicker 2s ease-in-out infinite;
+        }
+
+        /* Random flicker animation for light sabers when not hovering */
+        @keyframes saberFlicker {
+            0%, 100% {
+                height: 40%;
+                opacity: 0.3;
+            }
+            50% {
+                height: 60%;
+                opacity: 0.6;
+            }
+        }
+
+        /* Extreme hover effect - wobbling laser animation */
+        .gignite-button:hover .light-saber {
+            opacity: 1;
+            animation: saberWobbleExtreme 0.3s ease-in-out infinite, saberPulse 0.5s ease-in-out infinite;
+            filter: blur(2px);
+            width: 6px;
+            box-shadow:
+                0 0 20px rgba(6, 182, 212, 0.8),
+                0 0 40px rgba(6, 182, 212, 0.6),
+                0 0 60px rgba(6, 182, 212, 0.4),
+                0 0 80px rgba(6, 182, 212, 0.2);
+        }
+
+        @keyframes saberWobbleExtreme {
+            0%, 100% {
+                transform: translateY(-50%) translateX(0) scaleY(1);
+            }
+            25% {
+                transform: translateY(-50%) translateX(-3px) scaleY(1.1);
+            }
+            50% {
+                transform: translateY(-50%) translateX(2px) scaleY(0.95);
+            }
+            75% {
+                transform: translateY(-50%) translateX(-2px) scaleY(1.05);
+            }
+        }
+
+        @keyframes saberPulse {
+            0%, 100% {
+                height: 80%;
+                opacity: 0.9;
+            }
+            33% {
+                height: 120%;
+                opacity: 1;
+            }
+            66% {
+                height: 95%;
+                opacity: 0.95;
+            }
+        }
     </style>
 </head>
 <body class="bg-black">
@@ -1645,7 +1743,7 @@
             // Configuration
             const trailLength = 20; // Number of blobs in the trail
             const container = document.getElementById('trail-container');
-            const baseScale = 0.2; // Start small
+            const baseScale = 0.6; // Increased for better visibility
 
             // Store dots
             const dots = [];
@@ -1717,6 +1815,56 @@
             // Start blob animation
             animate();
         }
+
+        // Light Saber Effects for Buttons
+        function initLightSabers() {
+            const buttons = document.querySelectorAll('.gignite-button');
+
+            buttons.forEach(button => {
+                // Create left and right light sabers
+                const leftSaber = document.createElement('div');
+                leftSaber.className = 'light-saber left';
+
+                const rightSaber = document.createElement('div');
+                rightSaber.className = 'light-saber right';
+
+                // Insert sabers before button content (so they appear behind)
+                button.insertBefore(leftSaber, button.firstChild);
+                button.insertBefore(rightSaber, button.firstChild);
+
+                // Random activation function for subtle effect when not hovering
+                function randomActivate() {
+                    if (!button.matches(':hover')) {
+                        // Randomly decide which sabers to activate
+                        const activateLeft = Math.random() > 0.5;
+                        const activateRight = Math.random() > 0.5;
+
+                        if (activateLeft) {
+                            leftSaber.classList.add('active');
+                            setTimeout(() => {
+                                leftSaber.classList.remove('active');
+                            }, 800 + Math.random() * 1200); // Active for 0.8-2s
+                        }
+
+                        if (activateRight) {
+                            rightSaber.classList.add('active');
+                            setTimeout(() => {
+                                rightSaber.classList.remove('active');
+                            }, 800 + Math.random() * 1200); // Active for 0.8-2s
+                        }
+                    }
+
+                    // Schedule next random activation
+                    setTimeout(randomActivate, 1000 + Math.random() * 3000); // Every 1-4 seconds
+                }
+
+                // Start random activation
+                setTimeout(randomActivate, Math.random() * 2000); // Stagger initial start
+            });
+        }
+
+        // Initialize light sabers after page loads
+        initLightSabers();
     </script>
 
 </body>
