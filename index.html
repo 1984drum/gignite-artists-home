@@ -1905,7 +1905,7 @@
                 </div>
 
                 <div id="mc_embed_signup" class="mailchimp-form">
-                    <form action="https://live.us19.list-manage.com/subscribe/post?u=0af904bb923e40ef979e3dff4&amp;id=ea7e5d6226&amp;f_id=00c53be3f0" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank">
+                    <form action="https://live.us19.list-manage.com/subscribe/post?u=0af904bb923e40ef979e3dff4&amp;id=ea7e5d6226&amp;f_id=00c53be3f0" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="hidden_iframe">
                         <div id="mc_embed_signup_scroll">
                             <div class="mb-6">
                                 <label for="mce-EMAIL" class="block text-white font-semibold mb-2 text-sm uppercase tracking-wide">Email Address <span class="text-cyan-500">*</span></label>
@@ -1948,6 +1948,15 @@
                             </div>
                         </div>
                     </form>
+
+                    <!-- Hidden iframe to prevent page redirect -->
+                    <iframe name="hidden_iframe" style="display:none;"></iframe>
+                </div>
+
+                <!-- Custom Thank You Message (hidden by default) -->
+                <div id="custom-thank-you" class="text-center" style="display: none;">
+                    <h3 class="text-3xl md:text-4xl font-bold mb-4 gignite-heading text-cyan-500">Thank You!</h3>
+                    <p class="text-xl text-gray-300">Thank you for subscribing to Early Access Sign Up.</p>
                 </div>
             </div>
         </div>
@@ -2642,6 +2651,20 @@
             ftypes[4]='phone';
         }(jQuery));
         var $mcj = jQuery.noConflict(true);
+
+        // Handle form submission and show custom thank you message
+        (function($) {
+            $('#mc-embedded-subscribe-form').on('submit', function() {
+                // Wait a moment for the form to submit to MailChimp
+                setTimeout(function() {
+                    // Hide the form
+                    $('#mc_embed_signup').fadeOut(400, function() {
+                        // Show custom thank you message
+                        $('#custom-thank-you').fadeIn(400);
+                    });
+                }, 500);
+            });
+        }(jQuery));
     </script>
 
     <!-- Smooth Scroll and Cursor Blob Handling -->
