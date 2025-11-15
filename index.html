@@ -20,6 +20,11 @@
     <!-- 3. Load Inter for cursor blob text -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@900&display=swap" rel="stylesheet">
 
+    <!-- Preload critical background images for faster display -->
+    <link rel="preload" href="img/GN 64.png" as="image">
+    <link rel="preload" href="img/GN 69.png" as="image">
+    <link rel="preload" href="img/1984drum_A_dynamic_long-exposure_photograph._The_static_stage_1d984278-e076-4baa-9338-daf1edf5dae0_1.png" as="image">
+
     <!-- 4. Load Font Awesome Pro Kit -->
     <script src="https://kit.fontawesome.com/218e17b06d.js" crossorigin="anonymous"></script>
 
@@ -1395,9 +1400,9 @@
     <section class="hero-section h-screen w-full relative overflow-hidden">
         <!-- Background Images (Carousel) - First image fades in after typewriter -->
         <img src="img/GN 29.png" alt="GIGNITE Background" class="hero-bg-image" data-slide="0" />
-        <img src="img/GN 44.png" alt="GIGNITE Background" class="hero-bg-image" data-slide="1" />
-        <img src="img/GN 48.png" alt="GIGNITE Background" class="hero-bg-image" data-slide="2" />
-        <img src="img/GN 45.png" alt="GIGNITE Background" class="hero-bg-image" data-slide="3" />
+        <img src="img/GN 44.png" alt="GIGNITE Background" class="hero-bg-image" data-slide="1" loading="lazy" />
+        <img src="img/GN 48.png" alt="GIGNITE Background" class="hero-bg-image" data-slide="2" loading="lazy" />
+        <img src="img/GN 45.png" alt="GIGNITE Background" class="hero-bg-image" data-slide="3" loading="lazy" />
 
         <!-- Equalizer Transition Overlay -->
         <div class="equalizer-transition" id="equalizer-transition"></div>
