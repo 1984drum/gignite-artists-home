@@ -1059,18 +1059,48 @@
             font-family: 'Inter', sans-serif;
             font-weight: 900;
             font-size: 16px;
-            fill: #ffffff; /* White fill to match center dot */
+            fill: #ffffff;
             letter-spacing: 1.5px;
             transition: font-size 0.5s ease;
+            transform-origin: 50px 50px; /* Center of the SVG viewBox */
+            animation: rippleRotate 20s linear infinite;
+            --rotation-offset: 0deg;
         }
 
         #spinning-text-cursor.idle text {
             font-size: 13px;
+            animation: rippleRotate 15s linear infinite; /* Faster when idle */
         }
 
-        #spinning-text-cursor circle {
-            fill: #000000; /* Black fill for mask effect */
-            transition: r 0.5s ease;
+        /* Rippling rotation animation with slight scale variation */
+        @keyframes rippleRotate {
+            0% {
+                transform: rotate(calc(var(--rotation-offset) + 0deg)) scale(1);
+            }
+            12.5% {
+                transform: rotate(calc(var(--rotation-offset) + 45deg)) scale(1.01);
+            }
+            25% {
+                transform: rotate(calc(var(--rotation-offset) + 90deg)) scale(1.02);
+            }
+            37.5% {
+                transform: rotate(calc(var(--rotation-offset) + 135deg)) scale(1.01);
+            }
+            50% {
+                transform: rotate(calc(var(--rotation-offset) + 180deg)) scale(1);
+            }
+            62.5% {
+                transform: rotate(calc(var(--rotation-offset) + 225deg)) scale(0.99);
+            }
+            75% {
+                transform: rotate(calc(var(--rotation-offset) + 270deg)) scale(0.98);
+            }
+            87.5% {
+                transform: rotate(calc(var(--rotation-offset) + 315deg)) scale(0.99);
+            }
+            100% {
+                transform: rotate(calc(var(--rotation-offset) + 360deg)) scale(1);
+            }
         }
 
         /* Hide cursor blob on mobile/tablet screens */
@@ -1408,8 +1438,7 @@
             <!-- Larger path for idle state -->
             <path id="text-circle-cursor-large" d="M 50, 50 m -45, 0 a 45,45 0 1,1 90,0 a 45,45 0 1,1 -90,0"></path>
         </defs>
-        <!-- Center blob like a crotchet note - black for mask effect -->
-        <circle id="cursor-center-dot" cx="50" cy="50" r="6" fill="#000000" />
+        <!-- Center blob removed per user request -->
         <text>
             <!-- Attach the text to the circular path -->
             <textPath id="cursor-text-path" href="#text-circle-cursor">
@@ -2565,8 +2594,8 @@
 
         // Cursor text fade out when over text elements and idle quote system
         const cursorTextPath = document.getElementById('cursor-text-path');
-        const cursorCenterDot = document.getElementById('cursor-center-dot');
         const spinningTextCursor = document.getElementById('spinning-text-cursor');
+        const cursorTextElement = spinningTextCursor.querySelector('text');
 
         let mouseIdleTimer = null;
         let isIdle = false;
@@ -2606,7 +2635,6 @@
                 isIdle = true;
                 spinningTextCursor.classList.add('idle');
                 cursorTextPath.setAttribute('href', '#text-circle-cursor-large');
-                cursorCenterDot.setAttribute('r', '10');
                 cycleQuote();
             }
         }
@@ -2618,7 +2646,6 @@
                 spinningTextCursor.classList.remove('idle');
                 cursorTextPath.setAttribute('href', '#text-circle-cursor');
                 cursorTextPath.textContent = 'YOU  HAVE  THE  POWER  ';
-                cursorCenterDot.setAttribute('r', '6');
             }
         }
 
@@ -2626,6 +2653,11 @@
         function cycleQuote() {
             if (isIdle) {
                 cursorTextPath.textContent = artisticQuotes[currentQuoteIndex] + '  ';
+
+                // Set random rotation offset for text to appear at different position
+                const randomRotation = Math.floor(Math.random() * 360);
+                cursorTextElement.style.setProperty('--rotation-offset', `${randomRotation}deg`);
+
                 currentQuoteIndex = (currentQuoteIndex + 1) % artisticQuotes.length;
                 setTimeout(cycleQuote, 3000); // Change quote every 3 seconds
             }
