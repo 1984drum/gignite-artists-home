@@ -20,8 +20,8 @@
     <!-- 3. Load Inter for cursor blob text -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@900&display=swap" rel="stylesheet">
 
-    <!-- 4. Load Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- 4. Load Font Awesome Pro Kit -->
+    <script src="https://kit.fontawesome.com/218e17b06d.js" crossorigin="anonymous"></script>
 
     <style>
         /* REMOVED: @import url("https://use.typekit.net/hat1wfl.css"); */
@@ -375,12 +375,26 @@
 
         /* Subtitle typing effect */
         .subtitle-text {
-            display: inline-block;
-            background-color: #000;
-            padding: 0.5rem 1rem;
+            display: inline;
+            background-color: transparent;
+            padding: 0;
             line-height: 2.2;
             opacity: 0;
             position: relative;
+        }
+
+        .subtitle-text .char {
+            opacity: 0;
+            background-color: transparent;
+            padding: 0.25rem 0;
+        }
+
+        .subtitle-text .char.visible {
+            opacity: 1;
+            background-color: #000;
+            padding: 0.25rem 0.1rem;
+            box-decoration-break: clone;
+            -webkit-box-decoration-break: clone;
         }
 
         .subtitle-text::after {
@@ -410,15 +424,6 @@
             50% {
                 opacity: 1;
             }
-        }
-
-        /* Character reveal animation */
-        .subtitle-text .char {
-            opacity: 0;
-        }
-
-        .subtitle-text .char.visible {
-            opacity: 1;
         }
 
         /* Button fade-in after subtitle */
@@ -631,13 +636,13 @@
 
         .equalizer-bar {
             flex: 1;
-            /* Segmented equalizer effect using repeating gradient */
+            /* Segmented equalizer effect using repeating gradient - more square-like */
             background: repeating-linear-gradient(
                 to top,
                 #000 0px,
-                #000 12px,
-                transparent 12px,
-                transparent 16px
+                #000 18px,
+                transparent 18px,
+                transparent 22px
             );
             transform: scaleY(0);
             transform-origin: bottom;
@@ -725,8 +730,8 @@
 
         /* 3D "Apple TV" hover effect for feature cards */
         .feature-card {
-            background-color: #111827; /* gray-900 */
-            border: 3px solid #374151; /* gray-700 */
+            background-color: #000; /* black */
+            border: 3px solid #ffffff; /* white */
             transform-style: preserve-d;
             transition: all 0.3s ease;
         }
@@ -759,13 +764,25 @@
         /* Helper class for the animated waveform bars */
         .sample-bar {
             width: 3px; /* Fixed width for bars */
-            background: repeating-linear-gradient(
-                to bottom,
-                white 0px,
-                white 4px,
-                transparent 4px,
-                transparent 8px
-            );
+            background:
+                /* Gradient overlay from cyan at edges to transparent in middle */
+                linear-gradient(
+                    to bottom,
+                    #06b6d4 0%,
+                    rgba(6, 182, 212, 0.6) 15%,
+                    rgba(255, 255, 255, 0) 40%,
+                    rgba(255, 255, 255, 0) 60%,
+                    rgba(6, 182, 212, 0.6) 85%,
+                    #06b6d4 100%
+                ),
+                /* Repeating pattern for segmented bars */
+                repeating-linear-gradient(
+                    to bottom,
+                    white 0px,
+                    white 4px,
+                    transparent 4px,
+                    transparent 8px
+                );
             /* Animation will be set via JavaScript for randomness */
         }
 
@@ -832,7 +849,7 @@
             background-position: center;
             filter: brightness(0.4);
             z-index: 0;
-            transition: transform 0.1s ease-out;
+            transition: transform 0.6s ease-out;
             will-change: transform;
             transform: translate(var(--parallax-x, 0px), var(--parallax-y, 0px));
         }
@@ -893,6 +910,7 @@
 
         .glitch-button:hover {
             background: #06b6d4 !important;
+            color: #000 !important;
             backdrop-filter: blur(0);
             -webkit-backdrop-filter: blur(0);
             animation: buttonGrow 3s ease-out forwards;
@@ -1028,7 +1046,7 @@
         }
 
         #spinning-text-cursor.faded {
-            opacity: 0;
+            opacity: 0.3;
         }
 
         #spinning-text-cursor.idle {
@@ -1040,7 +1058,7 @@
             font-family: 'Inter', sans-serif;
             font-weight: 900;
             font-size: 16px;
-            fill: #000000; /* Black fill for mask effect */
+            fill: #ffffff; /* White fill to match center dot */
             letter-spacing: 1.5px;
             transition: font-size 0.5s ease;
         }
@@ -1054,18 +1072,12 @@
             transition: r 0.5s ease;
         }
 
-        /* Center cursor dot - always visible at exact mouse position */
-        #cursor-center-dot {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 12px;
-            height: 12px;
-            background: #ffffff;
-            border-radius: 50%;
-            z-index: 10000;
-            pointer-events: none;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        /* Hide cursor blob on mobile/tablet screens */
+        @media (max-width: 1024px) {
+            #spinning-text-cursor,
+            .cursor-trail-container {
+                display: none !important;
+            }
         }
 
         /* Light Saber Effects for Buttons */
@@ -1073,6 +1085,16 @@
             position: relative;
             z-index: 10;
             overflow: visible;
+            background: rgba(0, 0, 0, 0.5) !important;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .gignite-button:hover {
+            background: #06b6d4 !important;
+            color: #000 !important;
+            backdrop-filter: blur(0);
+            -webkit-backdrop-filter: blur(0);
         }
 
         .light-saber {
@@ -1331,13 +1353,10 @@
             <!-- Logo -->
             <div class="logo">GIGNITE</div>
 
-            <!-- Login Button -->
-            <button class="login-btn">
-                Login
-                <svg class="login-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                </svg>
-            </button>
+            <!-- Join Us Button -->
+            <a href="#signup-form" class="login-btn">
+                JOIN US
+            </a>
         </div>
     </header>
 
@@ -1372,7 +1391,7 @@
                 </p>
                 <!-- Button -->
                 <a id="start-planning-btn" href="https://mailchi.mp/YOUR_SIGNUP_URL" target="_blank" rel="noopener noreferrer" class="glitch-button gignite-button button-hidden mt-12 inline-block py-3 px-10 bg-transparent text-white border-[3px] border-cyan-500 font-bold text-lg uppercase shadow-lg shadow-cyan-500/30 transform transition-all duration-300 hover:scale-105 hover:bg-cyan-500 hover:text-black hover:border-cyan-500">
-                    Start Planning
+                    EARLY ACCESS SIGN UP
                 </a>
             </div>
             </div>
@@ -1380,9 +1399,6 @@
     </section>
 
     <!-- Cursor Blob Elements -->
-    <!-- Center dot at exact cursor position -->
-    <div id="cursor-center-dot"></div>
-
     <!-- SVG for the spinning, circular text -->
     <svg id="spinning-text-cursor" viewBox="0 0 100 100">
         <defs>
@@ -1460,6 +1476,16 @@
                 <div class="sample-bar" style="animation-delay: 0.1s"></div>
                 <div class="sample-bar" style="animation-delay: 0.2s"></div>
                 <div class="sample-bar" style="animation-delay: 0.5s"></div>
+                <div class="sample-bar" style="animation-delay: 0.3s"></div>
+                <div class="sample-bar" style="animation-delay: 0.1s"></div>
+                <div class="sample-bar" style="animation-delay: 0.4s"></div>
+                <div class="sample-bar" style="animation-delay: 0.2s"></div>
+                <div class="sample-bar" style="animation-delay: 0.5s"></div>
+                <div class="sample-bar" style="animation-delay: 0.3s"></div>
+                <div class="sample-bar" style="animation-delay: 0.1s"></div>
+                <div class="sample-bar" style="animation-delay: 0.2s"></div>
+                <div class="sample-bar" style="animation-delay: 0.4s"></div>
+                <div class="sample-bar" style="animation-delay: 0.3s"></div>
             </div>
             <div class="h-[3px] bg-white" style="width: 60%;"></div>
         </div>
@@ -1483,7 +1509,7 @@
                     </p>
                     <!-- UPDATED: Button Style 2 -->
                     <a href="https://mailchi.mp/YOUR_SIGNUP_URL" target="_blank" rel="noopener noreferrer" class="gignite-button mt-10 inline-block py-3 px-10 bg-transparent text-white border-[3px] border-cyan-500 font-bold text-lg uppercase shadow-lg shadow-cyan-500/30 transform transition-all duration-300 hover:scale-105 hover:bg-cyan-500 hover:text-black hover:border-cyan-500">
-                        Get Started
+                        EARLY ACCESS SIGN UP
                     </a>
                 </div>
                 <!-- Mock UI Visual -->
@@ -1621,6 +1647,21 @@
                     <div class="sample-bar" style="animation-delay: 0.4s; animation-duration: 1.0s;"></div>
                     <div class="sample-bar" style="animation-delay: 0.3s; animation-duration: 1.0s;"></div>
                     <div class="sample-bar" style="animation-delay: 0.5s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.3s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.4s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.5s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.3s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.4s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.5s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.3s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 1.0s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.4s; animation-duration: 1.0s;"></div>
                 </div>
                 <div class="h-[3px] bg-white" style="width: 5%;"></div>
             </div>
@@ -1632,7 +1673,7 @@
                 <div class="text-center max-w-3xl mx-auto reveal-on-scroll">
                     <h2 class="gignite-heading text-4xl md:text-6xl font-bold tracking-tight">Your Virtual Tour Manager</h2>
                     <p class="text-lg text-gray-300 mt-6">
-                        <span style="background-color: #000; padding: 0.5rem 1rem; display: inline-block; line-height: 1.8;">Gignite guides you through every step, ensuring no details are overlooked. From customs paperwork to visas, we've got you covered.</span>
+                        <span id="tour-manager-text" class="subtitle-text">Gignite guides you through every step, ensuring no details are overlooked. From customs paperwork to visas, we've got you covered.</span>
                     </p>
                 </div>
 
@@ -1709,6 +1750,19 @@
                     <div class="sample-bar" style="animation-delay: 0.3s; animation-duration: 0.8s;"></div>
                     <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 0.8s;"></div>
                     <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 0.8s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.4s; animation-duration: 0.8s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.3s; animation-duration: 0.8s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.5s; animation-duration: 0.8s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 0.8s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 0.8s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.3s; animation-duration: 0.8s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 0.8s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.4s; animation-duration: 0.8s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 0.8s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.5s; animation-duration: 0.8s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.3s; animation-duration: 0.8s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 0.8s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 0.8s;"></div>
                 </div>
                 <div class="h-[3px] bg-white" style="width: 60%;"></div>
             </div>
@@ -1778,6 +1832,20 @@
                     <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 1.3s;"></div>
                     <div class="sample-bar" style="animation-delay: 0.3s; animation-duration: 1.3s;"></div>
                     <div class="sample-bar" style="animation-delay: 0.4s; animation-duration: 1.3s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.5s; animation-duration: 1.3s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 1.3s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 1.3s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.3s; animation-duration: 1.3s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.4s; animation-duration: 1.3s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 1.3s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.5s; animation-duration: 1.3s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 1.3s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.3s; animation-duration: 1.3s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.4s; animation-duration: 1.3s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 1.3s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.5s; animation-duration: 1.3s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 1.3s;"></div>
+                    <div class="sample-bar" style="animation-delay: 0.3s; animation-duration: 1.3s;"></div>
                 </div>
                 <div class="h-[3px] bg-white" style="width: 5%;"></div>
             </div>
@@ -1793,7 +1861,7 @@
                 </p>
                 <!-- UPDATED: Button Style 3 -->
                 <a href="https://mailchi.mp/YOUR_SIGNUP_URL" target="_blank" rel="noopener noreferrer" class="gignite-button mt-12 inline-block py-4 px-12 border-[3px] border-cyan-500 text-white font-bold text-lg uppercase tracking-widest transform transition-all duration-300 hover:bg-cyan-500 hover:text-black hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/30">
-                    Get Started For Free
+                    EARLY ACCESS SIGN UP
                 </a>
             </div>
         </section>
@@ -1820,13 +1888,25 @@
                 <div class="sample-bar" style="animation-delay: 0.4s; animation-duration: 1.0s;"></div>
                 <div class="sample-bar" style="animation-delay: 0.3s; animation-duration: 1.0s;"></div>
                 <div class="sample-bar" style="animation-delay: 0.5s; animation-duration: 1.0s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 1.0s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 1.0s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.3s; animation-duration: 1.0s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 1.0s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.4s; animation-duration: 1.0s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 1.0s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.5s; animation-duration: 1.0s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.3s; animation-duration: 1.0s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 1.0s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 1.0s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.4s; animation-duration: 1.0s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.3s; animation-duration: 1.0s;"></div>
             </div>
             <div class="h-[3px] bg-white" style="width: 35%;"></div>
         </div>
     </section>
 
     <!-- Newsletter Subscription Section -->
-    <section class="bg-black py-20">
+    <section id="signup-form" class="bg-black py-20">
         <div class="container mx-auto px-6">
             <div class="max-w-2xl mx-auto">
                 <div class="text-center mb-12">
@@ -1923,6 +2003,47 @@
         revealElements.forEach(el => {
             observer.observe(el);
         });
+
+        // Typing animation for Virtual Tour Manager text
+        const tourManagerText = document.getElementById('tour-manager-text');
+        const tourManagerObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !tourManagerText.classList.contains('typing-started')) {
+                    tourManagerText.classList.add('typing-started');
+                    const text = tourManagerText.textContent;
+                    tourManagerText.textContent = '';
+                    tourManagerText.style.opacity = 1;
+                    tourManagerText.classList.add('typing');
+
+                    // Wrap each character in a span
+                    const chars = text.split('').map(char => {
+                        const span = document.createElement('span');
+                        span.className = 'char';
+                        span.textContent = char;
+                        tourManagerText.appendChild(span);
+                        return span;
+                    });
+
+                    // Reveal characters one by one
+                    let charIndex = 0;
+                    const typeSpeed = 25; // milliseconds per character
+                    const typeInterval = setInterval(() => {
+                        if (charIndex < chars.length) {
+                            chars[charIndex].classList.add('visible');
+                            charIndex++;
+                        } else {
+                            clearInterval(typeInterval);
+                            tourManagerText.classList.remove('typing');
+                            tourManagerText.classList.add('typing-complete');
+                        }
+                    }, typeSpeed);
+                }
+            });
+        }, {
+            threshold: 0.5 // Trigger when 50% of the element is visible
+        });
+
+        tourManagerObserver.observe(tourManagerText);
 
         // 3D Hover Effect Script (for feature cards)
         const featureCards = document.querySelectorAll('.feature-card');
@@ -2148,7 +2269,6 @@
 
         // Initialize spinning cursor text immediately
         const cursorText = document.getElementById('spinning-text-cursor');
-        const centerDot = document.getElementById('cursor-center-dot');
         let mouseX = window.innerWidth / 2;
         let mouseY = window.innerHeight / 2;
         let cursorRotation = 0;
@@ -2162,9 +2282,6 @@
             mouseY = e.clientY;
             lastMoveTime = Date.now();
             idleTime = 0;
-
-            // Update center dot position immediately (no sway)
-            centerDot.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
         });
 
         // Animate cursor text rotation from the start
@@ -2441,19 +2558,19 @@
             "LIVE  THE  MUSIC"
         ];
 
-        // Check if cursor is over text elements
+        // Check if cursor is over buttons/links/feature cards
         function checkTextUnderCursor(x, y) {
             const elements = document.elementsFromPoint(x, y);
-            const hasText = elements.some(el => {
-                // Check if element has text content (excluding our cursor elements)
-                if (el.id === 'spinning-text-cursor' || el.id === 'trail-container') {
-                    return false;
-                }
-                const text = el.textContent?.trim();
-                return text && text.length > 0 && el.offsetParent !== null;
+            const hasButton = elements.some(el => {
+                // Check if element is a button, link, or feature card
+                return el.tagName === 'BUTTON' ||
+                       el.tagName === 'A' ||
+                       el.classList.contains('gignite-button') ||
+                       el.classList.contains('glitch-button') ||
+                       el.classList.contains('feature-card');
             });
 
-            if (hasText && !spinningTextCursor.classList.contains('hidden')) {
+            if (hasButton && !spinningTextCursor.classList.contains('hidden')) {
                 spinningTextCursor.classList.add('faded');
             } else if (!spinningTextCursor.classList.contains('hidden')) {
                 spinningTextCursor.classList.remove('faded');
