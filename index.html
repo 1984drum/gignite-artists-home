@@ -1141,7 +1141,7 @@
             -webkit-backdrop-filter: blur(0);
         }
 
-        /* Button spotlight effect on hover */
+        /* Button spotlight effect on hover - larger, animated, with warping */
         .gignite-button::before {
             content: '';
             position: absolute;
@@ -1150,19 +1150,79 @@
             width: 0;
             height: 0;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(6, 182, 212, 0.6) 0%, rgba(6, 182, 212, 0.3) 40%, transparent 70%);
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.8) 0%, rgba(6, 182, 212, 0.5) 30%, rgba(6, 182, 212, 0.2) 60%, transparent 80%);
             transform: translate(-50%, -50%);
             opacity: 0;
             pointer-events: none;
-            transition: all 0.5s ease;
+            transition: opacity 0.3s ease, width 0.3s ease, height 0.3s ease;
             z-index: -1;
-            filter: blur(20px);
+            filter: blur(30px);
         }
 
         .gignite-button:hover::before {
-            width: 300px;
-            height: 300px;
+            width: 500px;
+            height: 500px;
             opacity: 1;
+            animation: spotlightMove 4s ease-in-out infinite;
+        }
+
+        /* Add warping effect with backdrop blur on button text */
+        .gignite-button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, width 0.3s ease, height 0.3s ease;
+            z-index: 1;
+            backdrop-filter: blur(1px) brightness(1.2);
+            -webkit-backdrop-filter: blur(1px) brightness(1.2);
+        }
+
+        .gignite-button:hover::after {
+            width: 400px;
+            height: 400px;
+            opacity: 0.6;
+            animation: spotlightWarp 4s ease-in-out infinite;
+        }
+
+        @keyframes spotlightMove {
+            0%, 100% {
+                transform: translate(-50%, -50%) translate(0px, 0px);
+            }
+            25% {
+                transform: translate(-50%, -50%) translate(15px, -10px);
+            }
+            50% {
+                transform: translate(-50%, -50%) translate(-10px, 15px);
+            }
+            75% {
+                transform: translate(-50%, -50%) translate(10px, 10px);
+            }
+        }
+
+        @keyframes spotlightWarp {
+            0%, 100% {
+                transform: translate(-50%, -50%) translate(0px, 0px) scale(1);
+                filter: blur(1px);
+            }
+            25% {
+                transform: translate(-50%, -50%) translate(12px, -8px) scale(1.05);
+                filter: blur(1.5px);
+            }
+            50% {
+                transform: translate(-50%, -50%) translate(-8px, 12px) scale(0.95);
+                filter: blur(1px);
+            }
+            75% {
+                transform: translate(-50%, -50%) translate(8px, 8px) scale(1.02);
+                filter: blur(1.3px);
+            }
         }
 
         .light-saber {
