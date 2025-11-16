@@ -1141,7 +1141,7 @@
             -webkit-backdrop-filter: blur(0);
         }
 
-        /* Button spotlight effect on hover - larger, animated, with warping */
+        /* Button spotlight effect on hover - white brightening spotlight */
         .gignite-button::before {
             content: '';
             position: absolute;
@@ -1150,13 +1150,14 @@
             width: 0;
             height: 0;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(6, 182, 212, 0.8) 0%, rgba(6, 182, 212, 0.5) 30%, rgba(6, 182, 212, 0.2) 60%, transparent 80%);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.25) 20%, rgba(6, 182, 212, 0.15) 40%, rgba(6, 182, 212, 0.08) 60%, transparent 80%);
             transform: translate(-50%, -50%);
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.3s ease, width 0.3s ease, height 0.3s ease;
             z-index: -1;
-            filter: blur(30px);
+            filter: blur(40px);
+            mix-blend-mode: screen;
         }
 
         .gignite-button:hover::before {
@@ -1166,7 +1167,7 @@
             animation: spotlightMove 4s ease-in-out infinite;
         }
 
-        /* Add warping effect with backdrop blur on button text */
+        /* Add brightening effect without blurring button text */
         .gignite-button::after {
             content: '';
             position: absolute;
@@ -1180,14 +1181,14 @@
             pointer-events: none;
             transition: opacity 0.3s ease, width 0.3s ease, height 0.3s ease;
             z-index: 1;
-            backdrop-filter: blur(1px) brightness(1.2);
-            -webkit-backdrop-filter: blur(1px) brightness(1.2);
+            backdrop-filter: brightness(1.3);
+            -webkit-backdrop-filter: brightness(1.3);
         }
 
         .gignite-button:hover::after {
             width: 400px;
             height: 400px;
-            opacity: 0.6;
+            opacity: 0.5;
             animation: spotlightWarp 4s ease-in-out infinite;
         }
 
