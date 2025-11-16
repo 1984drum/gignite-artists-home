@@ -417,6 +417,13 @@
             display: none;
         }
 
+        /* Wider container for tour manager section on large screens */
+        @media (min-width: 1536px) {
+            .features-section .text-center.max-w-3xl {
+                max-width: 60rem; /* Wider than default to prevent "covered." alone on last line */
+            }
+        }
+
         @keyframes blinkCursor {
             from, to {
                 opacity: 0;
@@ -1039,6 +1046,7 @@
             opacity: 1; /* Always visible */
             /* Remove isolation to allow masking */
             transition: opacity 0.3s ease, width 0.5s ease, height 0.5s ease;
+            overflow: visible; /* Prevent text cutoff at edges */
         }
 
         #spinning-text-cursor.hidden {
@@ -1095,6 +1103,30 @@
             color: #000 !important;
             backdrop-filter: blur(0);
             -webkit-backdrop-filter: blur(0);
+        }
+
+        /* Button spotlight effect on hover */
+        .gignite-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.6) 0%, rgba(6, 182, 212, 0.3) 40%, transparent 70%);
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.5s ease;
+            z-index: -1;
+            filter: blur(20px);
+        }
+
+        .gignite-button:hover::before {
+            width: 300px;
+            height: 300px;
+            opacity: 1;
         }
 
         .light-saber {
