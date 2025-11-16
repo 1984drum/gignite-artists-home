@@ -1124,6 +1124,36 @@
             }
         }
 
+        /* Global cursor spotlight */
+        #global-spotlight {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.08) 20%, rgba(6, 182, 212, 0.05) 40%, transparent 70%);
+            pointer-events: none;
+            z-index: 9997;
+            transform: translate(-50%, -50%);
+            filter: blur(50px);
+            mix-blend-mode: screen;
+            opacity: 0.4;
+            transition: opacity 0.3s ease, width 0.3s ease, height 0.3s ease, filter 0.3s ease;
+        }
+
+        #global-spotlight.intensify {
+            opacity: 1;
+            width: 500px;
+            height: 500px;
+            filter: blur(35px);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.5) 15%, rgba(255, 255, 255, 0.3) 30%, rgba(6, 182, 212, 0.2) 50%, rgba(6, 182, 212, 0.1) 70%, transparent 85%);
+        }
+
+        @media (max-width: 1024px) {
+            #global-spotlight {
+                display: none !important;
+            }
+        }
+
         /* Light Saber Effects for Buttons */
         .gignite-button {
             position: relative;
@@ -1141,93 +1171,7 @@
             -webkit-backdrop-filter: blur(0);
         }
 
-        /* Button spotlight effect on hover - white brightening spotlight that follows cursor */
-        .gignite-button {
-            --spotlight-x: 50%;
-            --spotlight-y: 50%;
-        }
-
-        .gignite-button::before {
-            content: '';
-            position: absolute;
-            top: var(--spotlight-y);
-            left: var(--spotlight-x);
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.5) 15%, rgba(255, 255, 255, 0.3) 30%, rgba(6, 182, 212, 0.2) 50%, rgba(6, 182, 212, 0.1) 70%, transparent 85%);
-            transform: translate(-50%, -50%);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease, width 0.3s ease, height 0.3s ease, top 0.15s ease, left 0.15s ease;
-            z-index: -1;
-            filter: blur(35px);
-            mix-blend-mode: screen;
-        }
-
-        .gignite-button:hover::before {
-            width: 500px;
-            height: 500px;
-            opacity: 1;
-        }
-
-        /* Add brightening effect without blurring button text */
-        .gignite-button::after {
-            content: '';
-            position: absolute;
-            top: var(--spotlight-y);
-            left: var(--spotlight-x);
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease, width 0.3s ease, height 0.3s ease, top 0.15s ease, left 0.15s ease;
-            z-index: 1;
-            backdrop-filter: brightness(1.4);
-            -webkit-backdrop-filter: brightness(1.4);
-        }
-
-        .gignite-button:hover::after {
-            width: 400px;
-            height: 400px;
-            opacity: 0.6;
-        }
-
-        @keyframes spotlightMove {
-            0%, 100% {
-                transform: translate(-50%, -50%) translate(0px, 0px);
-            }
-            25% {
-                transform: translate(-50%, -50%) translate(15px, -10px);
-            }
-            50% {
-                transform: translate(-50%, -50%) translate(-10px, 15px);
-            }
-            75% {
-                transform: translate(-50%, -50%) translate(10px, 10px);
-            }
-        }
-
-        @keyframes spotlightWarp {
-            0%, 100% {
-                transform: translate(-50%, -50%) translate(0px, 0px) scale(1);
-                filter: blur(1px);
-            }
-            25% {
-                transform: translate(-50%, -50%) translate(12px, -8px) scale(1.05);
-                filter: blur(1.5px);
-            }
-            50% {
-                transform: translate(-50%, -50%) translate(-8px, 12px) scale(0.95);
-                filter: blur(1px);
-            }
-            75% {
-                transform: translate(-50%, -50%) translate(8px, 8px) scale(1.02);
-                filter: blur(1.3px);
-            }
-        }
+        /* Button spotlight now handled by global spotlight - removed button-specific spotlight */
 
         .light-saber {
             position: absolute;
@@ -1551,6 +1495,9 @@
     <!-- The blob container (will appear black on white, and white on black) -->
     <div class="cursor-trail-container" id="trail-container">
     </div>
+
+    <!-- Global cursor spotlight -->
+    <div id="global-spotlight"></div>
 
     <!-- SVG Filter for cursor warp/displacement effect -->
     <svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="position: absolute; width: 0; height: 0;">
@@ -2655,28 +2602,31 @@
         // Initialize light sabers after page loads
         initLightSabers();
 
-        // Button spotlight cursor tracking
-        const spotlightButtons = document.querySelectorAll('.gignite-button');
-        spotlightButtons.forEach(button => {
-            button.addEventListener('mousemove', (e) => {
-                const rect = button.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
+        // Global cursor spotlight that follows mouse
+        const globalSpotlight = document.getElementById('global-spotlight');
+        const interactiveElements = document.querySelectorAll('.gignite-button, .feature-card');
 
-                // Convert to percentage
-                const xPercent = (x / rect.width) * 100;
-                const yPercent = (y / rect.height) * 100;
+        document.addEventListener('mousemove', (e) => {
+            // Update spotlight position
+            globalSpotlight.style.left = e.clientX + 'px';
+            globalSpotlight.style.top = e.clientY + 'px';
 
-                // Update CSS variables for spotlight position
-                button.style.setProperty('--spotlight-x', `${xPercent}%`);
-                button.style.setProperty('--spotlight-y', `${yPercent}%`);
+            // Check if hovering over interactive elements
+            let isOverInteractive = false;
+            interactiveElements.forEach(element => {
+                const rect = element.getBoundingClientRect();
+                if (e.clientX >= rect.left && e.clientX <= rect.right &&
+                    e.clientY >= rect.top && e.clientY <= rect.bottom) {
+                    isOverInteractive = true;
+                }
             });
 
-            button.addEventListener('mouseleave', () => {
-                // Reset to center when mouse leaves
-                button.style.setProperty('--spotlight-x', '50%');
-                button.style.setProperty('--spotlight-y', '50%');
-            });
+            // Intensify when over interactive elements
+            if (isOverInteractive) {
+                globalSpotlight.classList.add('intensify');
+            } else {
+                globalSpotlight.classList.remove('intensify');
+            }
         });
 
         // Fade out cursor text on button hover
