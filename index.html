@@ -397,7 +397,7 @@
         .subtitle-text .char.visible {
             opacity: 1;
             background-color: #000;
-            padding: 0.25rem 0.1rem;
+            padding: 0.4rem 0.3rem;
             box-decoration-break: clone;
             -webkit-box-decoration-break: clone;
         }
@@ -425,7 +425,7 @@
         /* Wider container for tour manager section on large screens */
         @media (min-width: 1536px) {
             .features-section .text-center.max-w-3xl {
-                max-width: 60rem; /* Wider than default to prevent "covered." alone on last line */
+                max-width: 72rem; /* Much wider to make text only 2 lines instead of 3 */
             }
         }
 
@@ -1141,22 +1141,27 @@
             -webkit-backdrop-filter: blur(0);
         }
 
-        /* Button spotlight effect on hover - white brightening spotlight */
+        /* Button spotlight effect on hover - white brightening spotlight that follows cursor */
+        .gignite-button {
+            --spotlight-x: 50%;
+            --spotlight-y: 50%;
+        }
+
         .gignite-button::before {
             content: '';
             position: absolute;
-            top: 50%;
-            left: 50%;
+            top: var(--spotlight-y);
+            left: var(--spotlight-x);
             width: 0;
             height: 0;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.25) 20%, rgba(6, 182, 212, 0.15) 40%, rgba(6, 182, 212, 0.08) 60%, transparent 80%);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.5) 15%, rgba(255, 255, 255, 0.3) 30%, rgba(6, 182, 212, 0.2) 50%, rgba(6, 182, 212, 0.1) 70%, transparent 85%);
             transform: translate(-50%, -50%);
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.3s ease, width 0.3s ease, height 0.3s ease;
+            transition: opacity 0.3s ease, width 0.3s ease, height 0.3s ease, top 0.15s ease, left 0.15s ease;
             z-index: -1;
-            filter: blur(40px);
+            filter: blur(35px);
             mix-blend-mode: screen;
         }
 
@@ -1164,32 +1169,30 @@
             width: 500px;
             height: 500px;
             opacity: 1;
-            animation: spotlightMove 4s ease-in-out infinite;
         }
 
         /* Add brightening effect without blurring button text */
         .gignite-button::after {
             content: '';
             position: absolute;
-            top: 50%;
-            left: 50%;
+            top: var(--spotlight-y);
+            left: var(--spotlight-x);
             width: 0;
             height: 0;
             border-radius: 50%;
             transform: translate(-50%, -50%);
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.3s ease, width 0.3s ease, height 0.3s ease;
+            transition: opacity 0.3s ease, width 0.3s ease, height 0.3s ease, top 0.15s ease, left 0.15s ease;
             z-index: 1;
-            backdrop-filter: brightness(1.3);
-            -webkit-backdrop-filter: brightness(1.3);
+            backdrop-filter: brightness(1.4);
+            -webkit-backdrop-filter: brightness(1.4);
         }
 
         .gignite-button:hover::after {
             width: 400px;
             height: 400px;
-            opacity: 0.5;
-            animation: spotlightWarp 4s ease-in-out infinite;
+            opacity: 0.6;
         }
 
         @keyframes spotlightMove {
@@ -2651,6 +2654,30 @@
 
         // Initialize light sabers after page loads
         initLightSabers();
+
+        // Button spotlight cursor tracking
+        const spotlightButtons = document.querySelectorAll('.gignite-button');
+        spotlightButtons.forEach(button => {
+            button.addEventListener('mousemove', (e) => {
+                const rect = button.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                // Convert to percentage
+                const xPercent = (x / rect.width) * 100;
+                const yPercent = (y / rect.height) * 100;
+
+                // Update CSS variables for spotlight position
+                button.style.setProperty('--spotlight-x', `${xPercent}%`);
+                button.style.setProperty('--spotlight-y', `${yPercent}%`);
+            });
+
+            button.addEventListener('mouseleave', () => {
+                // Reset to center when mouse leaves
+                button.style.setProperty('--spotlight-x', '50%');
+                button.style.setProperty('--spotlight-y', '50%');
+            });
+        });
 
         // Fade out cursor text on button hover
         const spinningCursorText = document.getElementById('spinning-text-cursor');
