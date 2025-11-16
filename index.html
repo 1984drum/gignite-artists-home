@@ -993,7 +993,7 @@
             cursor: none; /* Hide default cursor when blob is active */
         }
 
-        /* The container that applies the 'Gooey' filter to its children */
+        /* The container that applies the magnifying/brightness filter to its children */
         .cursor-trail-container {
             position: fixed;
             top: 0;
@@ -1002,10 +1002,10 @@
             height: 100%;
             pointer-events: none;
             z-index: 9998;
-            /* This filter blurs the elements and then contrasts them to make them 'stick' */
-            filter: url('#goo-cursor');
-            /* This creates the color inversion effect */
-            mix-blend-mode: difference;
+            /* This filter creates the soft, feathered magnifying glass effect */
+            filter: url('#goo-cursor') brightness(1.3) contrast(1.1);
+            /* This creates the brightness/highlight effect */
+            mix-blend-mode: screen;
             /* Start hidden */
             opacity: 0;
             transition: opacity 1s ease-in-out;
@@ -1021,11 +1021,11 @@
             /* Increased base size 4x */
             width: 560px;
             height: 560px;
-            /* Blob color must be white for mix-blend-mode to work */
-            background: #ffffff;
+            /* White blob for screen blend mode brightening effect */
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 100%);
             border-radius: 50%;
             transform: translate(-50%, -50%);
-            opacity: 0.5;
+            opacity: 0.6;
         }
 
         /* Growing animation for blobs */
@@ -1456,21 +1456,35 @@
     <div class="cursor-trail-container" id="trail-container">
     </div>
 
-    <!-- SVG Filter for cursor spotlight effect -->
+    <!-- SVG Filter for cursor magnifying/brightness effect -->
     <svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="position: absolute; width: 0; height: 0;">
         <defs>
-            <filter id="goo-cursor">
-                <!-- 1. Blur the source graphic for smooth circular spotlight -->
-                <feGaussianBlur in="SourceGraphic" stdDeviation="50" result="blur" />
+            <filter id="goo-cursor" x="-50%" y="-50%" width="200%" height="200%">
+                <!-- 1. Create turbulence for displacement map (magnifying effect) -->
+                <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="1" result="turbulence" />
 
-                <!-- 2. Sharpen to create clean circular edges -->
+                <!-- 2. Blur the source for soft edges -->
+                <feGaussianBlur in="SourceGraphic" stdDeviation="100" result="blur" />
+
+                <!-- 3. Create displacement map for magnifying glass warp -->
+                <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="15" xChannelSelector="R" yChannelSelector="G" result="displaced" />
+
+                <!-- 4. Brighten the area -->
+                <feComponentTransfer in="displaced" result="brightened">
+                    <feFuncR type="linear" slope="1.4" intercept="0.1"/>
+                    <feFuncG type="linear" slope="1.4" intercept="0.1"/>
+                    <feFuncB type="linear" slope="1.4" intercept="0.1"/>
+                </feComponentTransfer>
+
+                <!-- 5. Create soft feathered mask -->
                 <feColorMatrix in="blur" mode="matrix" values="
                     1 0 0 0 0
                     0 1 0 0 0
                     0 0 1 0 0
-                    0 0 0 40 -15" result="sharp" />
+                    0 0 0 20 -8" result="mask" />
 
-                <feComposite in="SourceGraphic" in2="sharp" operator="atop"/>
+                <!-- 6. Composite brightened content with soft mask -->
+                <feComposite in="brightened" in2="mask" operator="in" />
             </filter>
         </defs>
     </svg>
