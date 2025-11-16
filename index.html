@@ -1140,7 +1140,8 @@
             filter: blur(35px);
             mix-blend-mode: screen;
             opacity: 1;
-            transition: opacity 0.3s ease, width 0.3s ease, height 0.3s ease, filter 0.3s ease, background 0.3s ease;
+            transition: opacity 0.3s ease, width 0.3s ease, height 0.3s ease, filter 0.3s ease;
+            animation: spotlightPulse 4.5s ease-in-out infinite, spotlightDrift 6s ease-in-out infinite, spotlightMorph 5.5s ease-in-out infinite;
         }
 
         #global-spotlight.intensify {
@@ -1148,6 +1149,63 @@
             height: 400px;
             filter: blur(15px);
             background: radial-gradient(circle, rgba(6, 182, 212, 0.7) 0%, rgba(6, 182, 212, 0.5) 15%, rgba(255, 255, 255, 0.35) 30%, rgba(6, 182, 212, 0.25) 50%, rgba(6, 182, 212, 0.12) 70%, transparent 85%);
+            animation: spotlightPulseIntense 3.5s ease-in-out infinite, spotlightDrift 6s ease-in-out infinite, spotlightMorph 5.5s ease-in-out infinite;
+        }
+
+        /* Pulse animation - changes size and opacity to simulate falloff edge movement */
+        @keyframes spotlightPulse {
+            0%, 100% {
+                width: 480px;
+                height: 480px;
+                opacity: 1;
+            }
+            50% {
+                width: 520px;
+                height: 520px;
+                opacity: 0.85;
+            }
+        }
+
+        @keyframes spotlightPulseIntense {
+            0%, 100% {
+                width: 400px;
+                height: 400px;
+                opacity: 1;
+            }
+            50% {
+                width: 440px;
+                height: 440px;
+                opacity: 0.9;
+            }
+        }
+
+        /* Drift animation - subtle position offset */
+        @keyframes spotlightDrift {
+            0%, 100% {
+                transform: translate(-50%, -50%) translate(0px, 0px);
+            }
+            25% {
+                transform: translate(-50%, -50%) translate(8px, -6px);
+            }
+            50% {
+                transform: translate(-50%, -50%) translate(-5px, 10px);
+            }
+            75% {
+                transform: translate(-50%, -50%) translate(6px, 4px);
+            }
+        }
+
+        /* Morph animation - subtle shape changes */
+        @keyframes spotlightMorph {
+            0%, 100% {
+                border-radius: 50%;
+            }
+            33% {
+                border-radius: 48% 52% 51% 49% / 51% 48% 52% 49%;
+            }
+            66% {
+                border-radius: 51% 49% 48% 52% / 49% 51% 49% 51%;
+            }
         }
 
         @media (max-width: 1024px) {
