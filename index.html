@@ -1125,91 +1125,143 @@
             }
         }
 
-        /* Global cursor spotlight */
-        #global-spotlight {
+        /* New Cursor Blob System - Layer 1: Lens (Distortion) */
+        #lens-container {
             position: fixed;
-            left: 50%;
-            top: 50%;
-            width: 320px;
-            height: 320px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.35) 20%, rgba(255, 255, 255, 0.2) 40%, rgba(255, 255, 255, 0.1) 60%, transparent 80%);
-            pointer-events: none;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             z-index: 9997;
+            pointer-events: none;
+        }
+
+        .lens-blob {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: transparent;
+            backdrop-filter: brightness(1.2) saturate(1) contrast(1);
+            -webkit-backdrop-filter: brightness(1.2) saturate(1) contrast(1);
+            -webkit-mask-image: radial-gradient(circle, black 40%, transparent 70%);
+            mask-image: radial-gradient(circle, black 40%, transparent 70%);
             transform: translate(-50%, -50%);
-            filter: blur(17.5px);
-            mix-blend-mode: screen;
+            transition: width 0.4s ease, height 0.4s ease, backdrop-filter 0.4s ease;
+        }
+
+        /* Layer 2: Gooey (Visuals) */
+        #goo-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9998;
+            pointer-events: none;
+            filter: url(#gooey-blob);
+            opacity: 0.45;
+        }
+
+        .goo-blob {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 70%);
+            mix-blend-mode: overlay;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s ease, height 0.4s ease, background 0.4s ease;
+        }
+
+        /* Control Panel Styles */
+        #blob-controls {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(17, 24, 39, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 1rem;
+            border-radius: 1rem 1rem 0 0;
+            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+            transition: transform 0.3s ease;
+            transform: translateY(0);
+        }
+
+        #blob-controls.hidden {
+            transform: translateY(100%);
+        }
+
+        #blob-toggle {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            background: rgba(6, 182, 212, 0.9);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            z-index: 10001;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        #blob-toggle:hover {
+            background: rgba(6, 182, 212, 1);
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(6, 182, 212, 0.5);
+        }
+
+        /* Custom slider styles for blob controls */
+        #blob-controls input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            background: #4a5568;
+            border-radius: 5px;
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        #blob-controls input[type="range"]:hover {
             opacity: 1;
-            transition: opacity 0.3s ease, width 0.3s ease, height 0.3s ease, filter 0.3s ease;
-            animation: spotlightPulse 4.5s ease-in-out infinite, spotlightDrift 6s ease-in-out infinite, spotlightMorph 5.5s ease-in-out infinite;
         }
 
-        #global-spotlight.intensify {
-            width: 400px;
-            height: 400px;
-            filter: blur(7.5px);
-            background: radial-gradient(circle, rgba(6, 182, 212, 0.7) 0%, rgba(6, 182, 212, 0.5) 15%, rgba(255, 255, 255, 0.35) 30%, rgba(6, 182, 212, 0.25) 50%, rgba(6, 182, 212, 0.12) 70%, transparent 85%);
-            animation: spotlightPulseIntense 3.5s ease-in-out infinite, spotlightDrift 6s ease-in-out infinite, spotlightMorph 5.5s ease-in-out infinite;
+        #blob-controls input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #06b6d4;
+            border-radius: 50%;
+            cursor: pointer;
         }
 
-        /* Pulse animation - changes size and opacity to simulate falloff edge movement */
-        @keyframes spotlightPulse {
-            0%, 100% {
-                width: 320px;
-                height: 320px;
-                opacity: 1;
-            }
-            50% {
-                width: 360px;
-                height: 360px;
-                opacity: 0.85;
-            }
-        }
-
-        @keyframes spotlightPulseIntense {
-            0%, 100% {
-                width: 400px;
-                height: 400px;
-                opacity: 1;
-            }
-            50% {
-                width: 440px;
-                height: 440px;
-                opacity: 0.9;
-            }
-        }
-
-        /* Drift animation - subtle position offset */
-        @keyframes spotlightDrift {
-            0%, 100% {
-                transform: translate(-50%, -50%) translate(0px, 0px);
-            }
-            25% {
-                transform: translate(-50%, -50%) translate(8px, -6px);
-            }
-            50% {
-                transform: translate(-50%, -50%) translate(-5px, 10px);
-            }
-            75% {
-                transform: translate(-50%, -50%) translate(6px, 4px);
-            }
-        }
-
-        /* Morph animation - subtle shape changes */
-        @keyframes spotlightMorph {
-            0%, 100% {
-                border-radius: 50%;
-            }
-            33% {
-                border-radius: 48% 52% 51% 49% / 51% 48% 52% 49%;
-            }
-            66% {
-                border-radius: 51% 49% 48% 52% / 49% 51% 49% 51%;
-            }
+        #blob-controls input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: #06b6d4;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
         }
 
         @media (max-width: 1024px) {
-            #global-spotlight {
+            #lens-container,
+            #goo-container,
+            #blob-controls,
+            #blob-toggle {
                 display: none !important;
             }
         }
@@ -1556,34 +1608,122 @@
     <div class="cursor-trail-container" id="trail-container">
     </div>
 
-    <!-- Global cursor spotlight -->
-    <div id="global-spotlight"></div>
+    <!-- New Cursor Blob System -->
+    <!-- Layer 1: Lens Effects (Backdrop Filter) -->
+    <div id="lens-container">
+        <div id="lens-blob" class="lens-blob"></div>
+    </div>
 
-    <!-- SVG Filter for cursor warp/displacement effect -->
+    <!-- Layer 2: Gooey Visuals (Overlay + SVG Filter) -->
+    <div id="goo-container">
+        <div id="goo-blob" class="goo-blob"></div>
+    </div>
+
+    <!-- SVG Filter for Gooey Blob Effect -->
     <svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="position: absolute; width: 0; height: 0;">
         <defs>
+            <filter id="gooey-blob">
+                <feGaussianBlur id="goo-blur" in="SourceGraphic" stdDeviation="10" result="blur" />
+                <feColorMatrix id="goo-contrast" in="blur" mode="matrix"
+                    values="1 0 0 0 0
+                            0 1 0 0 0
+                            0 0 1 0 0
+                            0 0 0 18 -7"
+                    result="goo" />
+                <feBlend in="SourceGraphic" in2="goo" />
+            </filter>
             <filter id="goo-cursor" x="-50%" y="-50%" width="200%" height="200%">
-                <!-- 1. Create turbulence for displacement map (magnifying/warp effect) -->
+                <!-- Old filter kept for compatibility -->
                 <feTurbulence type="fractalNoise" baseFrequency="0.008" numOctaves="2" result="turbulence" />
-
-                <!-- 2. Blur the source for soft, feathered edges -->
                 <feGaussianBlur in="SourceGraphic" stdDeviation="120" result="blur" />
-
-                <!-- 3. Create displacement map for stronger magnifying glass warp -->
                 <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="45" xChannelSelector="R" yChannelSelector="G" result="displaced" />
-
-                <!-- 4. Create soft feathered mask that fades out gradually -->
                 <feColorMatrix in="blur" mode="matrix" values="
                     1 0 0 0 0
                     0 1 0 0 0
                     0 0 1 0 0
                     0 0 0 15 -6" result="mask" />
-
-                <!-- 5. Composite displaced content with soft mask -->
                 <feComposite in="displaced" in2="mask" operator="in" />
             </filter>
         </defs>
     </svg>
+
+    <!-- Blob Control Panel Toggle Button -->
+    <button id="blob-toggle">Blob Controls</button>
+
+    <!-- Blob Control Panel -->
+    <div id="blob-controls" class="hidden">
+        <div style="max-width: 90rem; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; font-size: 0.875rem; color: white;">
+
+            <!-- Column 1 -->
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                    <label for="size" style="font-weight: 500;">Size: <span id="size-val">400</span>px</label>
+                    <input type="range" id="size" min="50" max="1000" value="400" style="width: 100%;">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                    <label for="effectOpacity" style="font-weight: 500;">Effect Opacity: <span id="effectOpacity-val">0.45</span></label>
+                    <input type="range" id="effectOpacity" min="0" max="1" value="0.45" step="0.05" style="width: 100%;">
+                </div>
+            </div>
+
+            <!-- Column 2 -->
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                    <label for="gooeyBlurSVG" style="font-weight: 500;">Gooey Blur: <span id="gooeyBlurSVG-val">10</span></label>
+                    <input type="range" id="gooeyBlurSVG" min="0" max="50" value="10" step="1" style="width: 100%;">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                    <label for="gooeySharpnessSVG" style="font-weight: 500;">Gooey Sharpness: <span id="gooeySharpnessSVG-val">18</span></label>
+                    <input type="range" id="gooeySharpnessSVG" min="1" max="50" value="18" step="1" style="width: 100%;">
+                </div>
+            </div>
+
+            <!-- Column 3 -->
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                    <label for="brightness" style="font-weight: 500;">Brightness: <span id="brightness-val">1.2</span></label>
+                    <input type="range" id="brightness" min="0.5" max="3" value="1.2" step="0.1" style="width: 100%;">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                    <label for="saturate" style="font-weight: 500;">Saturation: <span id="saturate-val">1</span></label>
+                    <input type="range" id="saturate" min="0" max="3" value="1" step="0.1" style="width: 100%;">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                    <label for="contrast" style="font-weight: 500;">Contrast: <span id="contrast-val">1</span></label>
+                    <input type="range" id="contrast" min="0" max="5" value="1" step="0.1" style="width: 100%;">
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem; padding-top: 0.25rem;">
+                    <input type="checkbox" id="invert" style="height: 1rem; width: 1rem; color: #06b6d4; border-radius: 0.25rem; border-color: #9ca3af;">
+                    <label for="invert" style="font-weight: 500;">Invert Colors</label>
+                </div>
+            </div>
+
+            <!-- Column 4 -->
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                    <label for="pulseSpeed" style="font-weight: 500;">Pulse Speed: <span id="pulseSpeed-val">0.2</span></label>
+                    <input type="range" id="pulseSpeed" min="0" max="2" value="0.2" step="0.1" style="width: 100%;">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                    <label for="pulseAmount" style="font-weight: 500;">Pulse Amount: <span id="pulseAmount-val">0.05</span></label>
+                    <input type="range" id="pulseAmount" min="0" max="0.2" value="0.05" step="0.01" style="width: 100%;">
+                </div>
+            </div>
+
+            <!-- Column 5 -->
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                    <label for="trailLag" style="font-weight: 500;">Trail Lag: <span id="trailLag-val">0.06</span></label>
+                    <input type="range" id="trailLag" min="0.02" max="0.2" value="0.06" step="0.01" style="width: 100%;">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                    <label for="trailCount" style="font-weight: 500;">Trail Count: <span id="trailCount-val">3</span></label>
+                    <input type="range" id="trailCount" min="0" max="10" value="3" step="1" style="width: 100%;">
+                </div>
+            </div>
+
+        </div>
+    </div>
 
     <!-- Section Divider 1 -->
     <section class="bg-black py-10 w-full">
@@ -2662,32 +2802,253 @@
         // Initialize light sabers after page loads
         initLightSabers();
 
-        // Global cursor spotlight that follows mouse
-        const globalSpotlight = document.getElementById('global-spotlight');
-        const interactiveElements = document.querySelectorAll('.gignite-button, .feature-card');
+        // New Cursor Blob System
+        (function initCursorBlob() {
+            const lensContainer = document.getElementById('lens-container');
+            const gooContainer = document.getElementById('goo-container');
+            const controls = document.getElementById('blob-controls');
+            const toggleBtn = document.getElementById('blob-toggle');
 
-        document.addEventListener('mousemove', (e) => {
-            // Update spotlight position
-            globalSpotlight.style.left = e.clientX + 'px';
-            globalSpotlight.style.top = e.clientY + 'px';
+            // Main Blobs
+            const mainLensBlob = document.getElementById('lens-blob');
+            const mainGooBlob = document.getElementById('goo-blob');
 
-            // Check if hovering over interactive elements
-            let isOverInteractive = false;
-            interactiveElements.forEach(element => {
-                const rect = element.getBoundingClientRect();
-                if (e.clientX >= rect.left && e.clientX <= rect.right &&
-                    e.clientY >= rect.top && e.clientY <= rect.bottom) {
-                    isOverInteractive = true;
+            // Arrays to hold all blobs
+            let lensBlobs = [mainLensBlob];
+            let gooBlobs = [mainGooBlob];
+
+            // Get SVG Filter elements
+            const feGaussianBlur = document.getElementById('goo-blur');
+            const feColorMatrix = document.getElementById('goo-contrast');
+
+            // Control elements
+            const sizeSlider = document.getElementById('size');
+            const brightnessSlider = document.getElementById('brightness');
+            const effectOpacitySlider = document.getElementById('effectOpacity');
+            const saturateSlider = document.getElementById('saturate');
+            const contrastSlider = document.getElementById('contrast');
+            const invertCheckbox = document.getElementById('invert');
+            const gooeyBlurSVGSlider = document.getElementById('gooeyBlurSVG');
+            const gooeySharpnessSVGSlider = document.getElementById('gooeySharpnessSVG');
+            const pulseSpeedSlider = document.getElementById('pulseSpeed');
+            const pulseAmountSlider = document.getElementById('pulseAmount');
+            const trailLagSlider = document.getElementById('trailLag');
+            const trailCountSlider = document.getElementById('trailCount');
+
+            // Labels
+            const sizeVal = document.getElementById('size-val');
+            const brightnessVal = document.getElementById('brightness-val');
+            const effectOpacityVal = document.getElementById('effectOpacity-val');
+            const saturateVal = document.getElementById('saturate-val');
+            const contrastVal = document.getElementById('contrast-val');
+            const gooeyBlurSVGVal = document.getElementById('gooeyBlurSVG-val');
+            const gooeySharpnessSVGVal = document.getElementById('gooeySharpnessSVG-val');
+            const pulseSpeedVal = document.getElementById('pulseSpeed-val');
+            const pulseAmountVal = document.getElementById('pulseAmount-val');
+            const trailLagVal = document.getElementById('trailLag-val');
+            const trailCountVal = document.getElementById('trailCount-val');
+
+            // State
+            const state = {
+                size: 400,
+                brightness: 1.2,
+                effectOpacity: 0.45,
+                saturate: 1,
+                contrast: 1,
+                invert: false,
+                gooeyBlurSVG: 10,
+                gooeySharpnessSVG: 18,
+                pulseSpeed: 0.2,
+                pulseAmount: 0.05,
+                trailLag: 0.06,
+                trailCount: 3,
+                isPanelHovered: false
+            };
+
+            // Position State
+            const mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+            let positions = [
+                { x: window.innerWidth / 2, y: window.innerHeight / 2 }
+            ];
+
+            // Function to adjust trail blobs
+            function updateTrailCount(newCount) {
+                const oldCount = lensBlobs.length - 1;
+
+                if (newCount > oldCount) {
+                    for (let i = oldCount; i < newCount; i++) {
+                        const newLens = document.createElement('div');
+                        newLens.className = 'lens-blob';
+                        lensContainer.appendChild(newLens);
+                        lensBlobs.push(newLens);
+
+                        const newGoo = document.createElement('div');
+                        newGoo.className = 'goo-blob';
+                        gooContainer.appendChild(newGoo);
+                        gooBlobs.push(newGoo);
+
+                        const lastPos = positions[positions.length - 1];
+                        positions.push({ x: lastPos.x, y: lastPos.y });
+                    }
+                } else if (newCount < oldCount) {
+                    for (let i = newCount; i < oldCount; i++) {
+                        const lensToRemove = lensBlobs.pop();
+                        lensToRemove.remove();
+
+                        const gooToRemove = gooBlobs.pop();
+                        gooToRemove.remove();
+
+                        positions.pop();
+                    }
                 }
+                updateBlobStyle();
+            }
+
+            // Linear interpolation function
+            function lerp(start, end, amt) {
+                return (1 - amt) * start + amt * end;
+            }
+
+            // Update Styles
+            function updateBlobStyle() {
+                const invertFilter = state.invert ? 'invert(1)' : 'invert(0)';
+                const backdropFilter = `brightness(${state.brightness}) saturate(${state.saturate}) contrast(${state.contrast}) ${invertFilter}`;
+
+                gooContainer.style.opacity = state.effectOpacity;
+
+                for (let i = 0; i < lensBlobs.length; i++) {
+                    const lens = lensBlobs[i];
+                    const goo = gooBlobs[i];
+                    const index = i;
+
+                    const scaleFactor = 1 - (index * 0.15);
+                    const size = `${state.size * scaleFactor}px`;
+
+                    lens.style.width = size;
+                    lens.style.height = size;
+                    lens.style.backdropFilter = backdropFilter;
+                    lens.style.webkitBackdropFilter = backdropFilter;
+
+                    goo.style.width = size;
+                    goo.style.height = size;
+
+                    const duration = 0.4 + (index * 0.1);
+                    const transition = `${duration}s ease`;
+                    lens.style.transition = `width ${transition}, height ${transition}, backdrop-filter ${transition}`;
+                    goo.style.transition = `width ${transition}, height ${transition}`;
+
+                    if (index > 0) {
+                        const opacity = 1 - (index * 0.2);
+                        lens.style.opacity = opacity;
+                        goo.style.opacity = opacity;
+                    } else {
+                        lens.style.opacity = 1;
+                        goo.style.opacity = 1;
+                    }
+                }
+            }
+
+            // Main Animation Loop
+            function animateLoop(time) {
+                let targetX, targetY;
+
+                if (state.isPanelHovered) {
+                    const circleTime = time * (2 * Math.PI / 1500);
+                    targetX = window.innerWidth / 2 + Math.cos(circleTime) * 150;
+                    targetY = window.innerHeight / 2 + Math.sin(circleTime) * 150;
+                } else {
+                    targetX = mouse.x;
+                    targetY = mouse.y;
+                }
+
+                positions.forEach((pos, index) => {
+                    const lag = state.trailLag * (index + 1);
+                    pos.x = lerp(pos.x, targetX, lag);
+                    pos.y = lerp(pos.y, targetY, lag);
+                    targetX = pos.x;
+                    targetY = pos.y;
+                });
+
+                const pulseTime = time * 0.001 * state.pulseSpeed;
+                const scale = 1 + Math.sin(pulseTime) * state.pulseAmount;
+
+                for (let i = 0; i < lensBlobs.length; i++) {
+                    const lens = lensBlobs[i];
+                    const goo = gooBlobs[i];
+                    const pos = positions[i];
+
+                    let transform = `translate(${pos.x}px, ${pos.y}px) translate(-50%, -50%)`;
+                    if (i === 0) {
+                        transform += ` scale(${scale})`;
+                    }
+
+                    lens.style.transform = transform;
+                    goo.style.transform = transform;
+                }
+
+                requestAnimationFrame(animateLoop);
+            }
+
+            // Event Listeners
+            document.addEventListener('mousemove', (e) => {
+                mouse.x = e.clientX;
+                mouse.y = e.clientY;
             });
 
-            // Intensify when over interactive elements
-            if (isOverInteractive) {
-                globalSpotlight.classList.add('intensify');
-            } else {
-                globalSpotlight.classList.remove('intensify');
-            }
-        });
+            // Toggle button
+            toggleBtn.addEventListener('click', () => {
+                controls.classList.toggle('hidden');
+            });
+
+            controls.addEventListener('mouseenter', () => {
+                state.isPanelHovered = true;
+            });
+            controls.addEventListener('mouseleave', () => {
+                state.isPanelHovered = false;
+            });
+
+            // Slider Listeners
+            const addListener = (el, stateKey, labelEl, isInt = false, callback = null) => {
+                el.addEventListener('input', (e) => {
+                    let val = isInt ? parseInt(e.target.value, 10) : parseFloat(e.target.value);
+                    state[stateKey] = val;
+                    if (labelEl) labelEl.textContent = val;
+                    if (callback) callback(val);
+                    else updateBlobStyle();
+                });
+            };
+
+            addListener(sizeSlider, 'size', sizeVal);
+            addListener(brightnessSlider, 'brightness', brightnessVal);
+            addListener(effectOpacitySlider, 'effectOpacity', effectOpacityVal);
+            addListener(saturateSlider, 'saturate', saturateVal);
+            addListener(contrastSlider, 'contrast', contrastVal);
+            addListener(pulseSpeedSlider, 'pulseSpeed', pulseSpeedVal);
+            addListener(pulseAmountSlider, 'pulseAmount', pulseAmountVal);
+            addListener(trailLagSlider, 'trailLag', trailLagVal);
+
+            addListener(trailCountSlider, 'trailCount', trailCountVal, true, updateTrailCount);
+
+            invertCheckbox.addEventListener('change', (e) => {
+                state.invert = e.target.checked;
+                updateBlobStyle();
+            });
+
+            addListener(gooeyBlurSVGSlider, 'gooeyBlurSVG', gooeyBlurSVGVal, false, (val) => {
+                state.gooeyBlurSVG = val;
+                feGaussianBlur.setAttribute('stdDeviation', val);
+            });
+            addListener(gooeySharpnessSVGSlider, 'gooeySharpnessSVG', gooeySharpnessSVGVal, false, (val) => {
+                state.gooeySharpnessSVG = val;
+                const matrix = `1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 ${val} -7`;
+                feColorMatrix.setAttribute('values', matrix);
+            });
+
+            // Init
+            updateTrailCount(state.trailCount);
+            updateBlobStyle();
+            requestAnimationFrame(animateLoop);
+        })();
 
         // Fade out cursor text on button hover
         const spinningCursorText = document.getElementById('spinning-text-cursor');
