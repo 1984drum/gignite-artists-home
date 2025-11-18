@@ -1193,6 +1193,7 @@
             z-index: 10000;
             transition: transform 0.3s ease;
             transform: translateY(0);
+            cursor: default;
         }
 
         #blob-controls.hidden {
@@ -1657,40 +1658,36 @@
             <!-- Column 1 -->
             <div style="display: flex; flex-direction: column; gap: 0.75rem;">
                 <div style="display: flex; flex-direction: column; gap: 0.25rem;">
-                    <label for="size" style="font-weight: 500;">Size: <span id="size-val">400</span>px</label>
-                    <input type="range" id="size" min="50" max="1000" value="400" style="width: 100%;">
+                    <label for="size" style="font-weight: 500;">Size: <span id="size-val">700</span>px</label>
+                    <input type="range" id="size" min="200" max="1200" value="700" style="width: 100%;">
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 0.25rem;">
-                    <label for="effectOpacity" style="font-weight: 500;">Effect Opacity: <span id="effectOpacity-val">0.45</span></label>
-                    <input type="range" id="effectOpacity" min="0" max="1" value="0.45" step="0.05" style="width: 100%;">
+                    <label for="gooeyBlurSVG" style="font-weight: 500;">Gooey Blur: <span id="gooeyBlurSVG-val">50</span></label>
+                    <input type="range" id="gooeyBlurSVG" min="0" max="100" value="50" step="1" style="width: 100%;">
                 </div>
             </div>
 
             <!-- Column 2 -->
             <div style="display: flex; flex-direction: column; gap: 0.75rem;">
                 <div style="display: flex; flex-direction: column; gap: 0.25rem;">
-                    <label for="gooeyBlurSVG" style="font-weight: 500;">Gooey Blur: <span id="gooeyBlurSVG-val">10</span></label>
-                    <input type="range" id="gooeyBlurSVG" min="0" max="50" value="10" step="1" style="width: 100%;">
+                    <label for="gooeySharpnessSVG" style="font-weight: 500;">Gooey Sharpness: <span id="gooeySharpnessSVG-val">1</span></label>
+                    <input type="range" id="gooeySharpnessSVG" min="0.5" max="10" value="1" step="0.5" style="width: 100%;">
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 0.25rem;">
-                    <label for="gooeySharpnessSVG" style="font-weight: 500;">Gooey Sharpness: <span id="gooeySharpnessSVG-val">18</span></label>
-                    <input type="range" id="gooeySharpnessSVG" min="1" max="50" value="18" step="1" style="width: 100%;">
+                    <label for="brightness" style="font-weight: 500;">Brightness: <span id="brightness-val">1.2</span></label>
+                    <input type="range" id="brightness" min="0.6" max="1.8" value="1.2" step="0.1" style="width: 100%;">
                 </div>
             </div>
 
             <!-- Column 3 -->
             <div style="display: flex; flex-direction: column; gap: 0.75rem;">
                 <div style="display: flex; flex-direction: column; gap: 0.25rem;">
-                    <label for="brightness" style="font-weight: 500;">Brightness: <span id="brightness-val">1.2</span></label>
-                    <input type="range" id="brightness" min="0.5" max="3" value="1.2" step="0.1" style="width: 100%;">
+                    <label for="saturate" style="font-weight: 500;">Saturation: <span id="saturate-val">3</span></label>
+                    <input type="range" id="saturate" min="1.5" max="4.5" value="3" step="0.1" style="width: 100%;">
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 0.25rem;">
-                    <label for="saturate" style="font-weight: 500;">Saturation: <span id="saturate-val">1</span></label>
-                    <input type="range" id="saturate" min="0" max="3" value="1" step="0.1" style="width: 100%;">
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
-                    <label for="contrast" style="font-weight: 500;">Contrast: <span id="contrast-val">1</span></label>
-                    <input type="range" id="contrast" min="0" max="5" value="1" step="0.1" style="width: 100%;">
+                    <label for="contrast" style="font-weight: 500;">Contrast: <span id="contrast-val">2.8</span></label>
+                    <input type="range" id="contrast" min="1.4" max="4.2" value="2.8" step="0.1" style="width: 100%;">
                 </div>
                 <div style="display: flex; align-items: center; gap: 0.5rem; padding-top: 0.25rem;">
                     <input type="checkbox" id="invert" style="height: 1rem; width: 1rem; color: #06b6d4; border-radius: 0.25rem; border-color: #9ca3af;">
@@ -1702,23 +1699,23 @@
             <div style="display: flex; flex-direction: column; gap: 0.75rem;">
                 <div style="display: flex; flex-direction: column; gap: 0.25rem;">
                     <label for="pulseSpeed" style="font-weight: 500;">Pulse Speed: <span id="pulseSpeed-val">0.2</span></label>
-                    <input type="range" id="pulseSpeed" min="0" max="2" value="0.2" step="0.1" style="width: 100%;">
+                    <input type="range" id="pulseSpeed" min="0" max="0.4" value="0.2" step="0.05" style="width: 100%;">
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 0.25rem;">
                     <label for="pulseAmount" style="font-weight: 500;">Pulse Amount: <span id="pulseAmount-val">0.05</span></label>
-                    <input type="range" id="pulseAmount" min="0" max="0.2" value="0.05" step="0.01" style="width: 100%;">
+                    <input type="range" id="pulseAmount" min="0" max="0.1" value="0.05" step="0.01" style="width: 100%;">
                 </div>
             </div>
 
             <!-- Column 5 -->
             <div style="display: flex; flex-direction: column; gap: 0.75rem;">
                 <div style="display: flex; flex-direction: column; gap: 0.25rem;">
-                    <label for="trailLag" style="font-weight: 500;">Trail Lag: <span id="trailLag-val">0.06</span></label>
-                    <input type="range" id="trailLag" min="0.02" max="0.2" value="0.06" step="0.01" style="width: 100%;">
+                    <label for="trailLag" style="font-weight: 500;">Trail Lag: <span id="trailLag-val">0.09</span></label>
+                    <input type="range" id="trailLag" min="0.045" max="0.135" value="0.09" step="0.005" style="width: 100%;">
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 0.25rem;">
                     <label for="trailCount" style="font-weight: 500;">Trail Count: <span id="trailCount-val">3</span></label>
-                    <input type="range" id="trailCount" min="0" max="10" value="3" step="1" style="width: 100%;">
+                    <input type="range" id="trailCount" min="0" max="6" value="3" step="1" style="width: 100%;">
                 </div>
             </div>
 
@@ -2824,7 +2821,6 @@
             // Control elements
             const sizeSlider = document.getElementById('size');
             const brightnessSlider = document.getElementById('brightness');
-            const effectOpacitySlider = document.getElementById('effectOpacity');
             const saturateSlider = document.getElementById('saturate');
             const contrastSlider = document.getElementById('contrast');
             const invertCheckbox = document.getElementById('invert');
@@ -2838,7 +2834,6 @@
             // Labels
             const sizeVal = document.getElementById('size-val');
             const brightnessVal = document.getElementById('brightness-val');
-            const effectOpacityVal = document.getElementById('effectOpacity-val');
             const saturateVal = document.getElementById('saturate-val');
             const contrastVal = document.getElementById('contrast-val');
             const gooeyBlurSVGVal = document.getElementById('gooeyBlurSVG-val');
@@ -2850,17 +2845,17 @@
 
             // State
             const state = {
-                size: 400,
+                size: 700,
                 brightness: 1.2,
-                effectOpacity: 0.45,
-                saturate: 1,
-                contrast: 1,
+                effectOpacity: 0,
+                saturate: 3,
+                contrast: 2.8,
                 invert: false,
-                gooeyBlurSVG: 10,
-                gooeySharpnessSVG: 18,
+                gooeyBlurSVG: 50,
+                gooeySharpnessSVG: 1,
                 pulseSpeed: 0.2,
                 pulseAmount: 0.05,
-                trailLag: 0.06,
+                trailLag: 0.09,
                 trailCount: 3,
                 isPanelHovered: false
             };
@@ -3020,7 +3015,6 @@
 
             addListener(sizeSlider, 'size', sizeVal);
             addListener(brightnessSlider, 'brightness', brightnessVal);
-            addListener(effectOpacitySlider, 'effectOpacity', effectOpacityVal);
             addListener(saturateSlider, 'saturate', saturateVal);
             addListener(contrastSlider, 'contrast', contrastVal);
             addListener(pulseSpeedSlider, 'pulseSpeed', pulseSpeedVal);
