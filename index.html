@@ -791,6 +791,22 @@
                     transparent 8px
                 );
             /* Animation will be set via JavaScript for randomness */
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform, filter, background;
+            position: relative;
+        }
+
+        /* Wild hover effects for waveform bars */
+        .sample-bar.wild-active {
+            filter: brightness(1.5) saturate(1.5) drop-shadow(0 0 8px rgba(6, 182, 212, 0.8));
+        }
+
+        .sample-bar.wild-intense {
+            filter: brightness(2) saturate(2) hue-rotate(30deg) drop-shadow(0 0 12px rgba(255, 0, 255, 0.9));
+        }
+
+        .sample-bar.wild-crazy {
+            filter: brightness(2.5) saturate(3) hue-rotate(60deg) drop-shadow(0 0 16px rgba(255, 255, 0, 1));
         }
 
         /* Problem/Solution Section Background */
@@ -2665,6 +2681,148 @@
 
         // Start idle timer
         mouseIdleTimer = setTimeout(enterIdleMode, 4000);
+
+        // Wild Waveform Interaction System
+        (function initWildWaveforms() {
+            const allBars = document.querySelectorAll('.sample-bar');
+            if (!allBars.length) return;
+
+            let cursorX = 0;
+            let cursorY = 0;
+            let animationFrameId = null;
+
+            // Track cursor position
+            document.addEventListener('mousemove', (e) => {
+                cursorX = e.clientX;
+                cursorY = e.clientY;
+
+                if (!animationFrameId) {
+                    animationFrameId = requestAnimationFrame(updateWaveforms);
+                }
+            });
+
+            function updateWaveforms() {
+                allBars.forEach((bar) => {
+                    const rect = bar.getBoundingClientRect();
+                    const barCenterX = rect.left + rect.width / 2;
+                    const barCenterY = rect.top + rect.height / 2;
+
+                    // Calculate distance from cursor to bar center
+                    const dx = cursorX - barCenterX;
+                    const dy = cursorY - barCenterY;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    // Define proximity zones (in pixels)
+                    const crazyZone = 80;    // Super wild zone
+                    const intenseZone = 150; // Intense zone
+                    const activeZone = 250;  // Active zone
+
+                    // Remove all wild classes first
+                    bar.classList.remove('wild-active', 'wild-intense', 'wild-crazy');
+
+                    if (distance < crazyZone) {
+                        // CRAZY ZONE: Maximum wildness
+                        bar.classList.add('wild-crazy');
+
+                        // Extreme amplitude boost
+                        const amplitudeBoost = 3.5 + Math.random() * 1.5;
+
+                        // Random rotation
+                        const rotation = (Math.random() - 0.5) * 25;
+
+                        // Scale based on distance (closer = bigger)
+                        const scale = 1.5 + (1 - distance / crazyZone) * 1.5;
+
+                        // Wild skew effect
+                        const skewX = (Math.random() - 0.5) * 20;
+                        const skewY = (Math.random() - 0.5) * 15;
+
+                        // Speed up animation dramatically
+                        const currentDuration = parseFloat(bar.style.animationDuration) || 1.2;
+                        bar.style.animationDuration = `${Math.max(0.15, currentDuration * 0.3)}s`;
+
+                        bar.style.transform = `
+                            scaleY(${amplitudeBoost})
+                            scaleX(${scale})
+                            rotate(${rotation}deg)
+                            skew(${skewX}deg, ${skewY}deg)
+                            translateY(${Math.sin(Date.now() * 0.01) * 5}px)
+                        `;
+
+                    } else if (distance < intenseZone) {
+                        // INTENSE ZONE: Strong effects
+                        bar.classList.add('wild-intense');
+
+                        const amplitudeBoost = 2.5 + Math.random() * 0.8;
+                        const rotation = (Math.random() - 0.5) * 15;
+                        const scale = 1.3 + (1 - distance / intenseZone) * 0.7;
+                        const skewX = (Math.random() - 0.5) * 10;
+
+                        // Speed up animation moderately
+                        const currentDuration = parseFloat(bar.style.animationDuration) || 1.2;
+                        bar.style.animationDuration = `${Math.max(0.3, currentDuration * 0.5)}s`;
+
+                        bar.style.transform = `
+                            scaleY(${amplitudeBoost})
+                            scaleX(${scale})
+                            rotate(${rotation}deg)
+                            skew(${skewX}deg, 0deg)
+                        `;
+
+                    } else if (distance < activeZone) {
+                        // ACTIVE ZONE: Subtle effects
+                        bar.classList.add('wild-active');
+
+                        const amplitudeBoost = 1.5 + (1 - distance / activeZone) * 0.8;
+                        const scale = 1.1 + (1 - distance / activeZone) * 0.2;
+
+                        // Speed up animation slightly
+                        const currentDuration = parseFloat(bar.style.animationDuration) || 1.2;
+                        bar.style.animationDuration = `${Math.max(0.5, currentDuration * 0.7)}s`;
+
+                        bar.style.transform = `scaleY(${amplitudeBoost}) scaleX(${scale})`;
+
+                    } else {
+                        // NORMAL ZONE: Reset to default
+                        bar.style.transform = '';
+
+                        // Reset animation speed gradually
+                        const currentDuration = parseFloat(bar.style.animationDuration) || 1.2;
+                        if (currentDuration < 1.2) {
+                            bar.style.animationDuration = `${Math.min(1.2, currentDuration * 1.05)}s`;
+                        }
+                    }
+                });
+
+                animationFrameId = null;
+            }
+
+            // Add glitch effect randomly to bars when cursor is nearby
+            setInterval(() => {
+                if (cursorX > 0) { // Only if cursor has moved
+                    allBars.forEach((bar) => {
+                        const rect = bar.getBoundingClientRect();
+                        const barCenterX = rect.left + rect.width / 2;
+                        const barCenterY = rect.top + rect.height / 2;
+                        const dx = cursorX - barCenterX;
+                        const dy = cursorY - barCenterY;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+
+                        if (distance < 150 && Math.random() < 0.1) {
+                            // Random glitch effect
+                            const glitchTransform = `translateX(${(Math.random() - 0.5) * 8}px)`;
+                            const currentTransform = bar.style.transform || '';
+                            bar.style.transform = currentTransform + ' ' + glitchTransform;
+
+                            setTimeout(() => {
+                                bar.style.transform = currentTransform;
+                            }, 50);
+                        }
+                    });
+                }
+            }, 100);
+
+        })();
     </script>
 
     <!-- MailChimp Scripts -->
