@@ -2933,7 +2933,9 @@
                     const index = i;
 
                     const scaleFactor = 1 - (index * 0.15);
-                    const size = `${state.size * scaleFactor}px`;
+                    // Make blob 2.5x bigger when hovering over control panel
+                    const panelMultiplier = state.isPanelHovered ? 2.5 : 1;
+                    const size = `${state.size * scaleFactor * panelMultiplier}px`;
 
                     lens.style.width = size;
                     lens.style.height = size;
@@ -3013,9 +3015,11 @@
 
             controls.addEventListener('mouseenter', () => {
                 state.isPanelHovered = true;
+                updateBlobStyle(); // Update size immediately
             });
             controls.addEventListener('mouseleave', () => {
                 state.isPanelHovered = false;
+                updateBlobStyle(); // Update size immediately
             });
 
             // Slider Listeners
