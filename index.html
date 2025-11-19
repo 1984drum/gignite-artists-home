@@ -2922,12 +2922,8 @@
 
             // Update Styles
             function updateBlobStyle() {
-                // Apply invert as a separate filter on the containers (at the end of the effect chain)
                 const invertFilter = state.invert ? 'invert(1)' : 'invert(0)';
-                lensContainer.style.filter = invertFilter;
-                gooContainer.style.filter = invertFilter;
-
-                const backdropFilter = `brightness(${state.brightness}) saturate(${state.saturate}) contrast(${state.contrast})`;
+                const backdropFilter = `brightness(${state.brightness}) saturate(${state.saturate}) contrast(${state.contrast}) ${invertFilter}`;
 
                 gooContainer.style.opacity = state.effectOpacity;
 
