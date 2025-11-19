@@ -20,6 +20,11 @@
     <!-- 3. Load Inter for cursor blob text -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@900&display=swap" rel="stylesheet">
 
+    <!-- Preload critical background images for faster display -->
+    <link rel="preload" href="img/GN 64.png" as="image">
+    <link rel="preload" href="img/GN 69.png" as="image">
+    <link rel="preload" href="img/1984drum_A_dynamic_long-exposure_photograph._The_static_stage_1d984278-e076-4baa-9338-daf1edf5dae0_1.png" as="image">
+
     <!-- 4. Load Font Awesome Pro Kit -->
     <script src="https://kit.fontawesome.com/218e17b06d.js" crossorigin="anonymous"></script>
 
@@ -392,7 +397,8 @@
         .subtitle-text .char.visible {
             opacity: 1;
             background-color: #000;
-            padding: 0.25rem 0.1rem;
+            padding: 0.5rem 0.15rem;
+            letter-spacing: -0.05em;
             box-decoration-break: clone;
             -webkit-box-decoration-break: clone;
         }
@@ -420,7 +426,7 @@
         /* Wider container for tour manager section on large screens */
         @media (min-width: 1536px) {
             .features-section .text-center.max-w-3xl {
-                max-width: 60rem; /* Wider than default to prevent "covered." alone on last line */
+                max-width: 72rem; /* Much wider to make text only 2 lines instead of 3 */
             }
         }
 
@@ -771,6 +777,7 @@
         /* Helper class for the animated waveform bars */
         .sample-bar {
             width: 3px; /* Fixed width for bars */
+            height: 3px; /* Initial height */
             background:
                 /* Gradient overlay from cyan at edges to transparent in middle */
                 linear-gradient(
@@ -1010,7 +1017,7 @@
             cursor: none; /* Hide default cursor when blob is active */
         }
 
-        /* The container that applies the 'Gooey' filter to its children */
+        /* The container that applies the warp/displacement filter to its children */
         .cursor-trail-container {
             position: fixed;
             top: 0;
@@ -1019,10 +1026,10 @@
             height: 100%;
             pointer-events: none;
             z-index: 9998;
-            /* This filter blurs the elements and then contrasts them to make them 'stick' */
+            /* This filter creates the soft, feathered warp/displacement effect */
             filter: url('#goo-cursor');
-            /* This creates the color inversion effect */
-            mix-blend-mode: difference;
+            /* No blend mode - just pure displacement */
+            mix-blend-mode: normal;
             /* Start hidden */
             opacity: 0;
             transition: opacity 1s ease-in-out;
@@ -1035,14 +1042,14 @@
         /* The trailing blobs */
         .trail-dot {
             position: absolute;
-            /* Increased base size 4x */
-            width: 560px;
-            height: 560px;
-            /* Blob color must be white for mix-blend-mode to work */
-            background: #ffffff;
+            /* Bigger size for more prominent warp effect */
+            width: 800px;
+            height: 800px;
+            /* Transparent gradient - just for creating the warp mask, not for visibility */
+            background: radial-gradient(circle, rgba(128, 128, 128, 0.15) 0%, rgba(128, 128, 128, 0.05) 60%, rgba(128, 128, 128, 0) 100%);
             border-radius: 50%;
             transform: translate(-50%, -50%);
-            opacity: 0.5;
+            opacity: 1;
         }
 
         /* Growing animation for blobs */
@@ -1082,24 +1089,196 @@
             font-family: 'Inter', sans-serif;
             font-weight: 900;
             font-size: 16px;
-            fill: #ffffff; /* White fill to match center dot */
+            fill: #ffffff;
             letter-spacing: 1.5px;
             transition: font-size 0.5s ease;
+            transform-origin: 50px 50px; /* Center of the SVG viewBox */
+            animation: rippleRotate 20s linear infinite;
+            --rotation-offset: 0deg;
         }
 
         #spinning-text-cursor.idle text {
             font-size: 13px;
+            animation: rippleRotate 15s linear infinite; /* Faster when idle */
         }
 
-        #spinning-text-cursor circle {
-            fill: #000000; /* Black fill for mask effect */
-            transition: r 0.5s ease;
+        /* Rippling rotation animation with slight scale variation */
+        @keyframes rippleRotate {
+            0% {
+                transform: rotate(calc(var(--rotation-offset) + 0deg)) scale(1);
+            }
+            12.5% {
+                transform: rotate(calc(var(--rotation-offset) + 45deg)) scale(1.01);
+            }
+            25% {
+                transform: rotate(calc(var(--rotation-offset) + 90deg)) scale(1.02);
+            }
+            37.5% {
+                transform: rotate(calc(var(--rotation-offset) + 135deg)) scale(1.01);
+            }
+            50% {
+                transform: rotate(calc(var(--rotation-offset) + 180deg)) scale(1);
+            }
+            62.5% {
+                transform: rotate(calc(var(--rotation-offset) + 225deg)) scale(0.99);
+            }
+            75% {
+                transform: rotate(calc(var(--rotation-offset) + 270deg)) scale(0.98);
+            }
+            87.5% {
+                transform: rotate(calc(var(--rotation-offset) + 315deg)) scale(0.99);
+            }
+            100% {
+                transform: rotate(calc(var(--rotation-offset) + 360deg)) scale(1);
+            }
         }
 
         /* Hide cursor blob on mobile/tablet screens */
         @media (max-width: 1024px) {
             #spinning-text-cursor,
             .cursor-trail-container {
+                display: none !important;
+            }
+        }
+
+        /* New Cursor Blob System - Layer 1: Lens (Distortion) */
+        #lens-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9997;
+            pointer-events: none;
+        }
+
+        .lens-blob {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: transparent;
+            backdrop-filter: brightness(1.2) saturate(1) contrast(1);
+            -webkit-backdrop-filter: brightness(1.2) saturate(1) contrast(1);
+            -webkit-mask-image: radial-gradient(circle, black 40%, transparent 70%);
+            mask-image: radial-gradient(circle, black 40%, transparent 70%);
+            transform: translate(-50%, -50%);
+            transition: width 0.4s ease, height 0.4s ease, backdrop-filter 0.4s ease;
+        }
+
+        /* Layer 2: Gooey (Visuals) */
+        #goo-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9998;
+            pointer-events: none;
+            filter: url(#gooey-blob);
+            opacity: 0.45;
+        }
+
+        .goo-blob {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 70%);
+            mix-blend-mode: overlay;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s ease, height 0.4s ease, background 0.4s ease;
+        }
+
+        /* Control Panel Styles */
+        #blob-controls {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(17, 24, 39, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 1rem;
+            border-radius: 1rem 1rem 0 0;
+            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+            transition: transform 0.3s ease;
+            transform: translateY(0);
+            cursor: default;
+        }
+
+        #blob-controls.hidden {
+            transform: translateY(100%);
+        }
+
+        #blob-toggle {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            background: rgba(6, 182, 212, 0.9);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            z-index: 10001;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        #blob-toggle:hover {
+            background: rgba(6, 182, 212, 1);
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(6, 182, 212, 0.5);
+        }
+
+        /* Custom slider styles for blob controls */
+        #blob-controls input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            background: #4a5568;
+            border-radius: 5px;
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        #blob-controls input[type="range"]:hover {
+            opacity: 1;
+        }
+
+        #blob-controls input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #06b6d4;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        #blob-controls input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: #06b6d4;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        @media (max-width: 1024px) {
+            #lens-container,
+            #goo-container,
+            #blob-controls,
+            #blob-toggle {
                 display: none !important;
             }
         }
@@ -1121,29 +1300,7 @@
             -webkit-backdrop-filter: blur(0);
         }
 
-        /* Button spotlight effect on hover */
-        .gignite-button::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(6, 182, 212, 0.6) 0%, rgba(6, 182, 212, 0.3) 40%, transparent 70%);
-            transform: translate(-50%, -50%);
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.5s ease;
-            z-index: -1;
-            filter: blur(20px);
-        }
-
-        .gignite-button:hover::before {
-            width: 300px;
-            height: 300px;
-            opacity: 1;
-        }
+        /* Button spotlight now handled by global spotlight - removed button-specific spotlight */
 
         .light-saber {
             position: absolute;
@@ -1412,9 +1569,9 @@
     <section class="hero-section h-screen w-full relative overflow-hidden">
         <!-- Background Images (Carousel) - First image fades in after typewriter -->
         <img src="img/GN 29.png" alt="GIGNITE Background" class="hero-bg-image" data-slide="0" />
-        <img src="img/GN 44.png" alt="GIGNITE Background" class="hero-bg-image" data-slide="1" />
-        <img src="img/GN 48.png" alt="GIGNITE Background" class="hero-bg-image" data-slide="2" />
-        <img src="img/GN 45.png" alt="GIGNITE Background" class="hero-bg-image" data-slide="3" />
+        <img src="img/GN 44.png" alt="GIGNITE Background" class="hero-bg-image" data-slide="1" loading="lazy" />
+        <img src="img/GN 48.png" alt="GIGNITE Background" class="hero-bg-image" data-slide="2" loading="lazy" />
+        <img src="img/GN 45.png" alt="GIGNITE Background" class="hero-bg-image" data-slide="3" loading="lazy" />
 
         <!-- Equalizer Transition Overlay -->
         <div class="equalizer-transition" id="equalizer-transition"></div>
@@ -1438,7 +1595,7 @@
                     <span id="subtitle-text" class="subtitle-text">Our platform will help you build out your tour plan step by step, making your ambitions a reality.</span>
                 </p>
                 <!-- Button -->
-                <a id="start-planning-btn" href="https://mailchi.mp/YOUR_SIGNUP_URL" target="_blank" rel="noopener noreferrer" class="glitch-button gignite-button button-hidden mt-12 inline-block py-3 px-10 bg-transparent text-white border-[3px] border-cyan-500 font-bold text-lg uppercase shadow-lg shadow-cyan-500/30 transform transition-all duration-300 hover:scale-105 hover:bg-cyan-500 hover:text-black hover:border-cyan-500">
+                <a id="start-planning-btn" href="#signup-form" class="glitch-button gignite-button button-hidden mt-12 inline-block py-3 px-10 bg-transparent text-white border-[3px] border-cyan-500 font-bold text-lg uppercase shadow-lg shadow-cyan-500/30 transform transition-all duration-300 hover:scale-105 hover:bg-cyan-500 hover:text-black hover:border-cyan-500">
                     EARLY ACCESS SIGN UP
                 </a>
             </div>
@@ -1455,8 +1612,7 @@
             <!-- Larger path for idle state -->
             <path id="text-circle-cursor-large" d="M 50, 50 m -45, 0 a 45,45 0 1,1 90,0 a 45,45 0 1,1 -90,0"></path>
         </defs>
-        <!-- Center blob like a crotchet note - black for mask effect -->
-        <circle id="cursor-center-dot" cx="50" cy="50" r="6" fill="#000000" />
+        <!-- Center blob removed per user request -->
         <text>
             <!-- Attach the text to the circular path -->
             <textPath id="cursor-text-path" href="#text-circle-cursor">
@@ -1469,35 +1625,118 @@
     <div class="cursor-trail-container" id="trail-container">
     </div>
 
-    <!-- SVG Filter for cursor blob goo effect -->
+    <!-- New Cursor Blob System -->
+    <!-- Layer 1: Lens Effects (Backdrop Filter) -->
+    <div id="lens-container">
+        <div id="lens-blob" class="lens-blob"></div>
+    </div>
+
+    <!-- Layer 2: Gooey Visuals (Overlay + SVG Filter) -->
+    <div id="goo-container">
+        <div id="goo-blob" class="goo-blob"></div>
+    </div>
+
+    <!-- SVG Filter for Gooey Blob Effect -->
     <svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="position: absolute; width: 0; height: 0;">
         <defs>
-            <filter id="goo-cursor">
-                <!-- 1. Blur the source graphic (blobs) -->
-                <feGaussianBlur in="SourceGraphic" stdDeviation="80" result="blur" />
-
-                <!-- 2. Create an animating fractal noise pattern - increased for more abstract shapes -->
-                <feTurbulence type="fractalNoise" baseFrequency="0.004 0.006"
-                              numOctaves="4" seed="1" result="turbulence">
-                    <!-- Variable speed animation for irregular changes -->
-                    <animate attributeName="seed" from="1" to="100" dur="15s" repeatCount="indefinite" />
-                    <animate attributeName="baseFrequency" values="0.004 0.006; 0.006 0.008; 0.003 0.005; 0.004 0.006" dur="8s" repeatCount="indefinite" />
-                </feTurbulence>
-
-                <!-- 3. Use the noise to displace (warp) the blurred blobs - increased scale for more abstract shape -->
-                <feDisplacementMap in="blur" in2="turbulence" scale="80" result="warp" />
-
-                <!-- 4. Sharpen the *warped* blobs. Updated with very high contrast for a crisp edge. -->
-                <feColorMatrix in="warp" mode="matrix" values="
+            <filter id="gooey-blob">
+                <feGaussianBlur id="goo-blur" in="SourceGraphic" stdDeviation="10" result="blur" />
+                <feColorMatrix id="goo-contrast" in="blur" mode="matrix"
+                    values="1 0 0 0 0
+                            0 1 0 0 0
+                            0 0 1 0 0
+                            0 0 0 18 -7"
+                    result="goo" />
+                <feBlend in="SourceGraphic" in2="goo" />
+            </filter>
+            <filter id="goo-cursor" x="-50%" y="-50%" width="200%" height="200%">
+                <!-- Old filter kept for compatibility -->
+                <feTurbulence type="fractalNoise" baseFrequency="0.008" numOctaves="2" result="turbulence" />
+                <feGaussianBlur in="SourceGraphic" stdDeviation="120" result="blur" />
+                <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="45" xChannelSelector="R" yChannelSelector="G" result="displaced" />
+                <feColorMatrix in="blur" mode="matrix" values="
                     1 0 0 0 0
                     0 1 0 0 0
                     0 0 1 0 0
-                    0 0 0 70 -30" result="goo" />
-
-                <feComposite in="SourceGraphic" in2="goo" operator="atop"/>
+                    0 0 0 15 -6" result="mask" />
+                <feComposite in="displaced" in2="mask" operator="in" />
             </filter>
         </defs>
     </svg>
+
+    <!-- Blob Control Panel Toggle Button -->
+    <button id="blob-toggle">Blob Controls</button>
+
+    <!-- Blob Control Panel -->
+    <div id="blob-controls" class="hidden">
+        <div style="max-width: 90rem; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; font-size: 0.875rem; color: white;">
+
+            <!-- Column 1 -->
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                    <label for="size" style="font-weight: 500;">Size: <span id="size-val">700</span>px</label>
+                    <input type="range" id="size" min="200" max="1200" value="700" style="width: 100%;">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                    <label for="gooeyBlurSVG" style="font-weight: 500;">Gooey Blur: <span id="gooeyBlurSVG-val">50</span></label>
+                    <input type="range" id="gooeyBlurSVG" min="0" max="100" value="50" step="1" style="width: 100%;">
+                </div>
+            </div>
+
+            <!-- Column 2 -->
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                    <label for="gooeySharpnessSVG" style="font-weight: 500;">Gooey Sharpness: <span id="gooeySharpnessSVG-val">1</span></label>
+                    <input type="range" id="gooeySharpnessSVG" min="0.5" max="10" value="1" step="0.5" style="width: 100%;">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                    <label for="brightness" style="font-weight: 500;">Brightness: <span id="brightness-val">1.2</span></label>
+                    <input type="range" id="brightness" min="0.6" max="1.8" value="1.2" step="0.1" style="width: 100%;">
+                </div>
+            </div>
+
+            <!-- Column 3 -->
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                    <label for="saturate" style="font-weight: 500;">Saturation: <span id="saturate-val">3</span></label>
+                    <input type="range" id="saturate" min="1.5" max="4.5" value="3" step="0.1" style="width: 100%;">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                    <label for="contrast" style="font-weight: 500;">Contrast: <span id="contrast-val">2.8</span></label>
+                    <input type="range" id="contrast" min="1.4" max="4.2" value="2.8" step="0.1" style="width: 100%;">
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem; padding-top: 0.25rem;">
+                    <input type="checkbox" id="invert" style="height: 1rem; width: 1rem; color: #06b6d4; border-radius: 0.25rem; border-color: #9ca3af;">
+                    <label for="invert" style="font-weight: 500;">Invert Colors</label>
+                </div>
+            </div>
+
+            <!-- Column 4 -->
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                    <label for="pulseSpeed" style="font-weight: 500;">Pulse Speed: <span id="pulseSpeed-val">0.2</span></label>
+                    <input type="range" id="pulseSpeed" min="0" max="0.4" value="0.2" step="0.05" style="width: 100%;">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                    <label for="pulseAmount" style="font-weight: 500;">Pulse Amount: <span id="pulseAmount-val">0.05</span></label>
+                    <input type="range" id="pulseAmount" min="0" max="0.1" value="0.05" step="0.01" style="width: 100%;">
+                </div>
+            </div>
+
+            <!-- Column 5 -->
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                    <label for="trailLag" style="font-weight: 500;">Trail Lag: <span id="trailLag-val">0.09</span></label>
+                    <input type="range" id="trailLag" min="0.045" max="0.135" value="0.09" step="0.005" style="width: 100%;">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                    <label for="trailCount" style="font-weight: 500;">Trail Count: <span id="trailCount-val">3</span></label>
+                    <input type="range" id="trailCount" min="0" max="6" value="3" step="1" style="width: 100%;">
+                </div>
+            </div>
+
+        </div>
+    </div>
 
     <!-- Section Divider 1 -->
     <section class="bg-black py-10 w-full">
@@ -1556,7 +1795,7 @@
                         <span>All your bookings and info in one place, planned to perfection. You get clarity and transparency on the financials, enabling you to drive a more rewarding future for your band.</span>
                     </p>
                     <!-- UPDATED: Button Style 2 -->
-                    <a href="https://mailchi.mp/YOUR_SIGNUP_URL" target="_blank" rel="noopener noreferrer" class="gignite-button mt-10 inline-block py-3 px-10 bg-transparent text-white border-[3px] border-cyan-500 font-bold text-lg uppercase shadow-lg shadow-cyan-500/30 transform transition-all duration-300 hover:scale-105 hover:bg-cyan-500 hover:text-black hover:border-cyan-500">
+                    <a href="#signup-form" class="gignite-button mt-10 inline-block py-3 px-10 bg-transparent text-white border-[3px] border-cyan-500 font-bold text-lg uppercase shadow-lg shadow-cyan-500/30 transform transition-all duration-300 hover:scale-105 hover:bg-cyan-500 hover:text-black hover:border-cyan-500">
                         EARLY ACCESS SIGN UP
                     </a>
                 </div>
@@ -1716,7 +1955,7 @@
         </section>
 
         <!-- 3. Features Section (Interactive Cards) -->
-        <section id="features" class="features-section py-20 md:py-32 bg-gray-950">
+        <section id="features" class="features-section py-20 md:py-32 bg-black">
             <div class="container mx-auto px-6">
                 <div class="text-center max-w-3xl mx-auto reveal-on-scroll">
                     <h2 class="gignite-heading text-4xl md:text-6xl font-bold tracking-tight">Your Virtual Tour Manager</h2>
@@ -1774,7 +2013,7 @@
         </section>
         
         <!-- Section Divider 3 -->
-        <section class="py-16 bg-gray-950 w-full">
+        <section class="py-16 bg-black w-full">
             <div class="w-full flex items-center h-10">
                 <div class="h-[3px] bg-white" style="width: 10%;"></div>
                 <div class="h-10 flex items-center justify-between" style="width: 30%;">
@@ -1900,7 +2139,7 @@
         </section>
 
         <!-- 6. Final CTA -->
-        <section id="final-cta" class="final-cta-section py-20 md:py-32 bg-gray-950 text-center">
+        <section id="final-cta" class="final-cta-section py-20 md:py-32 bg-black text-center">
             <div class="container mx-auto px-6 reveal-on-scroll">
                 <h2 class="gignite-heading text-4xl md:text-6xl font-bold">The performance rules.</h2>
                 <p class="text-xl md:text-2xl text-gray-300 mt-6 max-w-3xl mx-auto">
@@ -1908,7 +2147,7 @@
                     Stop the admin headaches and get back to the music.
                 </p>
                 <!-- UPDATED: Button Style 3 -->
-                <a href="https://mailchi.mp/YOUR_SIGNUP_URL" target="_blank" rel="noopener noreferrer" class="gignite-button mt-12 inline-block py-4 px-12 border-[3px] border-cyan-500 text-white font-bold text-lg uppercase tracking-widest transform transition-all duration-300 hover:bg-cyan-500 hover:text-black hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/30">
+                <a href="#signup-form" class="gignite-button mt-12 inline-block py-4 px-12 border-[3px] border-cyan-500 text-white font-bold text-lg uppercase tracking-widest transform transition-all duration-300 hover:bg-cyan-500 hover:text-black hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/30">
                     EARLY ACCESS SIGN UP
                 </a>
             </div>
@@ -1916,7 +2155,7 @@
     </main>
 
     <!-- Section Divider 5 -->
-    <section class="bg-gray-950 py-10 w-full">
+    <section class="bg-black py-10 w-full">
         <div class="w-full flex items-center h-10">
             <div class="h-[3px] bg-white" style="width: 40%;"></div>
             <div class="h-10 flex items-center justify-between" style="width: 25%;">
@@ -1959,11 +2198,11 @@
             <div class="max-w-2xl mx-auto">
                 <div class="text-center mb-12">
                     <h2 class="text-4xl md:text-5xl font-bold mb-4 gignite-heading">Stay in the Loop</h2>
-                    <p class="text-gray-400 text-lg">Get updates on new features, tips for artists, and exclusive content delivered to your inbox.</p>
+                    <p class="text-gray-400 text-lg">Sign up for early access using this short form.</p>
                 </div>
 
                 <div id="mc_embed_signup" class="mailchimp-form">
-                    <form action="https://live.us19.list-manage.com/subscribe/post?u=0af904bb923e40ef979e3dff4&amp;id=ea7e5d6226&amp;f_id=00c53be3f0" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank">
+                    <form action="https://live.us19.list-manage.com/subscribe/post?u=0af904bb923e40ef979e3dff4&amp;id=ea7e5d6226&amp;f_id=00c53be3f0" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="hidden_iframe">
                         <div id="mc_embed_signup_scroll">
                             <div class="mb-6">
                                 <label for="mce-EMAIL" class="block text-white font-semibold mb-2 text-sm uppercase tracking-wide">Email Address <span class="text-cyan-500">*</span></label>
@@ -2006,8 +2245,43 @@
                             </div>
                         </div>
                     </form>
+
+                    <!-- Hidden iframe to prevent page redirect -->
+                    <iframe name="hidden_iframe" style="display:none;"></iframe>
+                </div>
+
+                <!-- Custom Thank You Message (hidden by default) -->
+                <div id="custom-thank-you" class="text-center" style="display: none;">
+                    <h3 class="text-3xl md:text-4xl font-bold mb-4 gignite-heading text-cyan-500">Thank You!</h3>
+                    <p class="text-xl text-gray-300">Early Access Sign Up Complete.</p>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!-- Section Divider 6 -->
+    <section class="bg-black py-10 w-full">
+        <div class="w-full flex items-center h-10">
+            <div class="h-[3px] bg-white" style="width: 35%;"></div>
+            <div class="h-10 flex items-center justify-between" style="width: 20%;">
+                <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 0.9s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.3s; animation-duration: 0.7s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 1.1s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.4s; animation-duration: 0.8s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 1.0s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.5s; animation-duration: 0.9s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 0.7s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.3s; animation-duration: 1.2s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 0.8s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.4s; animation-duration: 1.1s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 0.9s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.5s; animation-duration: 0.7s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.3s; animation-duration: 1.0s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.1s; animation-duration: 0.8s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.4s; animation-duration: 1.2s;"></div>
+                <div class="sample-bar" style="animation-delay: 0.2s; animation-duration: 0.9s;"></div>
+            </div>
+            <div class="h-[3px] bg-white" style="width: 45%;"></div>
         </div>
     </section>
 
@@ -2023,15 +2297,13 @@
         // Set current year in footer
         document.getElementById('current-year').textContent = new Date().getFullYear();
 
-        // Randomize sample bar animations
-        document.addEventListener('DOMContentLoaded', () => {
-            const sampleBars = document.querySelectorAll('.sample-bar');
-            sampleBars.forEach(bar => {
-                const animNum = Math.floor(Math.random() * 6) + 1; // Random 1-6
-                const duration = 0.6 + Math.random() * 1.2; // Random 0.6-1.8s
-                const delay = Math.random() * 0.8; // Random 0-0.8s delay
-                bar.style.animation = `sample-wave-anim-${animNum} ${duration}s infinite ease-in-out ${delay}s`;
-            });
+        // Randomize sample bar animations - run immediately since script is at bottom
+        const sampleBars = document.querySelectorAll('.sample-bar');
+        sampleBars.forEach(bar => {
+            const animNum = Math.floor(Math.random() * 6) + 1; // Random 1-6
+            const duration = 0.6 + Math.random() * 1.2; // Random 0.6-1.8s
+            const delay = Math.random() * 0.8; // Random 0-0.8s delay
+            bar.style.animation = `sample-wave-anim-${animNum} ${duration}s infinite ease-in-out ${delay}s`;
         });
 
         // Intersection Observer for scroll-triggered animations
@@ -2543,6 +2815,251 @@
         // Initialize light sabers after page loads
         initLightSabers();
 
+        // New Cursor Blob System
+        (function initCursorBlob() {
+            const lensContainer = document.getElementById('lens-container');
+            const gooContainer = document.getElementById('goo-container');
+            const controls = document.getElementById('blob-controls');
+            const toggleBtn = document.getElementById('blob-toggle');
+
+            // Main Blobs
+            const mainLensBlob = document.getElementById('lens-blob');
+            const mainGooBlob = document.getElementById('goo-blob');
+
+            // Arrays to hold all blobs
+            let lensBlobs = [mainLensBlob];
+            let gooBlobs = [mainGooBlob];
+
+            // Get SVG Filter elements
+            const feGaussianBlur = document.getElementById('goo-blur');
+            const feColorMatrix = document.getElementById('goo-contrast');
+
+            // Control elements
+            const sizeSlider = document.getElementById('size');
+            const brightnessSlider = document.getElementById('brightness');
+            const saturateSlider = document.getElementById('saturate');
+            const contrastSlider = document.getElementById('contrast');
+            const invertCheckbox = document.getElementById('invert');
+            const gooeyBlurSVGSlider = document.getElementById('gooeyBlurSVG');
+            const gooeySharpnessSVGSlider = document.getElementById('gooeySharpnessSVG');
+            const pulseSpeedSlider = document.getElementById('pulseSpeed');
+            const pulseAmountSlider = document.getElementById('pulseAmount');
+            const trailLagSlider = document.getElementById('trailLag');
+            const trailCountSlider = document.getElementById('trailCount');
+
+            // Labels
+            const sizeVal = document.getElementById('size-val');
+            const brightnessVal = document.getElementById('brightness-val');
+            const saturateVal = document.getElementById('saturate-val');
+            const contrastVal = document.getElementById('contrast-val');
+            const gooeyBlurSVGVal = document.getElementById('gooeyBlurSVG-val');
+            const gooeySharpnessSVGVal = document.getElementById('gooeySharpnessSVG-val');
+            const pulseSpeedVal = document.getElementById('pulseSpeed-val');
+            const pulseAmountVal = document.getElementById('pulseAmount-val');
+            const trailLagVal = document.getElementById('trailLag-val');
+            const trailCountVal = document.getElementById('trailCount-val');
+
+            // State
+            const state = {
+                size: 700,
+                brightness: 1.2,
+                effectOpacity: 0,
+                saturate: 3,
+                contrast: 2.8,
+                invert: false,
+                gooeyBlurSVG: 50,
+                gooeySharpnessSVG: 1,
+                pulseSpeed: 0.2,
+                pulseAmount: 0.05,
+                trailLag: 0.09,
+                trailCount: 3,
+                isPanelHovered: false
+            };
+
+            // Position State
+            const mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+            let positions = [
+                { x: window.innerWidth / 2, y: window.innerHeight / 2 }
+            ];
+
+            // Function to adjust trail blobs
+            function updateTrailCount(newCount) {
+                const oldCount = lensBlobs.length - 1;
+
+                if (newCount > oldCount) {
+                    for (let i = oldCount; i < newCount; i++) {
+                        const newLens = document.createElement('div');
+                        newLens.className = 'lens-blob';
+                        lensContainer.appendChild(newLens);
+                        lensBlobs.push(newLens);
+
+                        const newGoo = document.createElement('div');
+                        newGoo.className = 'goo-blob';
+                        gooContainer.appendChild(newGoo);
+                        gooBlobs.push(newGoo);
+
+                        const lastPos = positions[positions.length - 1];
+                        positions.push({ x: lastPos.x, y: lastPos.y });
+                    }
+                } else if (newCount < oldCount) {
+                    for (let i = newCount; i < oldCount; i++) {
+                        const lensToRemove = lensBlobs.pop();
+                        lensToRemove.remove();
+
+                        const gooToRemove = gooBlobs.pop();
+                        gooToRemove.remove();
+
+                        positions.pop();
+                    }
+                }
+                updateBlobStyle();
+            }
+
+            // Linear interpolation function
+            function lerp(start, end, amt) {
+                return (1 - amt) * start + amt * end;
+            }
+
+            // Update Styles
+            function updateBlobStyle() {
+                const invertFilter = state.invert ? 'invert(1)' : 'invert(0)';
+                const backdropFilter = `brightness(${state.brightness}) saturate(${state.saturate}) contrast(${state.contrast}) ${invertFilter}`;
+
+                gooContainer.style.opacity = state.effectOpacity;
+
+                for (let i = 0; i < lensBlobs.length; i++) {
+                    const lens = lensBlobs[i];
+                    const goo = gooBlobs[i];
+                    const index = i;
+
+                    const scaleFactor = 1 - (index * 0.15);
+                    const size = `${state.size * scaleFactor}px`;
+
+                    lens.style.width = size;
+                    lens.style.height = size;
+                    lens.style.backdropFilter = backdropFilter;
+                    lens.style.webkitBackdropFilter = backdropFilter;
+
+                    goo.style.width = size;
+                    goo.style.height = size;
+
+                    const duration = 0.4 + (index * 0.1);
+                    const transition = `${duration}s ease`;
+                    lens.style.transition = `width ${transition}, height ${transition}, backdrop-filter ${transition}`;
+                    goo.style.transition = `width ${transition}, height ${transition}`;
+
+                    if (index > 0) {
+                        const opacity = 1 - (index * 0.2);
+                        lens.style.opacity = opacity;
+                        goo.style.opacity = opacity;
+                    } else {
+                        lens.style.opacity = 1;
+                        goo.style.opacity = 1;
+                    }
+                }
+            }
+
+            // Main Animation Loop
+            function animateLoop(time) {
+                let targetX, targetY;
+
+                if (state.isPanelHovered) {
+                    const circleTime = time * (2 * Math.PI / 1500);
+                    targetX = window.innerWidth / 2 + Math.cos(circleTime) * 150;
+                    targetY = window.innerHeight / 2 + Math.sin(circleTime) * 150;
+                } else {
+                    targetX = mouse.x;
+                    targetY = mouse.y;
+                }
+
+                positions.forEach((pos, index) => {
+                    const lag = state.trailLag * (index + 1);
+                    pos.x = lerp(pos.x, targetX, lag);
+                    pos.y = lerp(pos.y, targetY, lag);
+                    targetX = pos.x;
+                    targetY = pos.y;
+                });
+
+                const pulseTime = time * 0.001 * state.pulseSpeed;
+                const scale = 1 + Math.sin(pulseTime) * state.pulseAmount;
+
+                for (let i = 0; i < lensBlobs.length; i++) {
+                    const lens = lensBlobs[i];
+                    const goo = gooBlobs[i];
+                    const pos = positions[i];
+
+                    let transform = `translate(${pos.x}px, ${pos.y}px) translate(-50%, -50%)`;
+                    if (i === 0) {
+                        transform += ` scale(${scale})`;
+                    }
+
+                    lens.style.transform = transform;
+                    goo.style.transform = transform;
+                }
+
+                requestAnimationFrame(animateLoop);
+            }
+
+            // Event Listeners
+            document.addEventListener('mousemove', (e) => {
+                mouse.x = e.clientX;
+                mouse.y = e.clientY;
+            });
+
+            // Toggle button
+            toggleBtn.addEventListener('click', () => {
+                controls.classList.toggle('hidden');
+            });
+
+            controls.addEventListener('mouseenter', () => {
+                state.isPanelHovered = true;
+            });
+            controls.addEventListener('mouseleave', () => {
+                state.isPanelHovered = false;
+            });
+
+            // Slider Listeners
+            const addListener = (el, stateKey, labelEl, isInt = false, callback = null) => {
+                el.addEventListener('input', (e) => {
+                    let val = isInt ? parseInt(e.target.value, 10) : parseFloat(e.target.value);
+                    state[stateKey] = val;
+                    if (labelEl) labelEl.textContent = val;
+                    if (callback) callback(val);
+                    else updateBlobStyle();
+                });
+            };
+
+            addListener(sizeSlider, 'size', sizeVal);
+            addListener(brightnessSlider, 'brightness', brightnessVal);
+            addListener(saturateSlider, 'saturate', saturateVal);
+            addListener(contrastSlider, 'contrast', contrastVal);
+            addListener(pulseSpeedSlider, 'pulseSpeed', pulseSpeedVal);
+            addListener(pulseAmountSlider, 'pulseAmount', pulseAmountVal);
+            addListener(trailLagSlider, 'trailLag', trailLagVal);
+
+            addListener(trailCountSlider, 'trailCount', trailCountVal, true, updateTrailCount);
+
+            invertCheckbox.addEventListener('change', (e) => {
+                state.invert = e.target.checked;
+                updateBlobStyle();
+            });
+
+            addListener(gooeyBlurSVGSlider, 'gooeyBlurSVG', gooeyBlurSVGVal, false, (val) => {
+                state.gooeyBlurSVG = val;
+                feGaussianBlur.setAttribute('stdDeviation', val);
+            });
+            addListener(gooeySharpnessSVGSlider, 'gooeySharpnessSVG', gooeySharpnessSVGVal, false, (val) => {
+                state.gooeySharpnessSVG = val;
+                const matrix = `1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 ${val} -7`;
+                feColorMatrix.setAttribute('values', matrix);
+            });
+
+            // Init
+            updateTrailCount(state.trailCount);
+            updateBlobStyle();
+            requestAnimationFrame(animateLoop);
+        })();
+
         // Fade out cursor text on button hover
         const spinningCursorText = document.getElementById('spinning-text-cursor');
         const allButtons = document.querySelectorAll('button, a.gignite-button');
@@ -2590,8 +3107,8 @@
 
         // Cursor text fade out when over text elements and idle quote system
         const cursorTextPath = document.getElementById('cursor-text-path');
-        const cursorCenterDot = document.getElementById('cursor-center-dot');
         const spinningTextCursor = document.getElementById('spinning-text-cursor');
+        const cursorTextElement = spinningTextCursor.querySelector('text');
 
         let mouseIdleTimer = null;
         let isIdle = false;
@@ -2631,7 +3148,6 @@
                 isIdle = true;
                 spinningTextCursor.classList.add('idle');
                 cursorTextPath.setAttribute('href', '#text-circle-cursor-large');
-                cursorCenterDot.setAttribute('r', '10');
                 cycleQuote();
             }
         }
@@ -2643,14 +3159,48 @@
                 spinningTextCursor.classList.remove('idle');
                 cursorTextPath.setAttribute('href', '#text-circle-cursor');
                 cursorTextPath.textContent = 'YOU  HAVE  THE  POWER  ';
-                cursorCenterDot.setAttribute('r', '6');
             }
         }
 
-        // Cycle through quotes
+        // Cycle through quotes with Matrix effect
         function cycleQuote() {
             if (isIdle) {
-                cursorTextPath.textContent = artisticQuotes[currentQuoteIndex] + '  ';
+                const targetText = artisticQuotes[currentQuoteIndex] + '  ';
+                const chars = targetText.split('');
+
+                // Matrix effect: flicker through random characters before revealing final text
+                const matrixChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*';
+                let flickerCount = 0;
+                const maxFlickers = 8; // Number of random characters to show before final
+
+                function flickerToFinal() {
+                    if (flickerCount < maxFlickers) {
+                        // Show random characters
+                        const randomText = chars.map((char, index) => {
+                            // Skip spaces
+                            if (char === ' ') return char;
+                            // Random delay per character for staggered effect
+                            if (Math.random() > 0.3) {
+                                return matrixChars[Math.floor(Math.random() * matrixChars.length)];
+                            }
+                            return char;
+                        }).join('');
+
+                        cursorTextPath.textContent = randomText;
+                        flickerCount++;
+                        setTimeout(flickerToFinal, 50); // Flicker every 50ms
+                    } else {
+                        // Show final text
+                        cursorTextPath.textContent = targetText;
+                    }
+                }
+
+                flickerToFinal();
+
+                // Set random rotation offset for text to appear at different position
+                const randomRotation = Math.floor(Math.random() * 360);
+                cursorTextElement.style.setProperty('--rotation-offset', `${randomRotation}deg`);
+
                 currentQuoteIndex = (currentQuoteIndex + 1) % artisticQuotes.length;
                 setTimeout(cycleQuote, 3000); // Change quote every 3 seconds
             }
@@ -2844,6 +3394,58 @@
             ftypes[4]='phone';
         }(jQuery));
         var $mcj = jQuery.noConflict(true);
+
+        // Handle form submission and show custom thank you message
+        (function($) {
+            $('#mc-embedded-subscribe-form').on('submit', function() {
+                // Wait a moment for the form to submit to MailChimp
+                setTimeout(function() {
+                    // Hide the form
+                    $('#mc_embed_signup').fadeOut(400, function() {
+                        // Show custom thank you message
+                        $('#custom-thank-you').fadeIn(400);
+                    });
+                }, 500);
+            });
+        }($mcj));
+    </script>
+
+    <!-- Smooth Scroll and Cursor Blob Handling -->
+    <script>
+        // Smooth scroll to signup form
+        document.querySelectorAll('a[href="#signup-form"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector('#signup-form');
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Hide cursor blob when hovering over MailChimp section
+        const signupSection = document.querySelector('#signup-form');
+        const cursorBlob = document.getElementById('trail-container');
+        const spinningCursor = document.getElementById('spinning-text-cursor');
+
+        if (signupSection && cursorBlob && spinningCursor) {
+            signupSection.addEventListener('mouseenter', function() {
+                cursorBlob.style.transition = 'opacity 1s ease-out';
+                cursorBlob.style.opacity = '0';
+                spinningCursor.style.transition = 'opacity 1s ease-out';
+                spinningCursor.style.opacity = '0';
+            });
+
+            signupSection.addEventListener('mouseleave', function() {
+                cursorBlob.style.transition = 'opacity 3s ease-in';
+                cursorBlob.style.opacity = '1';
+                spinningCursor.style.transition = 'opacity 3s ease-in';
+                spinningCursor.style.opacity = '1';
+            });
+        }
     </script>
 
 </body>
