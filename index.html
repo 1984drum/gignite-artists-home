@@ -1194,91 +1194,9 @@
             transition: width 0.4s ease, height 0.4s ease, background 0.4s ease;
         }
 
-        /* Control Panel Styles */
-        #blob-controls {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(17, 24, 39, 0.95);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            padding: 1rem;
-            border-radius: 1rem 1rem 0 0;
-            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
-            z-index: 10000;
-            transition: transform 0.3s ease;
-            transform: translateY(0);
-            cursor: default;
-        }
-
-        #blob-controls.hidden {
-            transform: translateY(100%);
-        }
-
-        #blob-toggle {
-            position: fixed;
-            bottom: 1rem;
-            right: 1rem;
-            background: rgba(6, 182, 212, 0.9);
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            border: none;
-            cursor: pointer;
-            z-index: 10001;
-            font-weight: 600;
-            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        #blob-toggle:hover {
-            background: rgba(6, 182, 212, 1);
-            transform: scale(1.05);
-            box-shadow: 0 6px 20px rgba(6, 182, 212, 0.5);
-        }
-
-        /* Custom slider styles for blob controls */
-        #blob-controls input[type="range"] {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 100%;
-            height: 8px;
-            background: #4a5568;
-            border-radius: 5px;
-            outline: none;
-            opacity: 0.7;
-            transition: opacity 0.2s;
-        }
-
-        #blob-controls input[type="range"]:hover {
-            opacity: 1;
-        }
-
-        #blob-controls input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 18px;
-            height: 18px;
-            background: #06b6d4;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-
-        #blob-controls input[type="range"]::-moz-range-thumb {
-            width: 18px;
-            height: 18px;
-            background: #06b6d4;
-            border-radius: 50%;
-            cursor: pointer;
-            border: none;
-        }
-
         @media (max-width: 1024px) {
             #lens-container,
-            #goo-container,
-            #blob-controls,
-            #blob-toggle {
+            #goo-container {
                 display: none !important;
             }
         }
@@ -1663,80 +1581,6 @@
             </filter>
         </defs>
     </svg>
-
-    <!-- Blob Control Panel Toggle Button -->
-    <button id="blob-toggle">Blob Controls</button>
-
-    <!-- Blob Control Panel -->
-    <div id="blob-controls" class="hidden">
-        <div style="max-width: 90rem; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; font-size: 0.875rem; color: white;">
-
-            <!-- Column 1 -->
-            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
-                    <label for="size" style="font-weight: 500;">Size: <span id="size-val">700</span>px</label>
-                    <input type="range" id="size" min="200" max="1200" value="700" style="width: 100%;">
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
-                    <label for="gooeyBlurSVG" style="font-weight: 500;">Gooey Blur: <span id="gooeyBlurSVG-val">50</span></label>
-                    <input type="range" id="gooeyBlurSVG" min="0" max="100" value="50" step="1" style="width: 100%;">
-                </div>
-            </div>
-
-            <!-- Column 2 -->
-            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
-                    <label for="gooeySharpnessSVG" style="font-weight: 500;">Gooey Sharpness: <span id="gooeySharpnessSVG-val">1</span></label>
-                    <input type="range" id="gooeySharpnessSVG" min="0.5" max="10" value="1" step="0.5" style="width: 100%;">
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
-                    <label for="brightness" style="font-weight: 500;">Brightness: <span id="brightness-val">1.2</span></label>
-                    <input type="range" id="brightness" min="0.6" max="1.8" value="1.2" step="0.1" style="width: 100%;">
-                </div>
-            </div>
-
-            <!-- Column 3 -->
-            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
-                    <label for="saturate" style="font-weight: 500;">Saturation: <span id="saturate-val">3</span></label>
-                    <input type="range" id="saturate" min="1.5" max="4.5" value="3" step="0.1" style="width: 100%;">
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
-                    <label for="contrast" style="font-weight: 500;">Contrast: <span id="contrast-val">2.8</span></label>
-                    <input type="range" id="contrast" min="1.4" max="4.2" value="2.8" step="0.1" style="width: 100%;">
-                </div>
-                <div style="display: flex; align-items: center; gap: 0.5rem; padding-top: 0.25rem;">
-                    <input type="checkbox" id="invert" style="height: 1rem; width: 1rem; color: #06b6d4; border-radius: 0.25rem; border-color: #9ca3af;">
-                    <label for="invert" style="font-weight: 500;">Invert Colors</label>
-                </div>
-            </div>
-
-            <!-- Column 4 -->
-            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
-                    <label for="pulseSpeed" style="font-weight: 500;">Pulse Speed: <span id="pulseSpeed-val">0.2</span></label>
-                    <input type="range" id="pulseSpeed" min="0" max="0.4" value="0.2" step="0.05" style="width: 100%;">
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
-                    <label for="pulseAmount" style="font-weight: 500;">Pulse Amount: <span id="pulseAmount-val">0.05</span></label>
-                    <input type="range" id="pulseAmount" min="0" max="0.1" value="0.05" step="0.01" style="width: 100%;">
-                </div>
-            </div>
-
-            <!-- Column 5 -->
-            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
-                    <label for="trailLag" style="font-weight: 500;">Trail Lag: <span id="trailLag-val">0.09</span></label>
-                    <input type="range" id="trailLag" min="0.045" max="0.135" value="0.09" step="0.005" style="width: 100%;">
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
-                    <label for="trailCount" style="font-weight: 500;">Trail Count: <span id="trailCount-val">3</span></label>
-                    <input type="range" id="trailCount" min="0" max="6" value="3" step="1" style="width: 100%;">
-                </div>
-            </div>
-
-        </div>
-    </div>
 
     <!-- Section Divider 1 -->
     <section class="bg-black py-10 w-full">
@@ -2819,8 +2663,6 @@
         (function initCursorBlob() {
             const lensContainer = document.getElementById('lens-container');
             const gooContainer = document.getElementById('goo-container');
-            const controls = document.getElementById('blob-controls');
-            const toggleBtn = document.getElementById('blob-toggle');
 
             // Main Blobs
             const mainLensBlob = document.getElementById('lens-blob');
@@ -2833,31 +2675,6 @@
             // Get SVG Filter elements
             const feGaussianBlur = document.getElementById('goo-blur');
             const feColorMatrix = document.getElementById('goo-contrast');
-
-            // Control elements
-            const sizeSlider = document.getElementById('size');
-            const brightnessSlider = document.getElementById('brightness');
-            const saturateSlider = document.getElementById('saturate');
-            const contrastSlider = document.getElementById('contrast');
-            const invertCheckbox = document.getElementById('invert');
-            const gooeyBlurSVGSlider = document.getElementById('gooeyBlurSVG');
-            const gooeySharpnessSVGSlider = document.getElementById('gooeySharpnessSVG');
-            const pulseSpeedSlider = document.getElementById('pulseSpeed');
-            const pulseAmountSlider = document.getElementById('pulseAmount');
-            const trailLagSlider = document.getElementById('trailLag');
-            const trailCountSlider = document.getElementById('trailCount');
-
-            // Labels
-            const sizeVal = document.getElementById('size-val');
-            const brightnessVal = document.getElementById('brightness-val');
-            const saturateVal = document.getElementById('saturate-val');
-            const contrastVal = document.getElementById('contrast-val');
-            const gooeyBlurSVGVal = document.getElementById('gooeyBlurSVG-val');
-            const gooeySharpnessSVGVal = document.getElementById('gooeySharpnessSVG-val');
-            const pulseSpeedVal = document.getElementById('pulseSpeed-val');
-            const pulseAmountVal = document.getElementById('pulseAmount-val');
-            const trailLagVal = document.getElementById('trailLag-val');
-            const trailCountVal = document.getElementById('trailCount-val');
 
             // State
             const state = {
@@ -2872,8 +2689,7 @@
                 pulseSpeed: 0.2,
                 pulseAmount: 0.05,
                 trailLag: 0.09,
-                trailCount: 3,
-                isPanelHovered: false
+                trailCount: 3
             };
 
             // Position State
@@ -2933,9 +2749,7 @@
                     const index = i;
 
                     const scaleFactor = 1 - (index * 0.15);
-                    // Make blob 2.5x bigger when hovering over control panel
-                    const panelMultiplier = state.isPanelHovered ? 2.5 : 1;
-                    const size = `${state.size * scaleFactor * panelMultiplier}px`;
+                    const size = `${state.size * scaleFactor}px`;
 
                     lens.style.width = size;
                     lens.style.height = size;
@@ -2963,16 +2777,8 @@
 
             // Main Animation Loop
             function animateLoop(time) {
-                let targetX, targetY;
-
-                if (state.isPanelHovered) {
-                    const circleTime = time * (2 * Math.PI / 1500);
-                    targetX = window.innerWidth / 2 + Math.cos(circleTime) * 150;
-                    targetY = window.innerHeight / 2 + Math.sin(circleTime) * 150;
-                } else {
-                    targetX = mouse.x;
-                    targetY = mouse.y;
-                }
+                let targetX = mouse.x;
+                let targetY = mouse.y;
 
                 positions.forEach((pos, index) => {
                     const lag = state.trailLag * (index + 1);
@@ -3006,56 +2812,6 @@
             document.addEventListener('mousemove', (e) => {
                 mouse.x = e.clientX;
                 mouse.y = e.clientY;
-            });
-
-            // Toggle button
-            toggleBtn.addEventListener('click', () => {
-                controls.classList.toggle('hidden');
-            });
-
-            controls.addEventListener('mouseenter', () => {
-                state.isPanelHovered = true;
-                updateBlobStyle(); // Update size immediately
-            });
-            controls.addEventListener('mouseleave', () => {
-                state.isPanelHovered = false;
-                updateBlobStyle(); // Update size immediately
-            });
-
-            // Slider Listeners
-            const addListener = (el, stateKey, labelEl, isInt = false, callback = null) => {
-                el.addEventListener('input', (e) => {
-                    let val = isInt ? parseInt(e.target.value, 10) : parseFloat(e.target.value);
-                    state[stateKey] = val;
-                    if (labelEl) labelEl.textContent = val;
-                    if (callback) callback(val);
-                    else updateBlobStyle();
-                });
-            };
-
-            addListener(sizeSlider, 'size', sizeVal);
-            addListener(brightnessSlider, 'brightness', brightnessVal);
-            addListener(saturateSlider, 'saturate', saturateVal);
-            addListener(contrastSlider, 'contrast', contrastVal);
-            addListener(pulseSpeedSlider, 'pulseSpeed', pulseSpeedVal);
-            addListener(pulseAmountSlider, 'pulseAmount', pulseAmountVal);
-            addListener(trailLagSlider, 'trailLag', trailLagVal);
-
-            addListener(trailCountSlider, 'trailCount', trailCountVal, true, updateTrailCount);
-
-            invertCheckbox.addEventListener('change', (e) => {
-                state.invert = e.target.checked;
-                updateBlobStyle();
-            });
-
-            addListener(gooeyBlurSVGSlider, 'gooeyBlurSVG', gooeyBlurSVGVal, false, (val) => {
-                state.gooeyBlurSVG = val;
-                feGaussianBlur.setAttribute('stdDeviation', val);
-            });
-            addListener(gooeySharpnessSVGSlider, 'gooeySharpnessSVG', gooeySharpnessSVGVal, false, (val) => {
-                state.gooeySharpnessSVG = val;
-                const matrix = `1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 ${val} -7`;
-                feColorMatrix.setAttribute('values', matrix);
             });
 
             // Init
